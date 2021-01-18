@@ -1,7 +1,9 @@
+import { AxiosInstance } from "axios";
 import Resource, {fromJSON as resourceFromJSON} from "./resource";
-import { client, request } from "../util/client";
 
-export function fromJSON(client: client, json: string|{[key: string]: any}): Order|string {
+const getURL = "https://api.arlula.com/api/order/get";
+
+export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any}): Order|string {
     if (typeof json === "string") {
         json = JSON.parse(json);
     }
@@ -60,7 +62,7 @@ export function fromJSON(client: client, json: string|{[key: string]: any}): Ord
 }
 
 export default class Order {
-    private _client: client;
+    private _client: AxiosInstance;
     private _id: string;
     private _createdAt: Date;
     private _updatedAt: Date;
@@ -73,7 +75,7 @@ export default class Order {
     private _expiration?: Date;
     private _resources: Resource[] = [];
     private detailed: boolean = false;
-    constructor(client: client, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
+    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
@@ -139,55 +141,38 @@ export default class Order {
             return Promise.resolve(this._resources);
         }
 
-        return new Promise((resolve, reject) => {
-            const req = new request(getURL);
-            req.addParam("id", this._id);
-            this._client.do(req)
-            .then((resp) => {
-                if (!resp.ok()) {
-                    reject(resp.text());
-                    return;
-                }
-
-                const body = resp.json();
-                if (typeof body !== "object") {
-                    reject("Order response is not an object");
-                    return;
-                }
-                if (!("resources" in body)) {
-                    // order has no resources
-                    this.detailed = true;
-                    resolve([]);
-                    return;
-                }
-                
-                if (!Array.isArray(body.resources)) {
-                    reject("Resources is not an array");
-                    return;
-                }
-
-                const resources: Resource[] = [];
-                for (let i=0; i<body.resources.length; i++) {
-                    const res = resourceFromJSON(this._client, body.resources[i]);
-                    if (!(res instanceof Resource)) {
-                        // error in decoding, pass error up the chain
-                        reject(res);
-                        return;
-                    }
-                    resources.push(res);
-                };
-
+        return this._client.get(getURL, {params: {id: this._id}})
+        .then((resp) => {
+            if (typeof resp.data !== "object") {
+                return Promise.reject("Order response is not an object");
+            }
+            if (!("resources" in resp.data)) {
+                // order has no resources
                 this.detailed = true;
-                this._resources = resources;
-                resolve(resources);
-            })
-            .catch(reject);
+                return [];
+            }
+            
+            if (!Array.isArray(resp.data.resources)) {
+                return Promise.reject("Resources is not an array");
+            }
+
+            const resources: Resource[] = [];
+            for (let i=0; i<resp.data.resources.length; i++) {
+                const res = resourceFromJSON(this._client, resp.data.resources[i]);
+                if (!(res instanceof Resource)) {
+                    // error in decoding, pass error up the chain
+                    return Promise.reject(res);
+                }
+                resources.push(res);
+            };
+
+            this.detailed = true;
+            this._resources = resources;
+            return resources;
         });
     }
 
 }
-
-const getURL = "/api/order/get";
 
 export enum OrderStatus {
     New        = "created",
