@@ -1,77 +1,56 @@
 import Order, { fromJSON } from "./order";
 import { downloadHelper as resourceDownloader } from "./resource";
-import { client, request } from "../util/client";
+import { AxiosInstance } from "axios";
 
-const listURL = "/api/order/list";
-const getURL = "/api/order/get";
+const listURL = "https://api.arlula.com/api/order/list";
+const getURL = "https://api.arlula.com/api/order/get";
 
 export default class Orders {
-    private _client: client;
-    constructor(client: client) {
+    private _client: AxiosInstance;
+    constructor(client: AxiosInstance) {
         this._client = client;
     }
 
     ListOrders(): Promise<Order[]> {
-        return new Promise((resolve, reject) => {
-            const req = new request(listURL);
-            this._client.do(req)
-            .then((resp) => {
-                if (!resp.ok()) {
-                    reject(resp.text());
-                    return;
-                }
+        return this._client.get(listURL)
+        .then((resp) => {
+            if (resp.status < 200 || resp.status >= 300) {
+                return Promise.reject(resp.data);
+            }
 
-                const body = resp.json();
-                if (!Array.isArray(body)) {
-                    reject("Orders list response is not array");
-                    return;
-                }
+            if (!Array.isArray(resp.data)) {
+                return Promise.reject("Orders list response is not array");
+            }
 
-                const orders: Order[] = [];
-                for (let i=0; i<body.length; i++) {
-                    const ord = fromJSON(this._client, body[i])
-                    if (!(ord instanceof Order)) {
-                        reject(ord);
-                        return;
-                    }
-                    orders.push(ord);
-                }
-
-                resolve(orders);
-            })
-            .catch(reject);
-        });
-    }
-
-    GetOrder(): Promise<Order> {
-        return new Promise((resolve, reject) => {
-            const req = new request(getURL);
-            this._client.do(req)
-            .then((resp) => {
-                if (!resp.ok()) {
-                    reject(resp.text());
-                    return;
-                }
-
-                const body = resp.json();
-                if (typeof body !== "object") {
-                    reject("Order is not an object");
-                    return;
-                }
-
-                const ord = fromJSON(this._client, body);
+            const orders: Order[] = [];
+            for (let i=0; i<resp.data.length; i++) {
+                const ord = fromJSON(this._client, resp.data[i])
                 if (!(ord instanceof Order)) {
-                    reject(ord);
-                    return;
+                    return Promise.reject(ord);
                 }
+                orders.push(ord);
+            }
 
-                resolve(ord);
-            })
-            .catch(reject);
+            return orders;
         });
     }
 
-    downloadResource(id: string): Promise<string> {
+    GetOrder(id: string): Promise<Order> {
+        return this._client.get(getURL, {params: {id: id}})
+        .then((resp) => {
+            if (typeof resp.data !== "object") {
+                return Promise.reject("Order is not an object");
+            }
+
+            const ord = fromJSON(this._client, resp.data);
+            if (!(ord instanceof Order)) {
+                return Promise.reject(ord);
+            }
+            return ord;
+        });
+    }
+
+    downloadResource(id: string): Promise<ArrayBuffer> {
         return resourceDownloader(this._client, id);
     }
 }
