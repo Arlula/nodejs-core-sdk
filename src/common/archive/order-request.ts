@@ -1,14 +1,14 @@
-import { searchResult } from ".";
+import SearchResult from "./search-result";
 
 export default class OrderRequest {
-    private _req?: searchResult;
+    private _req?: SearchResult;
     private _id: string;
     private _eula: string;
     private _seats: number;
     private _webhooks?: string[];
     private _emails?: string[];
 
-    constructor(searchID: string|searchResult, eula: string, seats: number, webhooks?: string[], emails?: string[]) {
+    constructor(searchID: string|SearchResult, eula: string, seats: number, webhooks?: string[], emails?: string[]) {
         if (typeof searchID === "string") {
             this._id = searchID
         } else {
