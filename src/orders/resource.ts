@@ -1,7 +1,6 @@
-import { client, request } from "../util/client";
-import Response from "../util/response";
+import { AxiosInstance } from "axios";
 
-export function fromJSON(client: client, json: string|{[key: string]: any}): Resource|string {
+export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any}): Resource|string {
     
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -38,14 +37,14 @@ export function fromJSON(client: client, json: string|{[key: string]: any}): Res
 }
 
 export default class Resource {
-    private _client: client;
+    private _client: AxiosInstance;
     private _id: string;
     private _createdAt: Date;
     private _updatedAt: Date;
     private _order: string;
     private _name: string;
     private _type: ResourceType;
-    constructor(client: client, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType) {
+    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
@@ -78,26 +77,17 @@ export default class Resource {
 
     // actual functions
 
-    download(): Promise<string> {
+    download(): Promise<ArrayBuffer> {
         return downloadHelper(this._client, this._id);
     }
 }
 
-const downloadPath = "/api/orders/resource/download";
+const downloadPath = "https://api.arlula.com/api/orders/resource/download";
 
-export function downloadHelper(client: client, id: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const req = new request(downloadPath);
-        req.addParam("id", id);
-        client.do(req)
-        .then((resp) => {
-            if (!resp.ok()) {
-                reject(resp.text());
-            }
-
-            resolve(resp.text());
-        })
-        .catch(reject)
+export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer> {
+    return client.get(downloadPath, {params: {id: id}, responseType: "arraybuffer"})
+    .then((resp) => {
+        return resp.data as ArrayBuffer;
     });
 }
 
