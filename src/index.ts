@@ -1,28 +1,36 @@
 import Archive from "./archive/index";
 import Orders from "./orders/index";
-import { client, request } from "./util/client";
+import axios, { AxiosInstance } from "axios";
 
-const testURL = "/api/test";
+const testURL = "https://api.arlula.com/api/test";
 
 export default class Arlula {
-    private _client: client
+    private _client: AxiosInstance
     private _archive: Archive;
     private _orders: Orders;
 
-    constructor(client: client) {
-        this._client = client;
+    constructor(key: string, secret: string) {
+        this._client = axios.create({
+            method: "GET",
+            auth: {
+                username: key,
+                password: secret,
+            },
+            timeout: 10000,
+            responseType: "json",
+            headers: {"User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + (navigator ? "client, user-agent: "+navigator.userAgent : `server nodejs ${process.version}; ${process.arch} ${process.platform}`)},
+        })
         this._archive = new Archive(this._client);
         this._orders = new Orders(this._client);
     }
 
     test(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            const req = new request(testURL);
-            this._client.do(req)
-            .then((resp) => {
-                resolve(resp.ok());
-            })
-            .catch(reject)
+        return this._client.get(testURL)
+        .then((resp) => {
+            return resp.status >= 200 && resp.status < 300; 
+        })
+        .catch((error) => {
+            return false;
         });
     }
 
