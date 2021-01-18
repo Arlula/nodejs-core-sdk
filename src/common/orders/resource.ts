@@ -78,23 +78,28 @@ export default class Resource {
 
     // actual functions
 
-    async download() {
-        const req = new request(downloadPath);
-        req.addParam("id", this._id);
-        const resp = await this._client.do(req);
-        if (resp instanceof Response) {
-            if (resp.ok()) {
-                return resp.text()
-            } else {
-                throw(resp.text());
-            }
-        } else {
-            throw (resp);
-        }
+    download(): Promise<string> {
+        return downloadHelper(this._client, this._id);
     }
 }
 
 const downloadPath = "/api/orders/resource/download";
+
+export function downloadHelper(client: client, id: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const req = new request(downloadPath);
+        req.addParam("id", id);
+        client.do(req)
+        .then((resp) => {
+            if (!resp.ok()) {
+                reject(resp.text());
+            }
+
+            resolve(resp.text());
+        })
+        .catch(reject)
+    });
+}
 
 export enum ResourceType {
     ImageryTiff       = "img_tiff",
