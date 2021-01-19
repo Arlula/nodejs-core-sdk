@@ -48,12 +48,12 @@ export default class SearchRequest {
 
     toQuery(): {[key: string]: string} {
         const query: {[key: string]: string} = {
-            start: this.start.toString(),
+            start: `${this.start.getFullYear()}-${pad(this.start.getMonth()+1, 2)}-${pad(this.start.getDate(), 2)}`,
             res: this.res.toString(),
         };
 
         if (this.end) {
-            query.end = this.end.toString();
+            query.end = `${this.end.getFullYear()}-${pad(this.end.getMonth()+1, 2)}-${pad(this.end.getDate(), 2)}`;
         }
 
         if (this.point) {
@@ -78,4 +78,10 @@ export enum Resolution {
     medium = 5,
     low = 20,
     veryLow = 100000,
+}
+
+function pad(num: number, size: number): string {
+    let numStr = num.toString();
+    while (numStr.length < size) numStr = "0" + num;
+    return numStr;
 }
