@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 
-export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any}): Resource|string {
+export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Resource|string {
     
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -107,6 +107,6 @@ export enum ResourceType {
     License           = "license",
 }
 
-function isResourceType(token: any): token is ResourceType {
+function isResourceType(token: string): token is ResourceType {
     return Object.values(ResourceType).includes(token as ResourceType);
-};
+}

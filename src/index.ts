@@ -29,7 +29,7 @@ export default class Arlula {
         .then((resp) => {
             return resp.status >= 200 && resp.status < 300; 
         })
-        .catch((error) => {
+        .catch(() => {
             return false;
         });
     }

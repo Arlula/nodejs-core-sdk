@@ -27,22 +27,22 @@ export default class OrderRequest {
         }
     }
 
-    setWebhooks(hooks: string[]) {
+    setWebhooks(hooks: string[]): void {
         this._webhooks = hooks;
     }
 
-    addWebhook(hook: string) {
+    addWebhook(hook: string): void {
         if (!this._webhooks) {
             this._webhooks = [];
         }
         this._webhooks.push(hook);
     }
 
-    setEmails(emails: string[]) {
+    setEmails(emails: string[]): void {
         this._emails = emails;
     }
 
-    addEmail(email: string) {
+    addEmail(email: string): void {
         if (!this._emails) {
             this._emails = [];
         }

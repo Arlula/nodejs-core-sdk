@@ -3,7 +3,7 @@ import Resource, {fromJSON as resourceFromJSON} from "./resource";
 
 const getURL = "https://api.arlula.com/api/order/get";
 
-export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any}): Order|string {
+export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Order|string {
     if (typeof json === "string") {
         json = JSON.parse(json);
     }
@@ -46,7 +46,7 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any
         return "Order Expiration invalid formatting";
     }
 
-    let resources: Resource[] = [];
+    const resources: Resource[] = [];
     if (json.resources && Array.isArray(json.resources)) {
         for (let i=0; i<json.resources.length; i++) {
             const res = resourceFromJSON(client, json.resources[i]);
@@ -58,7 +58,7 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: any
         }
     }
 
-    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, json.imageryID, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration):undefined);
+    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, json.imageryID, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
 }
 
 export default class Order {
@@ -74,7 +74,7 @@ export default class Order {
     private _type: string;
     private _expiration?: Date;
     private _resources: Resource[] = [];
-    private detailed: boolean = false;
+    private detailed = false;
     constructor(client: AxiosInstance, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
@@ -164,7 +164,7 @@ export default class Order {
                     return Promise.reject(res);
                 }
                 resources.push(res);
-            };
+            }
 
             this.detailed = true;
             this._resources = resources;
@@ -183,6 +183,6 @@ export enum OrderStatus {
     Complete   = "complete",
 }
 
-function isOrderStatus(token: any): token is OrderStatus {
+function isOrderStatus(token: string): token is OrderStatus {
     return Object.values(OrderStatus).includes(token as OrderStatus);
-};
+}

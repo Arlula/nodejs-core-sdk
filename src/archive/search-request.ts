@@ -10,30 +10,35 @@ export default class SearchRequest {
         this.start = date;
     }
 
-    searchFrom(date: Date) {
+    searchDate(date: Date): void {
+        this.end = undefined;
         this.start = date;
     }
 
-    searchTo(date: Date) {
+    searchFrom(date: Date): void {
+        this.start = date;
+    }
+
+    searchTo(date: Date): void {
         this.end = date;
     }
 
-    searchDateRange(start: Date, end: Date) {
+    searchDateRange(start: Date, end: Date): void {
         this.start = start;
         this.end = end;
     }
 
-    searchPoint(long: number, lat: number) {
+    searchPoint(long: number, lat: number): void {
         this.box = undefined;
         this.point = {long, lat};
     }
 
-    searchBoundingBox(west: number, north: number, east: number, south: number) {
+    searchBoundingBox(west: number, north: number, east: number, south: number): void {
         this.point = undefined;
         this.box = {west, north, east, south};
     }
 
-    setMaximumResolution(res: number|Resolution) {
+    setMaximumResolution(res: number|Resolution): void {
         this.res = res;
     }
 
