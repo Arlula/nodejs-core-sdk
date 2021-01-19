@@ -31,5 +31,11 @@ module.exports =  [
         output: {
             filename: "[name].min.js"
         }
+    },
+    {
+        ...baseConfig,
+        target: "node",
+        entry: {index: "./e2e/index.ts"},
+        output: {path: path.resolve(__dirname, "e2e/dist"),}
     }
 ];
