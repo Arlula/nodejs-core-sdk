@@ -18,8 +18,8 @@ export default class Arlula {
             },
             timeout: 10000,
             responseType: "json",
-            headers: {"User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + (navigator ? "client, user-agent: "+navigator.userAgent : `server nodejs ${process.version}; ${process.arch} ${process.platform}`)},
-        })
+            headers: {"User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment()},
+        });
         this._archive = new Archive(this._client);
         this._orders = new Orders(this._client);
     }
@@ -41,4 +41,13 @@ export default class Arlula {
     orders(): Orders {
         return this._orders;
     }
+}
+
+function getPlatformUserAgentFragment(): string {
+    if (process) {
+        // is node
+        return `server nodejs ${process.version}; ${process.arch} ${process.platform}`;
+    }
+    // in browser
+    return "client, user-agent: "+navigator.userAgent;
 }
