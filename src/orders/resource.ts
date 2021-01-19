@@ -78,14 +78,14 @@ export default class Resource {
 
     // actual functions
 
-    download(): Promise<ArrayBuffer> {
+    download(): Promise<ArrayBuffer|Buffer> {
         return downloadHelper(this._client, this._id);
     }
 }
 
 const downloadPath = "https://api.arlula.com/api/order/resource/get";
 
-export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer> {
+export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer|Buffer> {
     return client.get(downloadPath, {params: {id: id}, responseType: "arraybuffer"})
     .then((resp) => {
         return resp.data as ArrayBuffer;

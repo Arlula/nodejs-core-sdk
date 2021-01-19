@@ -53,7 +53,7 @@ export default class Orders {
         .catch(handleError);
     }
 
-    downloadResource(id: string): Promise<ArrayBuffer> {
+    downloadResource(id: string): Promise<ArrayBuffer|Buffer> {
         return resourceDownloader(this._client, id);
     }
 }
