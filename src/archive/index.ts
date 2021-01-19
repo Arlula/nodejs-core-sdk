@@ -33,7 +33,9 @@ export default class Archive {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
-        return this._client.post(orderURL, req.toJSON())
+        // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
+        // give a longer timeout to respect this and not timeout a successful order
+        return this._client.post(orderURL, req.toJSON(), {timeout: 120*1000})
         .then((resp) => {
 
             const ord = OrderFromJSON(this._client, resp.data);
