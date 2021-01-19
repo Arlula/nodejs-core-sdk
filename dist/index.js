@@ -1862,6 +1862,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var order_1 = __importStar(__webpack_require__(/*! ../orders/order */ "./src/orders/order.ts"));
+var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var searchURL = "https://api.arlula.com/api/archive/search";
 var orderURL = "https://api.arlula.com/api/archive/order";
 var Archive = /** @class */ (function () {
@@ -1878,21 +1879,25 @@ var Archive = /** @class */ (function () {
                 return Promise.reject("response was not an array of results");
             }
             return resp.data;
-        });
+        })
+            .catch(error_1.handleError);
     };
     Archive.prototype.Order = function (req) {
         var _this = this;
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
-        return this._client.post(orderURL, req.toJSON())
+        // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
+        // give a longer timeout to respect this and not timeout a successful order
+        return this._client.post(orderURL, req.toJSON(), { timeout: 120 * 1000 })
             .then(function (resp) {
             var ord = order_1.fromJSON(_this._client, resp.data);
             if (!(ord instanceof order_1.default)) {
                 return Promise.reject(ord);
             }
             return ord;
-        });
+        })
+            .catch(error_1.handleError);
     };
     return Archive;
 }());
@@ -1927,7 +1932,7 @@ var Arlula = /** @class */ (function () {
             },
             timeout: 10000,
             responseType: "json",
-            headers: { "User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + (navigator ? "client, user-agent: " + navigator.userAgent : "server nodejs " + process.version + "; " + process.arch + " " + process.platform) },
+            headers: { "User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment() },
         });
         this._archive = new index_1.default(this._client);
         this._orders = new index_2.default(this._client);
@@ -1950,6 +1955,14 @@ var Arlula = /** @class */ (function () {
     return Arlula;
 }());
 exports.default = Arlula;
+function getPlatformUserAgentFragment() {
+    if (process) {
+        // is node
+        return "server nodejs " + process.version + "; " + process.arch + " " + process.platform;
+    }
+    // in browser
+    return "client, user-agent: " + navigator.userAgent;
+}
 
 
 /***/ }),
@@ -1984,6 +1997,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var order_1 = __importStar(__webpack_require__(/*! ./order */ "./src/orders/order.ts"));
 var resource_1 = __webpack_require__(/*! ./resource */ "./src/orders/resource.ts");
+var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var listURL = "https://api.arlula.com/api/order/list";
 var getURL = "https://api.arlula.com/api/order/get";
 var Orders = /** @class */ (function () {
@@ -2009,7 +2023,8 @@ var Orders = /** @class */ (function () {
                 orders.push(ord);
             }
             return orders;
-        });
+        })
+            .catch(error_1.handleError);
     };
     Orders.prototype.GetOrder = function (id) {
         var _this = this;
@@ -2023,7 +2038,8 @@ var Orders = /** @class */ (function () {
                 return Promise.reject(ord);
             }
             return ord;
-        });
+        })
+            .catch(error_1.handleError);
     };
     Orders.prototype.downloadResource = function (id) {
         return resource_1.downloadHelper(this._client, id);
@@ -2065,6 +2081,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrderStatus = exports.fromJSON = void 0;
 var resource_1 = __importStar(__webpack_require__(/*! ./resource */ "./src/orders/resource.ts"));
+var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var getURL = "https://api.arlula.com/api/order/get";
 function fromJSON(client, json) {
     if (typeof json === "string") {
@@ -2251,11 +2268,11 @@ var Order = /** @class */ (function () {
                 }
                 resources.push(res);
             }
-            ;
             _this.detailed = true;
             _this._resources = resources;
             return resources;
-        });
+        })
+            .catch(error_1.handleError);
     };
     return Order;
 }());
@@ -2272,7 +2289,6 @@ var OrderStatus;
 function isOrderStatus(token) {
     return Object.values(OrderStatus).includes(token);
 }
-;
 
 
 /***/ }),
@@ -2281,12 +2297,13 @@ function isOrderStatus(token) {
 /*!********************************!*\
   !*** ./src/orders/resource.ts ***!
   \********************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ResourceType = exports.downloadHelper = exports.fromJSON = void 0;
+var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 function fromJSON(client, json) {
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -2379,12 +2396,13 @@ var Resource = /** @class */ (function () {
     return Resource;
 }());
 exports.default = Resource;
-var downloadPath = "https://api.arlula.com/api/orders/resource/download";
+var downloadPath = "https://api.arlula.com/api/order/resource/get";
 function downloadHelper(client, id) {
     return client.get(downloadPath, { params: { id: id }, responseType: "arraybuffer" })
         .then(function (resp) {
         return resp.data;
-    });
+    })
+        .catch(error_1.handleError);
 }
 exports.downloadHelper = downloadHelper;
 var ResourceType;
@@ -2406,7 +2424,25 @@ var ResourceType;
 function isResourceType(token) {
     return Object.values(ResourceType).includes(token);
 }
-;
+
+
+/***/ }),
+
+/***/ "./src/util/error.ts":
+/*!***************************!*\
+  !*** ./src/util/error.ts ***!
+  \***************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.handleError = void 0;
+function handleError(e) {
+    var _a;
+    return Promise.reject(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e);
+}
+exports.handleError = handleError;
 
 
 /***/ })
