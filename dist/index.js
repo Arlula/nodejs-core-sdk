@@ -1937,7 +1937,7 @@ var Arlula = /** @class */ (function () {
             .then(function (resp) {
             return resp.status >= 200 && resp.status < 300;
         })
-            .catch(function (error) {
+            .catch(function () {
             return false;
         });
     };
