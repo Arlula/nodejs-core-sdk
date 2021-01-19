@@ -83,7 +83,7 @@ export default class Resource {
     }
 }
 
-const downloadPath = "https://api.arlula.com/api/orders/resource/download";
+const downloadPath = "https://api.arlula.com/api/order/resource/get";
 
 export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer> {
     return client.get(downloadPath, {params: {id: id}, responseType: "arraybuffer"})
