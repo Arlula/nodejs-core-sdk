@@ -3,6 +3,7 @@ import SearchResult from "./search-result";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
 import { AxiosInstance } from "axios";
+import { handleError } from "../util/error";
 
 const searchURL = "https://api.arlula.com/api/archive/search";
 const orderURL = "https://api.arlula.com/api/archive/order";
@@ -24,7 +25,8 @@ export default class Archive {
             }
 
             return resp.data as SearchResult[];
-        });
+        })
+        .catch(handleError);
     }
 
     Order(req: OrderRequest): Promise<Order> {
@@ -40,6 +42,7 @@ export default class Archive {
             }
 
             return ord;
-        });
+        })
+        .catch(handleError);
     }
 }

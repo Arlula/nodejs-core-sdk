@@ -1,5 +1,6 @@
 import { AxiosInstance } from "axios";
 import Resource, {fromJSON as resourceFromJSON} from "./resource";
+import { handleError } from "../util/error";
 
 const getURL = "https://api.arlula.com/api/order/get";
 
@@ -169,7 +170,8 @@ export default class Order {
             this.detailed = true;
             this._resources = resources;
             return resources;
-        });
+        })
+        .catch(handleError);
     }
 
 }

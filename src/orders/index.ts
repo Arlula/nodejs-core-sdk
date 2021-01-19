@@ -1,6 +1,7 @@
 import Order, { fromJSON } from "./order";
 import { downloadHelper as resourceDownloader } from "./resource";
 import { AxiosInstance } from "axios";
+import { handleError } from "../util/error";
 
 const listURL = "https://api.arlula.com/api/order/list";
 const getURL = "https://api.arlula.com/api/order/get";
@@ -32,7 +33,8 @@ export default class Orders {
             }
 
             return orders;
-        });
+        })
+        .catch(handleError);
     }
 
     GetOrder(id: string): Promise<Order> {
@@ -47,7 +49,8 @@ export default class Orders {
                 return Promise.reject(ord);
             }
             return ord;
-        });
+        })
+        .catch(handleError);
     }
 
     downloadResource(id: string): Promise<ArrayBuffer> {

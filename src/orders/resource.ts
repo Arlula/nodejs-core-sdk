@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios";
+import { handleError } from "../util/error";
 
 export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Resource|string {
     
@@ -88,7 +89,8 @@ export function downloadHelper(client: AxiosInstance, id: string): Promise<Array
     return client.get(downloadPath, {params: {id: id}, responseType: "arraybuffer"})
     .then((resp) => {
         return resp.data as ArrayBuffer;
-    });
+    })
+    .catch(handleError);
 }
 
 export enum ResourceType {
