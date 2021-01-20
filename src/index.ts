@@ -83,7 +83,7 @@ export default class Arlula {
 
 // utility to construct user agent string for node and browser environment
 function getPlatformUserAgentFragment(): string {
-    if (process) {
+    if (typeof process !== "undefined") {
         // is node
         return `server nodejs ${process.version}; ${process.arch} ${process.platform}`;
     }
