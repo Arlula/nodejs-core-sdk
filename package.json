@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "JavaScript and TypeScript SDK for the Arlula satellite imagery API",
   "author": "Scott Owens",
-  "main": "dist/index.js",
+  "main": "dist/node.js",
+  "browser": "dist/browser.js",
   "types": "dist/index.d.ts",
   "keywords": [],
   "homepage": "https://arlula.com",
@@ -14,7 +15,7 @@
   },
   "scripts": {
     "prepublish": "npx webpack",
-    "test": "npx webpack && node ./e2e/dist/index.js"
+    "test": "npx webpack && node ./e2e/dist/node.js"
   },
   "license": "ISC",
   "dependencies": {

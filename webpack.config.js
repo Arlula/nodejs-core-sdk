@@ -6,7 +6,6 @@ const baseConfig = {
     },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "[name].js"
     },
     mode: "development",
     resolve: {
@@ -14,28 +13,66 @@ const baseConfig = {
     },
     devtool: "source-map",
     plugins: [],
-    module: {
-        rules: [{
-            test: /\.tsx?$/,
-            loader: "ts-loader",
-            exclude: /node_modules/,
-        }]
-    }
+};
+
+const tsModule = {
+    test: /\.tsx?$/,
+    loader: "ts-loader",
+    exclude: /node_modules/,
+    
 };
 
 module.exports =  [
-    {...baseConfig},
     {
         ...baseConfig,
-        mode: "production",
         output: {
-            filename: "[name].min.js"
+            filename: "browser.js"
+        },
+        module: {
+            rules: [tsModule]
+        }
+    },
+    {
+        ...baseConfig,
+        target: "node",
+        output: {
+            filename: "node.js"
+        },
+        module: {
+            rules: [tsModule]
+        }
+    },
+    {
+        ...baseConfig,
+        entry: {index: "./e2e/index.ts"},
+        output: {
+            path: path.resolve(__dirname, "e2e/dist"),
+            filename: "browser.js"
+        },
+        module: {
+            rules: [{
+                ...tsModule,
+                options: {
+                    configFile: "tests.tsconfig.json"
+                }
+            }]
         }
     },
     {
         ...baseConfig,
         target: "node",
         entry: {index: "./e2e/index.ts"},
-        output: {path: path.resolve(__dirname, "e2e/dist"),}
+        output: {
+            path: path.resolve(__dirname, "e2e/dist"),
+            filename: "node.js"
+        },
+        module: {
+            rules: [{
+                ...tsModule,
+                options: {
+                    configFile: "tests.tsconfig.json"
+                }
+            }]
+        }
     }
 ];
