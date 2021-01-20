@@ -15,7 +15,7 @@
   },
   "scripts": {
     "prepublish": "npx webpack",
-    "test": "npx webpack && node ./e2e/dist/node.js"
+    "test": "npx webpack --env tests && node ./e2e/dist/node.js"
   },
   "license": "ISC",
   "dependencies": {

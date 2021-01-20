@@ -1,4 +1,5 @@
 const path = require("path");
+const { env } = require("process");
 
 const baseConfig = {
     entry: {
@@ -22,7 +23,7 @@ const tsModule = {
     
 };
 
-module.exports =  [
+const modules = [
     {
         ...baseConfig,
         output: {
@@ -40,39 +41,46 @@ module.exports =  [
         },
         module: {
             rules: [tsModule]
-        }
-    },
-    {
-        ...baseConfig,
-        entry: {index: "./e2e/index.ts"},
-        output: {
-            path: path.resolve(__dirname, "e2e/dist"),
-            filename: "browser.js"
-        },
-        module: {
-            rules: [{
-                ...tsModule,
-                options: {
-                    configFile: "tests.tsconfig.json"
-                }
-            }]
-        }
-    },
-    {
-        ...baseConfig,
-        target: "node",
-        entry: {index: "./e2e/index.ts"},
-        output: {
-            path: path.resolve(__dirname, "e2e/dist"),
-            filename: "node.js"
-        },
-        module: {
-            rules: [{
-                ...tsModule,
-                options: {
-                    configFile: "tests.tsconfig.json"
-                }
-            }]
         }
     }
 ];
+
+module.exports = env => {
+    if (env.tests) {
+        modules.push({
+            ...baseConfig,
+            entry: {index: "./e2e/index.ts"},
+            output: {
+                path: path.resolve(__dirname, "e2e/dist"),
+                filename: "browser.js"
+            },
+            module: {
+                rules: [{
+                    ...tsModule,
+                    options: {
+                        configFile: "tests.tsconfig.json"
+                    }
+                }]
+            }
+        },
+        {
+            ...baseConfig,
+            target: "node",
+            entry: {index: "./e2e/index.ts"},
+            output: {
+                path: path.resolve(__dirname, "e2e/dist"),
+                filename: "node.js"
+            },
+            module: {
+                rules: [{
+                    ...tsModule,
+                    options: {
+                        configFile: "tests.tsconfig.json"
+                    }
+                }]
+            }
+        });
+    }
+
+    return modules
+}
