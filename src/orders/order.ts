@@ -4,6 +4,13 @@ import { handleError } from "../util/error";
 
 const getURL = "https://api.arlula.com/api/order/get";
 
+/**
+ * Utility class to construct Orders from JSON data
+ * 
+ * Note: only to be used internally, not by end users
+ * @param {AxiosInstance} client the dialer
+ * @param json the JSON content to attempt to parse into an Order
+ */
 export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Order|string {
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -62,6 +69,11 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unk
     return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, json.imageryID, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
 }
 
+/**
+ * @class Order wraps the data that makes up an order
+ * 
+ * Note: construction of this class is to only be done internally to the library
+ */
 export default class Order {
     private _client: AxiosInstance;
     private _id: string;
@@ -76,6 +88,23 @@ export default class Order {
     private _expiration?: Date;
     private _resources: Resource[] = [];
     private detailed = false;
+    /**
+     * Create a new order instance
+     * @constructor
+     * 
+     * @param {AxiosInstance} client    The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {string}        id        The Order ID
+     * @param {Date}          created   The timestamp when the order was created (UTC timezone)
+     * @param {Date}          updated   The timestamp when the order was last updated (UTC timezone)
+     * @param {string}        supplier  The name of the supplier fulfilling this order
+     * @param {string}        imgID     ID string used to order this scene (Arlula internal ID structure)
+     * @param {string}        scene     Scene identifier (supplier specific identifier)
+     * @param {OrderStatus}   status    Status of the order (pending, processing, complete, etc @see OrderStatus)
+     * @param {number}        total     Price paid for the order in US Cents
+     * @param {string}        type      Order type identifier (i.e. 'archive-scene', 'archive-aoi', etc)
+     * @param {Resource[]}    resources List of resource for this supplier (if available)
+     * @param {Date}          [exp]     Expiration date for this orders resources
+     */
     constructor(client: AxiosInstance, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
@@ -95,6 +124,8 @@ export default class Order {
     }
 
     // public getters
+    // provides an interface to get order fields, without providing a setter interface
+    // functionally ready only publicly, but allow edit internally
 
     public get id(): string {
         return this._id;
@@ -133,11 +164,20 @@ export default class Order {
         return this._resources;
     }
 
+    /**
+     * load and return the resources for this order (if they exist)
+     * 
+     * Note: orders that are not in the 'complete' state will not have resources yet
+     * 
+     * @returns {Promise<Resource[]>} The list of resources for this order
+     */
     loadResources(): Promise<Resource[]> {
+        // incomplete orders don't have resources yet
         if (this.status !== OrderStatus.Complete) {
             return Promise.resolve(this._resources);
         }
 
+        // resources already loaded
         if (this.detailed) {
             return Promise.resolve(this._resources);
         }
@@ -176,13 +216,23 @@ export default class Order {
 
 }
 
+/**
+ * OrderStatus enumerates the statuses that orders may be in
+ * 
+ * New ------------> "created",
+ * Pending --------> "pending",
+ * Processing -----> "processing",
+ * Manual ---------> "manual",
+ * PostProcessing -> "post-processing",
+ * Complete -------> "complete",
+ */
 export enum OrderStatus {
-    New        = "created",
-    Pending    = "pending",
-    Manual     = "processing",
-    Custom     = "manual",
-    Processing = "post-processing",
-    Complete   = "complete",
+    New            = "created",
+    Pending        = "pending",
+    Processing     = "processing",
+    Manual         = "manual",
+    PostProcessing = "post-processing",
+    Complete       = "complete",
 }
 
 function isOrderStatus(token: string): token is OrderStatus {
