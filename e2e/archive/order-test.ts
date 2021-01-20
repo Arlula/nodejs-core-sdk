@@ -10,7 +10,7 @@ export default function runOrderTests(client: Arlula): void {
 
     // basic order
     const req = new OrderRequest(orderID, eula, 1);
-    client.archive().Order(req)
+    client.archive().order(req)
     .then((resp) => {
         if (!resp.id) {
             console.error("order 1 - Receives order without ID");

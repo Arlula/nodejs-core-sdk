@@ -1,7 +1,7 @@
 import Arlula from "../../src/index";
 
 export default function runOrderListTests(client: Arlula): void {
-    client.orders().ListOrders()
+    client.orders().list()
     .then((ordList) => {
         if (!ordList.length) {
             console.log("Orders list empty, expecting existing list");

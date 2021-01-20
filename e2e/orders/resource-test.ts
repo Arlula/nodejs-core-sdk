@@ -2,7 +2,7 @@ import Arlula from "../../src/index";
 
 export default function runOrderResourceTests(client: Arlula): void {
     // order get => child resource => download
-    client.orders().GetOrder("1e71e2ff-507b-4fde-accc-f31bc6136afc")
+    client.orders().get("1e71e2ff-507b-4fde-accc-f31bc6136afc")
     .then((order) => {
         if (!order.resources.length) {
             console.error("resource 1, Get order returned no resources");

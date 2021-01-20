@@ -6,9 +6,9 @@ import SearchResult from "../../src/archive/search-result";
 export default function runSearchTests(client: Arlula): void {
     // search single date and point
     const search = new SearchRequest(new Date("2018-04-03"));
-    search.searchPoint(151.2108, -33.8523);
+    search.point(151.2108, -33.8523);
     search.setMaximumResolution(Resolution.medium)
-    client.archive().Search(search)
+    client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
@@ -19,8 +19,8 @@ export default function runSearchTests(client: Arlula): void {
         .catch(exceptionHandler("search 1 - point, date"));
 
     // search date range and point
-    search.searchTo(new Date("2018-06-13"));
-    client.archive().Search(search)
+    search.to(new Date("2018-06-13"));
+    client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
@@ -32,7 +32,7 @@ export default function runSearchTests(client: Arlula): void {
 
     // check lower res
     search.setMaximumResolution(Resolution.veryLow);
-    client.archive().Search(search)
+    client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 10) {
@@ -44,9 +44,9 @@ export default function runSearchTests(client: Arlula): void {
 
     // search date range and bounding box
     search.setMaximumResolution(Resolution.medium);
-    search.searchDate(new Date("2020-05-15"))
-    search.searchBoundingBox(14.658508, 50.392761, 14.032288, 50.021858);
-    client.archive().Search(search)
+    search.atDate(new Date("2020-05-15"))
+    search.boundingBox(14.658508, 50.392761, 14.032288, 50.021858);
+    client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
@@ -58,8 +58,8 @@ export default function runSearchTests(client: Arlula): void {
 
 
     // search single date and bounding box
-    search.searchTo(new Date("2020-06-13"));
-    client.archive().Search(search)
+    search.to(new Date("2020-06-13"));
+    client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
@@ -72,8 +72,8 @@ export default function runSearchTests(client: Arlula): void {
     // search errors
     
     // end before start
-    search.searchTo(new Date("2018-06-13"));
-    client.archive().Search(search)
+    search.to(new Date("2018-06-13"));
+    client.archive().search(search)
     .then(expectedError("search error 1 - error, end before start"))
     .catch((e) => {
         if (typeof e !== "string") {
@@ -86,8 +86,8 @@ export default function runSearchTests(client: Arlula): void {
     });
 
     // future date
-    search.searchDate(new Date("3000-01-01"));
-    client.archive().Search(search)
+    search.atDate(new Date("3000-01-01"));
+    client.archive().search(search)
     .then(expectedError("search error 2 - date future"))
     .catch((e) => {
         if (typeof e !== "string") {
@@ -100,9 +100,9 @@ export default function runSearchTests(client: Arlula): void {
     });
 
     // invalid long/lat
-    search.searchDate(new Date("2018-06-13"));
-    search.searchPoint(-33.8523, 151.2108);
-    client.archive().Search(search)
+    search.atDate(new Date("2018-06-13"));
+    search.point(-33.8523, 151.2108);
+    client.archive().search(search)
     .then(expectedError("search error 3 - invalid lat/long"))
     .catch((e) => {
         if (typeof e !== "string") {

@@ -3,7 +3,7 @@ import Order, { OrderStatus } from "../../src/orders/order";
 
 export default function runOrderGetTests(client: Arlula): void {
     // get from list
-    client.orders().ListOrders()
+    client.orders().list()
     .then((list) => {
         if (!list.length) {
             console.error("order get 1, failed to get list to check against");
@@ -39,7 +39,7 @@ export default function runOrderGetTests(client: Arlula): void {
 
 
     // get direct
-    client.orders().GetOrder("1e71e2ff-507b-4fde-accc-f31bc6136afc")
+    client.orders().get("1e71e2ff-507b-4fde-accc-f31bc6136afc")
     .then((order) => {
         if (!order.id) {
             console.error("order get 2, got empty order");
@@ -57,7 +57,7 @@ export default function runOrderGetTests(client: Arlula): void {
 
     // get invalid ID
     // changing version to 6 (invalid version) to invalidate ID
-    client.orders().GetOrder("1e71e2ff-507b-6fde-accc-f31bc6136afc")
+    client.orders().get("1e71e2ff-507b-6fde-accc-f31bc6136afc")
     .then((order) => {
         console.error("order get 3, got order from invalid ID: ", order);
         return;
