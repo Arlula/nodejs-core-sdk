@@ -77,7 +77,8 @@ export default function runSearchTests(client: Arlula): void {
     .then(expectedError("search error 1 - error, end before start"))
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 1): ", e)
+            console.error("Unexpected error response object (search error 1): ", e?.response?.data)
+            console.dir(e)
             return;
         }
         if (!e.startsWith("End date must be after start date")) {
@@ -91,7 +92,8 @@ export default function runSearchTests(client: Arlula): void {
     .then(expectedError("search error 2 - date future"))
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 2): ", e)
+            console.error("Unexpected error response object (search error 2): ", e?.response?.data)
+            console.dir(e)
             return;
         }
         if (!e.startsWith("Start Date must be in the past")) {
@@ -106,7 +108,8 @@ export default function runSearchTests(client: Arlula): void {
     .then(expectedError("search error 3 - invalid lat/long"))
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 3): ", e)
+            console.error("Unexpected error response object (search error 3): ", e?.response?.data)
+            console.dir(e)
             return;
         }
         if (!e.startsWith("Invalid Latitude")) {
