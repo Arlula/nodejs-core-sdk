@@ -12,7 +12,7 @@ export default class Orders {
         this._client = client;
     }
 
-    ListOrders(): Promise<Order[]> {
+    list(): Promise<Order[]> {
         return this._client.get(listURL)
         .then((resp) => {
             if (resp.status < 200 || resp.status >= 300) {
@@ -37,7 +37,7 @@ export default class Orders {
         .catch(handleError);
     }
 
-    GetOrder(id: string): Promise<Order> {
+    get(id: string): Promise<Order> {
         return this._client.get(getURL, {params: {id: id}})
         .then((resp) => {
             if (typeof resp.data !== "object") {

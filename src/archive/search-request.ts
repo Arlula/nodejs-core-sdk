@@ -1,71 +1,71 @@
 
 export default class SearchRequest {
-    private start: Date;
-    private end?: Date;
-    private res: number = Resolution.veryLow;
-    private point?: {long:number,lat:number};
-    private box?: {west: number, north: number, east: number, south: number};
+    private _start: Date;
+    private _end?: Date;
+    private _res: number = Resolution.veryLow;
+    private _point?: {long:number,lat:number};
+    private _box?: {west: number, north: number, east: number, south: number};
 
     constructor(date: Date) {
-        this.start = date;
+        this._start = date;
     }
 
-    searchDate(date: Date): void {
-        this.end = undefined;
-        this.start = date;
+    atDate(date: Date): void {
+        this._end = undefined;
+        this._start = date;
     }
 
-    searchFrom(date: Date): void {
-        this.start = date;
+    from(date: Date): void {
+        this._start = date;
     }
 
-    searchTo(date: Date): void {
-        this.end = date;
+    to(date: Date): void {
+        this._end = date;
     }
 
-    searchDateRange(start: Date, end: Date): void {
-        this.start = start;
-        this.end = end;
+    betweenDates(start: Date, end: Date): void {
+        this._start = start;
+        this._end = end;
     }
 
-    searchPoint(long: number, lat: number): void {
-        this.box = undefined;
-        this.point = {long, lat};
+    point(long: number, lat: number): void {
+        this._box = undefined;
+        this._point = {long, lat};
     }
 
-    searchBoundingBox(west: number, north: number, east: number, south: number): void {
-        this.point = undefined;
-        this.box = {west, north, east, south};
+    boundingBox(west: number, north: number, east: number, south: number): void {
+        this._point = undefined;
+        this._box = {west, north, east, south};
     }
 
     setMaximumResolution(res: number|Resolution): void {
-        this.res = res;
+        this._res = res;
     }
 
     valid(): boolean {
-        return !!(this.start && this.res > 0 && (this.point || this.box));
+        return !!(this._start && this._res > 0 && (this._point || this._box));
     }
 
     toQuery(): {[key: string]: string} {
         const query: {[key: string]: string} = {
-            start: `${this.start.getFullYear()}-${pad(this.start.getMonth()+1, 2)}-${pad(this.start.getDate(), 2)}`,
-            res: this.res.toString(),
+            start: `${this._start.getFullYear()}-${pad(this._start.getMonth()+1, 2)}-${pad(this._start.getDate(), 2)}`,
+            res: this._res.toString(),
         };
 
-        if (this.end) {
-            query.end = `${this.end.getFullYear()}-${pad(this.end.getMonth()+1, 2)}-${pad(this.end.getDate(), 2)}`;
+        if (this._end) {
+            query.end = `${this._end.getFullYear()}-${pad(this._end.getMonth()+1, 2)}-${pad(this._end.getDate(), 2)}`;
         }
 
-        if (this.point) {
-            query.lat = this.point.lat.toString();
-            query.long = this.point.long.toString();
+        if (this._point) {
+            query.lat = this._point.lat.toString();
+            query.long = this._point.long.toString();
         }
 
-        if (this.box) {
-            query.west = this.box.west.toString();
-            query.north = this.box.north.toString();
-            query.east = this.box.east.toString();
-            query.south = this.box.south.toString();
+        if (this._box) {
+            query.west = this._box.west.toString();
+            query.north = this._box.north.toString();
+            query.east = this._box.east.toString();
+            query.south = this._box.south.toString();
         }
 
         return query;

@@ -14,7 +14,7 @@ export default class Archive {
         this._client = client;
     }
 
-    Search(req: SearchRequest): Promise<SearchResult[]> {
+    search(req: SearchRequest): Promise<SearchResult[]> {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
@@ -29,7 +29,7 @@ export default class Archive {
         .catch(handleError);
     }
 
-    Order(req: OrderRequest): Promise<Order> {
+    order(req: OrderRequest): Promise<Order> {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
