@@ -36,7 +36,7 @@ export default class Arlula {
             },
             timeout: 10000,
             responseType: "json",
-            headers: {"User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment()},
+            headers: {"X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment()},
         });
         this._archive = new Archive(this._client);
         this._orders = new Orders(this._client);
