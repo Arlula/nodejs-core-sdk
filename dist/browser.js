@@ -1865,15 +1865,31 @@ var order_1 = __importStar(__webpack_require__(/*! ../orders/order */ "./src/ord
 var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var searchURL = "https://api.arlula.com/api/archive/search";
 var orderURL = "https://api.arlula.com/api/archive/order";
+/**
+ * @class Archive wraps the API requests to the archive imagery API
+ */
 var Archive = /** @class */ (function () {
+    /**
+     * creates a new archive API client
+     * @constructor
+     * @param {AxiosInstance} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     *
+     * @see {@link ../index|Arlula}
+     */
     function Archive(client) {
         this._client = client;
     }
-    Archive.prototype.Search = function (req) {
+    /**
+     * conduct an archive imagery search
+     *
+     * @param {SearchRequest} req the details of the search request
+     * @returns {Promise<SearchResult[]>} The list of search results
+     */
+    Archive.prototype.search = function (req) {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
-        return this._client.get(searchURL, { params: req.toQuery() })
+        return this._client.get(searchURL, { params: req._toQuery() })
             .then(function (resp) {
             if (!Array.isArray(resp.data)) {
                 return Promise.reject("response was not an array of results");
@@ -1882,14 +1898,23 @@ var Archive = /** @class */ (function () {
         })
             .catch(error_1.handleError);
     };
-    Archive.prototype.Order = function (req) {
+    /**
+     * Order archive imagery
+     *
+     * @warning this may charge your API account's credit card.
+     * Check the relevant SearchResult's `price` field
+     *
+     * @param {OrderRequest} req the details of the order to be placed
+     * @returns {Promise<Order>} The order that was placed
+     */
+    Archive.prototype.order = function (req) {
         var _this = this;
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
         // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
         // give a longer timeout to respect this and not timeout a successful order
-        return this._client.post(orderURL, req.toJSON(), { timeout: 120 * 1000 })
+        return this._client.post(orderURL, req._toJSON(false), { timeout: 120 * 1000 })
             .then(function (resp) {
             var ord = order_1.fromJSON(_this._client, resp.data);
             if (!(ord instanceof order_1.default)) {
@@ -1922,7 +1947,25 @@ var index_1 = __importDefault(__webpack_require__(/*! ./archive/index */ "./src/
 var index_2 = __importDefault(__webpack_require__(/*! ./orders/index */ "./src/orders/index.ts"));
 var axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
 var testURL = "https://api.arlula.com/api/test";
+/**
+ * @class Arlula is the root client for connecting to the Arlula API
+ *  initializing it creates a client that can be used to test the connection
+ * or to instantiate a client for the respective sub API.
+ *
+ * Currently this client supports the
+ *  - Archive imagery API `archive`
+ *  - Order management API `orders`
+ */
 var Arlula = /** @class */ (function () {
+    /**
+     * create a new client connection to the Arlula API
+     *
+     * @constructor
+     * @author Scott Owens
+     *
+     * @param {string} key    The API users API Key
+     * @param {string} secret The API users API Secret
+     */
     function Arlula(key, secret) {
         this._client = axios_1.default.create({
             method: "GET",
@@ -1932,11 +1975,17 @@ var Arlula = /** @class */ (function () {
             },
             timeout: 10000,
             responseType: "json",
-            headers: { "User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment() },
+            headers: { "X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment() },
         });
         this._archive = new index_1.default(this._client);
         this._orders = new index_2.default(this._client);
     }
+    /**
+     * tests connection to server by making an authenticated no-op request
+     * determines if credentials are correctly configured
+     *
+     * @returns {Promise<boolean>} Whether the requests authentication was successful
+     */
     Arlula.prototype.test = function () {
         return this._client.get(testURL)
             .then(function (resp) {
@@ -1946,17 +1995,32 @@ var Arlula = /** @class */ (function () {
             return false;
         });
     };
+    /**
+     * accesses the archive API client
+     *
+     * @returns {Archive} the archive API client
+     *
+     * @see {@link ./archive|Archive}
+     */
     Arlula.prototype.archive = function () {
         return this._archive;
     };
+    /**
+     * accesses the orders API client
+     *
+     * @returns {Orders} the orders API client
+     *
+     * @see {@link ./orders|Orders}
+     */
     Arlula.prototype.orders = function () {
         return this._orders;
     };
     return Arlula;
 }());
 exports.default = Arlula;
+// utility to construct user agent string for node and browser environment
 function getPlatformUserAgentFragment() {
-    if (process) {
+    if (typeof process !== "undefined") {
         // is node
         return "server nodejs " + process.version + "; " + process.arch + " " + process.platform;
     }
@@ -2000,11 +2064,25 @@ var resource_1 = __webpack_require__(/*! ./resource */ "./src/orders/resource.ts
 var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var listURL = "https://api.arlula.com/api/order/list";
 var getURL = "https://api.arlula.com/api/order/get";
+/**
+ * @class Orders wraps the API requests to the order management API
+ */
 var Orders = /** @class */ (function () {
+    /**
+     * creates a new orders API client
+     * @constructor
+     * @param {AxiosInstance} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     *
+     * @see {@link ../index|Arlula}
+     */
     function Orders(client) {
         this._client = client;
     }
-    Orders.prototype.ListOrders = function () {
+    /**
+     * list orders previously placed by this API from newest to oldest
+     * @returns {Promise<Order[]>} the list of orders
+     */
+    Orders.prototype.list = function () {
         var _this = this;
         return this._client.get(listURL)
             .then(function (resp) {
@@ -2026,7 +2104,12 @@ var Orders = /** @class */ (function () {
         })
             .catch(error_1.handleError);
     };
-    Orders.prototype.GetOrder = function (id) {
+    /**
+     * Gets a specific order from the server from its ID
+     * @param {string} id the ID of the order to retrieve
+     * @returns {Promise<Order>} the order retrieved
+     */
+    Orders.prototype.get = function (id) {
         var _this = this;
         return this._client.get(getURL, { params: { id: id } })
             .then(function (resp) {
@@ -2041,6 +2124,16 @@ var Orders = /** @class */ (function () {
         })
             .catch(error_1.handleError);
     };
+    /**
+     * Download the content of a resource (imagery, metadata, etc) based on its ID
+     * Data is made available as an ArrayBuffer or Buffer depending upon platform.
+     *
+     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * passed, this request will fail as the resource has expired and is no longer hosted in the platform
+     *
+     * @param {string} id The ID of the resource to download
+     * @returns {Promise<ArrayBuffer|Buffer>} the content of the resource as a Buffer
+     */
     Orders.prototype.downloadResource = function (id) {
         return resource_1.downloadHelper(this._client, id);
     };
@@ -2083,6 +2176,13 @@ exports.OrderStatus = exports.fromJSON = void 0;
 var resource_1 = __importStar(__webpack_require__(/*! ./resource */ "./src/orders/resource.ts"));
 var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
 var getURL = "https://api.arlula.com/api/order/get";
+/**
+ * Utility class to construct Orders from JSON data
+ *
+ * Note: only to be used internally, not by end users
+ * @param {AxiosInstance} client the dialer
+ * @param json the JSON content to attempt to parse into an Order
+ */
 function fromJSON(client, json) {
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -2137,7 +2237,29 @@ function fromJSON(client, json) {
     return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, json.imageryID, json.sceneID, json.status, json.total, json.type, resources, json.expiration ? new Date(json.expiration) : undefined);
 }
 exports.fromJSON = fromJSON;
+/**
+ * @class Order wraps the data that makes up an order
+ *
+ * Note: construction of this class is to only be done internally to the library
+ */
 var Order = /** @class */ (function () {
+    /**
+     * Create a new order instance
+     * @constructor
+     *
+     * @param {AxiosInstance} client    The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {string}        id        The Order ID
+     * @param {Date}          created   The timestamp when the order was created (UTC timezone)
+     * @param {Date}          updated   The timestamp when the order was last updated (UTC timezone)
+     * @param {string}        supplier  The name of the supplier fulfilling this order
+     * @param {string}        imgID     ID string used to order this scene (Arlula internal ID structure)
+     * @param {string}        scene     Scene identifier (supplier specific identifier)
+     * @param {OrderStatus}   status    Status of the order (pending, processing, complete, etc @see OrderStatus)
+     * @param {number}        total     Price paid for the order in US Cents
+     * @param {string}        type      Order type identifier (i.e. 'archive-scene', 'archive-aoi', etc)
+     * @param {Resource[]}    resources List of resource for this supplier (if available)
+     * @param {Date}          [exp]     Expiration date for this orders resources
+     */
     function Order(client, id, created, updated, supplier, imgID, scene, status, total, type, resources, exp) {
         this._resources = [];
         this.detailed = false;
@@ -2159,6 +2281,8 @@ var Order = /** @class */ (function () {
     }
     Object.defineProperty(Order.prototype, "id", {
         // public getters
+        // provides an interface to get order fields, without providing a setter interface
+        // functionally ready only publicly, but allow edit internally
         get: function () {
             return this._id;
         },
@@ -2238,11 +2362,20 @@ var Order = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    /**
+     * load and return the resources for this order (if they exist)
+     *
+     * Note: orders that are not in the 'complete' state will not have resources yet
+     *
+     * @returns {Promise<Resource[]>} The list of resources for this order
+     */
     Order.prototype.loadResources = function () {
         var _this = this;
+        // incomplete orders don't have resources yet
         if (this.status !== OrderStatus.Complete) {
             return Promise.resolve(this._resources);
         }
+        // resources already loaded
         if (this.detailed) {
             return Promise.resolve(this._resources);
         }
@@ -2277,13 +2410,23 @@ var Order = /** @class */ (function () {
     return Order;
 }());
 exports.default = Order;
+/**
+ * OrderStatus enumerates the statuses that orders may be in
+ *
+ * New ------------> "created",
+ * Pending --------> "pending",
+ * Processing -----> "processing",
+ * Manual ---------> "manual",
+ * PostProcessing -> "post-processing",
+ * Complete -------> "complete",
+ */
 var OrderStatus;
 (function (OrderStatus) {
     OrderStatus["New"] = "created";
     OrderStatus["Pending"] = "pending";
-    OrderStatus["Manual"] = "processing";
-    OrderStatus["Custom"] = "manual";
-    OrderStatus["Processing"] = "post-processing";
+    OrderStatus["Processing"] = "processing";
+    OrderStatus["Manual"] = "manual";
+    OrderStatus["PostProcessing"] = "post-processing";
     OrderStatus["Complete"] = "complete";
 })(OrderStatus = exports.OrderStatus || (exports.OrderStatus = {}));
 function isOrderStatus(token) {
@@ -2304,6 +2447,13 @@ function isOrderStatus(token) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ResourceType = exports.downloadHelper = exports.fromJSON = void 0;
 var error_1 = __webpack_require__(/*! ../util/error */ "./src/util/error.ts");
+/**
+ * Utility class to construct Resources from JSON data
+ *
+ * Note: only to be used internally, not by end users
+ * @param {AxiosInstance} client the dialer
+ * @param json the JSON content to attempt to parse into a Resource
+ */
 function fromJSON(client, json) {
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -2336,7 +2486,24 @@ function fromJSON(client, json) {
     return new Resource(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.order, json.name, json.type);
 }
 exports.fromJSON = fromJSON;
+/**
+ * @class Resource wraps the data that represents an order resource
+ *
+ * Note: construction of this class is to only be done internally to the library
+ */
 var Resource = /** @class */ (function () {
+    /**
+     * create a new resource instance
+     * @constructor
+     *
+     * @param {AxiosInstance} client  The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {string}        id      The Resource ID
+     * @param {Date}          created The timestamp when the resource was created (UTC timezone)
+     * @param {Date}          updated The timestamp when the resource was last updated (UTC timezone)
+     * @param {string}        order   ID of the order this resource belongs to
+     * @param {string}        name    An identifiable name/filename for this resource
+     * @param {ResourceType}  type    Identifier for the type of resource (imagery, metadata, etc @see ResourceType )
+     */
     function Resource(client, id, created, updated, order, name, type) {
         this._client = client;
         this._id = id;
@@ -2348,6 +2515,8 @@ var Resource = /** @class */ (function () {
     }
     Object.defineProperty(Resource.prototype, "id", {
         // public getters
+        // provides an interface to get resource fields, without providing a setter interface
+        // functionally ready only publicly, but allow edit internally
         get: function () {
             return this._id;
         },
@@ -2390,6 +2559,15 @@ var Resource = /** @class */ (function () {
         configurable: true
     });
     // actual functions
+    /**
+     * Download the content of a resource (imagery, metadata, etc)
+     * Data is made available as an ArrayBuffer or Buffer depending upon platform.
+     *
+     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * passed, this request will fail as the resource has expired and is no longer hosted in the platform
+     *
+     * @returns {Promise<ArrayBuffer|Buffer>} the content of the resource as a Buffer
+     */
     Resource.prototype.download = function () {
         return downloadHelper(this._client, this._id);
     };
@@ -2397,6 +2575,14 @@ var Resource = /** @class */ (function () {
 }());
 exports.default = Resource;
 var downloadPath = "https://api.arlula.com/api/order/resource/get";
+/**
+ * helper function to allow the download call both form a resource and from the orders API client
+ *
+ * Note: an internal helper not intended to be called directly
+ *
+ * @param {AxiosInstance} client The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+ * @param {string}        id     ID of the resource to download
+ */
 function downloadHelper(client, id) {
     return client.get(downloadPath, { params: { id: id }, responseType: "arraybuffer" })
         .then(function (resp) {
@@ -2405,6 +2591,30 @@ function downloadHelper(client, id) {
         .catch(error_1.handleError);
 }
 exports.downloadHelper = downloadHelper;
+/**
+ * ResourceType enumerates the currently provided/supported list of resources the Arlula API provides
+ *
+ * << imagery types >>
+ * ImageryTiff -------> "img_tiff",
+ * ImageryJP2 --------> "img_jp2",
+ * Thumb -------------> "thumb",
+ *
+ * << metadata types >>
+ * Overview ----------> "gdal_tiff_overview",
+ * MetadataMTL -------> "meta_mtl",
+ * MetadataJSON ------> "meta_json",
+ * MetadataXML -------> "meta_xml",
+ * MetadataBundle ----> "meta_bundle",
+ *
+ * << geometry types >>
+ * GeometryJSON ------> "geo_json",
+ * GeometryKml -------> "geo_kml",
+ * GeometryShapefile -> "geo_shp",
+ * GeometryBundle ----> "geo_bundle",
+ *
+ * << license information >>
+ * License -----------> "license",
+ */
 var ResourceType;
 (function (ResourceType) {
     ResourceType["ImageryTiff"] = "img_tiff";
@@ -2438,6 +2648,12 @@ function isResourceType(token) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.handleError = void 0;
+/**
+ * Return server error string for normal errors
+ * and the axios error for transport errors
+ * @param {AxiosError} e The error returned by the request in its catch block
+ * @returns {Promise<never>} a rejected promise containing either the error string, or the axios error
+ */
 function handleError(e) {
     var _a;
     return Promise.reject(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e);
@@ -2479,4 +2695,4 @@ exports.handleError = handleError;
 /******/ 	__webpack_require__("./src/index.ts");
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=browser.js.map

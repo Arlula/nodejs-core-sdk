@@ -1,3 +1,8 @@
+/**
+ * SearchResult contains information on a scene that may be ordered through the archive API
+ * full details can be found in the
+ * @see {https://arlula.com/documentation#search|Arlula documentation}
+ */
 export default interface SearchResult {
     supplier: string;
     eula: string;
