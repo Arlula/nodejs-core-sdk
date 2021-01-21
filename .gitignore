@@ -2,5 +2,6 @@ node_modules
 credentials.*
 **/credentials.*
 e2e/dist
+dist
 build
 *.tgz

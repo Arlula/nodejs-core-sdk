@@ -14,7 +14,10 @@
     "url": "https://github.com/Arlula/jsSDK.git"
   },
   "scripts": {
-    "prepublishOnly": "tsc",
+    "compile": "tsc",
+    "clean": "rm -rf dist",
+    "prebuildpackage": "npm run clean && npm run compile && node helpers/publishHelper.js",
+    "buildpackage": "cd dist && npm pack",
     "test": "npx webpack --env tests && node ./e2e/dist/node.js && echo \"Open the browser test script (located at e2e/dist/browser.js) in a browser, errors will appear in the console\""
   },
   "license": "ISC",
