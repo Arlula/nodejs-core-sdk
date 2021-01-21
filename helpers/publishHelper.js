@@ -16,6 +16,10 @@ function main() {
 
     // uncomment if ignore file required in future
     // fs.copyFileSync("./.npmignore", "./dist/.npmignore");
+
+    fs.copyFileSync("./README.md", "./dist/README.md");
+    fs.copyFileSync("./CONTRIBUTING.md", "./dist/CONTRIBUTING.md");
+    fs.copyFileSync("./CHANGELOG.md", "./dist/CHANGELOG.md");
 }
 
 main();
