@@ -20,6 +20,7 @@ function main() {
     fs.copyFileSync("./README.md", "./dist/README.md");
     fs.copyFileSync("./CONTRIBUTING.md", "./dist/CONTRIBUTING.md");
     fs.copyFileSync("./CHANGELOG.md", "./dist/CHANGELOG.md");
+    fs.copyFileSync("./LICENSE", "./dist/LICENSE");
 }
 
 main();

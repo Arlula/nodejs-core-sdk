@@ -20,7 +20,7 @@
     "buildpackage": "cd dist && npm pack",
     "test": "npx webpack --env tests && node ./e2e/dist/node.js && echo \"Open the browser test script (located at e2e/dist/browser.js) in a browser, errors will appear in the console\""
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1"
   },
