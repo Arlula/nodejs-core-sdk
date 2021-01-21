@@ -6,7 +6,7 @@ const baseConfig = {
         index: "./src/index.ts",
     },
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "build"),
     },
     mode: "development",
     resolve: {
@@ -45,41 +45,45 @@ const modules = [
     }
 ];
 
+const testModules = [
+    {
+        ...baseConfig,
+        entry: {index: "./e2e/index.ts"},
+        output: {
+            path: path.resolve(__dirname, "e2e/build"),
+            filename: "browser.js"
+        },
+        module: {
+            rules: [{
+                ...tsModule,
+                options: {
+                    configFile: "tests.tsconfig.json"
+                }
+            }]
+        }
+    },
+    {
+        ...baseConfig,
+        target: "node",
+        entry: {index: "./e2e/index.ts"},
+        output: {
+            path: path.resolve(__dirname, "e2e/build"),
+            filename: "node.js"
+        },
+        module: {
+            rules: [{
+                ...tsModule,
+                options: {
+                    configFile: "tests.tsconfig.json"
+                }
+            }]
+        }
+    }
+];
+
 module.exports = env => {
     if (env.tests) {
-        modules.push({
-            ...baseConfig,
-            entry: {index: "./e2e/index.ts"},
-            output: {
-                path: path.resolve(__dirname, "e2e/dist"),
-                filename: "browser.js"
-            },
-            module: {
-                rules: [{
-                    ...tsModule,
-                    options: {
-                        configFile: "tests.tsconfig.json"
-                    }
-                }]
-            }
-        },
-        {
-            ...baseConfig,
-            target: "node",
-            entry: {index: "./e2e/index.ts"},
-            output: {
-                path: path.resolve(__dirname, "e2e/dist"),
-                filename: "node.js"
-            },
-            module: {
-                rules: [{
-                    ...tsModule,
-                    options: {
-                        configFile: "tests.tsconfig.json"
-                    }
-                }]
-            }
-        });
+        modules.push(...testModules);
     }
 
     return modules
