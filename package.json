@@ -4,10 +4,17 @@
   "description": "JavaScript and TypeScript SDK for the Arlula satellite imagery API",
   "author": "Scott Owens",
   "main": "dist/index.js",
-  "browser-x": "dist/browser.js",
   "types": "dist/index.d.ts",
-  "keywords": [],
-  "homepage": "https://arlula.com",
+  "keywords": [
+    "TypeScript",
+    "satellite",
+    "satellite-images",
+    "satellite-imagery",
+    "eo",
+    "gis",
+    "geospatial"
+  ],
+  "homepage": "https://www.arlula.com",
   "bugs": "https://github.com/Arlula/jsSDK/issues",
   "repository": {
     "type": "git",
