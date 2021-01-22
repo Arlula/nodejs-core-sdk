@@ -12,6 +12,9 @@ function main() {
     if (sourceObj.main.startsWith("dist/")) {
         sourceObj.main = sourceObj.main.slice(5);
     }
+    if (sourceObj.types.startsWith("dist/")) {
+        sourceObj.types = sourceObj.types.slice(5);
+    }
     fs.writeFileSync("./dist/package.json", Buffer.from(JSON.stringify(sourceObj, null, 2), "utf-8") );
 
     // uncomment if ignore file required in future
