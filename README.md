@@ -25,7 +25,7 @@ npm install arlula --save
 To use the SDK, you will first need to initialized a connection to the server
 
 ```
-import Arlula from "@arlula/arlula";
+import Arlula from "@arlula/core";
 
 const client = new Arlula("<your API Key>", "<your API Secret>");
 ```
@@ -56,7 +56,7 @@ client.archive()
 Search available Archive imagery by creating and sending a search request
 
 ```
-import SearchRequest, { Resolution } from "@arlula/arlula/archive/search-request";
+import SearchRequest, { Resolution } from "@arlula/core/archive/search-request";
 
 const request = new SearchRequest(new Date("2020-08-16"));
 request.point(151.209439, -33.854259);
@@ -78,7 +78,7 @@ Once you've found a scene that suits your purpose, you can order the imagery.
 Ordering can either be done using a `SearchResult` object, or the value of its `id` field.
 
 ```
-import OrderRequest from "@arlula/arlula/archive/order-request";
+import OrderRequest from "@arlula/core/archive/order-request";
 
 const request = new OrderRequest("<scene id>", "<respective eula>", 1);
 client.archive().order(request)
@@ -100,7 +100,7 @@ These constraints can take several forms, which can be controlled by chaining me
 
 Search requests can be initialized without any details, or with an initial date for a single date search, or as the start date for a date range
 ```
-import SearchRequest from "@arlula/arlula/archive/search-request";
+import SearchRequest from "@arlula/core/archive/search-request";
 
 req = new SearchRequest();
 // or
@@ -125,7 +125,7 @@ Additionally, if you're only interested in results of a certain resolution, you 
 You can specify a resolution in meters/pixel, or use the labels of predefined common resolutions in the `Resolution` enumeration
 
 ```
-import { Resolution } from "@arlula/arlula/archive/search-request";
+import { Resolution } from "@arlula/core/archive/search-request";
 
 req.setMaximumResolution(Resolution.high)
 // or
@@ -145,7 +145,7 @@ In addition to creating an order request with its id/search request, eula and se
 Both in the constructor
 
 ```
-import OrderRequest from "@arlula/arlula/archive/order-request";
+import OrderRequest from "@arlula/core/archive/order-request";
 
 req = new OrderRequest("<id>", "<eula>", <seats>, [<webhooks...>], [<emails...>])
 ```
@@ -212,18 +212,18 @@ A full set of types are exported by this package to ensure type safety in TypeSc
 Beyond those covered above for search, ordering and their associated enumerations
 
 ```
-import SearchRequest, { Resolution } from "@arlula/arlula/archive/search-request";
+import SearchRequest, { Resolution } from "@arlula/core/archive/search-request";
 // and
-import OrderRequest from "@arlula/arlula/archive/order-request";
+import OrderRequest from "@arlula/core/archive/order-request";
 ```
 
 The return types and several of their enumerations are also exposed
 
 ```
 // the search result object
-import SearchResult from "@arlula/arlula/archive/search-result";
+import SearchResult from "@arlula/core/archive/search-result";
 // orders and their status enumeration
-import Order, { OrderStatus } from "@arlula/arlula/orders/order";
+import Order, { OrderStatus } from "@arlula/core/orders/order";
 // resources and their supported types enumeration
-import Resource, { ResourceType } from "@arlula/arlula/orders/resource";
+import Resource, { ResourceType } from "@arlula/core/orders/resource";
 ```

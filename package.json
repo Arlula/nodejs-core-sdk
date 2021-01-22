@@ -1,5 +1,5 @@
 {
-  "name": "@arlula/arlula",
+  "name": "@arlula/core",
   "version": "1.0.0",
   "description": "JavaScript and TypeScript SDK for the Arlula satellite imagery API",
   "author": {
