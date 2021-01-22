@@ -2,7 +2,10 @@
   "name": "arlula",
   "version": "1.0.0",
   "description": "JavaScript and TypeScript SDK for the Arlula satellite imagery API",
-  "author": "Scott Owens",
+  "author": {
+    "name": "Scott Owens",
+    "email": "scott.owens.dev@gmail.com"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "keywords": [
