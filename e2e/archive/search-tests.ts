@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
-import Arlula from "../../src";
-import SearchRequest, { Resolution } from "../../src/archive/search-request";
-import SearchResult from "../../src/archive/search-result";
+import Arlula from "../../dist";
+import SearchRequest, { Resolution } from "../../dist/archive/search-request";
+import SearchResult from "../../dist/archive/search-result";
 
 export default function runSearchTests(client: Arlula): void {
     // search single date and point

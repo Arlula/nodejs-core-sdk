@@ -1,4 +1,4 @@
-import Arlula from "../../src/index";
+import Arlula from "../../dist/index";
 
 export default function runOrderListTests(client: Arlula): void {
     client.orders().list()

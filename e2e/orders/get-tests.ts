@@ -1,5 +1,5 @@
-import Arlula from "../../src/index";
-import Order, { OrderStatus } from "../../src/orders/order";
+import Arlula from "../../dist/index";
+import Order, { OrderStatus } from "../../dist/orders/order";
 
 export default function runOrderGetTests(client: Arlula): void {
     // get from list

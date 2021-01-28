@@ -1,4 +1,4 @@
-import Arlula from "../../src/index";
+import Arlula from "../../dist/index";
 
 export default function runOrderResourceTests(client: Arlula): void {
     // order get => child resource => download

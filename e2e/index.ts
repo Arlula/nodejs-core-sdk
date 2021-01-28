@@ -1,5 +1,5 @@
 import { Key, Secret } from "./credentials";
-import Arlula from "../src/index";
+import Arlula from "../dist";
 import runSearchTests from "./archive/search-tests";
 import runOrderTests from "./archive/order-test";
 import runOrderListTests from "./orders/list-tests";
