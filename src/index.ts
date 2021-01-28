@@ -35,7 +35,6 @@ export default class Arlula {
                 password: secret,
             },
             timeout: 10000,
-            responseType: "json",
             headers: {"X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment()},
         });
         this._archive = new Archive(this._client);
