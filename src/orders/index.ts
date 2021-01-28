@@ -1,10 +1,8 @@
 import Order, { fromJSON } from "./order";
 import { downloadHelper as resourceDownloader } from "./resource";
+import paths from "../util/paths";
 import { AxiosInstance } from "axios";
 import { handleError } from "../util/error";
-
-const listURL = "https://api.arlula.com/api/order/list";
-const getURL = "https://api.arlula.com/api/order/get";
 
 /**
  * @class Orders wraps the API requests to the order management API
@@ -27,7 +25,7 @@ export default class Orders {
      * @returns {Promise<Order[]>} the list of orders
      */
     list(): Promise<Order[]> {
-        return this._client.get(listURL)
+        return this._client.get(paths.OrderList)
         .then((resp) => {
             if (resp.status < 200 || resp.status >= 300) {
                 return Promise.reject(resp.data);
@@ -57,7 +55,7 @@ export default class Orders {
      * @returns {Promise<Order>} the order retrieved
      */
     get(id: string): Promise<Order> {
-        return this._client.get(getURL, {params: {id: id}})
+        return this._client.get(paths.OrderGet, {params: {id: id}})
         .then((resp) => {
             if (typeof resp.data !== "object") {
                 return Promise.reject("Order is not an object");

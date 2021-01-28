@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios";
+import paths from "../util/paths";
 import { handleError } from "../util/error";
 
 /**
@@ -118,8 +119,6 @@ export default class Resource {
     }
 }
 
-const downloadPath = "https://api.arlula.com/api/order/resource/get";
-
 /**
  * helper function to allow the download call both form a resource and from the orders API client
  * 
@@ -129,7 +128,7 @@ const downloadPath = "https://api.arlula.com/api/order/resource/get";
  * @param {string}        id     ID of the resource to download
  */
 export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer|Buffer> {
-    return client.get(downloadPath, {params: {id: id}, responseType: "arraybuffer"})
+    return client.get(paths.ResourceDownload, {params: {id: id}, responseType: "arraybuffer"})
     .then((resp) => {
         return resp.data as ArrayBuffer;
     })

@@ -1,8 +1,7 @@
 import Archive from "./archive/index";
 import Orders from "./orders/index";
+import paths from "./util/paths";
 import axios, { AxiosInstance } from "axios";
-
-const testURL = "https://api.arlula.com/api/test";
 
 /** 
  * @class Arlula is the root client for connecting to the Arlula API
@@ -48,7 +47,7 @@ export default class Arlula {
      * @returns {Promise<boolean>} Whether the requests authentication was successful
      */
     test(): Promise<boolean> {
-        return this._client.get(testURL)
+        return this._client.get(paths.Test)
         .then((resp) => {
             return resp.status >= 200 && resp.status < 300; 
         })

@@ -1,8 +1,7 @@
 import { AxiosInstance } from "axios";
 import Resource, {fromJSON as resourceFromJSON} from "./resource";
+import paths from "../util/paths";
 import { handleError } from "../util/error";
-
-const getURL = "https://api.arlula.com/api/order/get";
 
 /**
  * Utility class to construct Orders from JSON data
@@ -182,7 +181,7 @@ export default class Order {
             return Promise.resolve(this._resources);
         }
 
-        return this._client.get(getURL, {params: {id: this._id}})
+        return this._client.get(paths.OrderGet, {params: {id: this._id}})
         .then((resp) => {
             if (typeof resp.data !== "object") {
                 return Promise.reject("Order response is not an object");

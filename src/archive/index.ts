@@ -2,11 +2,9 @@ import SearchRequest from "./search-request";
 import SearchResult from "./search-result";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
+import paths from "../util/paths";
 import { AxiosInstance } from "axios";
 import { handleError } from "../util/error";
-
-const searchURL = "https://api.arlula.com/api/archive/search";
-const orderURL = "https://api.arlula.com/api/archive/order";
 
 /**
  * @class Archive wraps the API requests to the archive imagery API
@@ -34,7 +32,7 @@ export default class Archive {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
-        return this._client.get(searchURL, {params: req._toQuery()})
+        return this._client.get(paths.ArchiveSearch, {params: req._toQuery()})
         .then((resp) => {
             if (!Array.isArray(resp.data)) {
                 return Promise.reject("response was not an array of results");
@@ -60,7 +58,7 @@ export default class Archive {
         }
         // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
         // give a longer timeout to respect this and not timeout a successful order
-        return this._client.post(orderURL, req._toJSON(false), {timeout: 120*1000})
+        return this._client.post(paths.ArchiveOrder, req._toJSON(false), {timeout: 120*1000})
         .then((resp) => {
 
             const ord = OrderFromJSON(this._client, resp.data);
