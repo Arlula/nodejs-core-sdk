@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import paths from "../util/paths";
 import { handleError } from "../util/error";
 
@@ -130,6 +130,16 @@ export default class Resource {
 export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer|Buffer> {
     return client.get(paths.ResourceDownload, {params: {id: id}, responseType: "arraybuffer"})
     .then((resp) => {
+        if (resp.status === 203) {
+            // fallback for browser where headers would get included in redirect
+            // custom header X-Download-Manual tells the server to send the redirect
+            // url that makes a subsequent request here without the headers configured
+            return axios.get(arrayBufferToString(resp.data), {responseType: "arraybuffer"})
+            .then((r) => {
+                return r.data as ArrayBuffer;
+            })
+            .catch(handleError);
+        }
         return resp.data as ArrayBuffer;
     })
     .catch(handleError);
@@ -178,3 +188,11 @@ export enum ResourceType {
 function isResourceType(token: string): token is ResourceType {
     return Object.values(ResourceType).includes(token as ResourceType);
 }
+
+function arrayBufferToString(buf: ArrayBuffer): string {
+    // std lib typings enforce an argument of 'number[]' and dont handle
+    // the newer numeric array types like Uint8Array 
+    // as a result this converts to unknown then to number array for type purposes
+    return String.fromCharCode.apply(null, new Uint8Array (buf) as unknown as number[]);
+  }
+

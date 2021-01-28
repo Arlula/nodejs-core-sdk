@@ -34,7 +34,7 @@ export default class Arlula {
                 password: secret,
             },
             timeout: 10000,
-            headers: {"X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, " + getPlatformUserAgentFragment()},
+            headers: getPlatformHeaders(),
         });
         this._archive = new Archive(this._client);
         this._orders = new Orders(this._client);
@@ -80,11 +80,16 @@ export default class Arlula {
 }
 
 // utility to construct user agent string for node and browser environment
-function getPlatformUserAgentFragment(): string {
+function getPlatformHeaders(): {[key: string]: string} {
     if (typeof process !== "undefined") {
         // is node
-        return `server nodejs ${process.version}; ${process.arch} ${process.platform}`;
+        return {
+            "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
+        };
     }
     // in browser
-    return "client, user-agent: "+navigator.userAgent;
+    return {
+        "X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, client, user-agent: "+navigator.userAgent,
+        "X-Download-Manual": "true",
+    };
 }

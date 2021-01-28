@@ -61,4 +61,4 @@ function arrayBufferToString(buf: ArrayBuffer): string {
     // the newer numeric array types like Uint8Array 
     // as a result this converts to unknown then to number array for type purposes
     return String.fromCharCode.apply(null, new Uint8Array (buf) as unknown as number[]);
-  }
+}
