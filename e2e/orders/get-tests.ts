@@ -1,6 +1,8 @@
 import Arlula from "../../dist/index";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
+import { orderID } from "../credentials";
+
 export default function runOrderGetTests(client: Arlula): Promise<unknown> {
 
     return Promise.all([test1(client), test2(client), test3(client)]);
@@ -48,7 +50,7 @@ function test1(client: Arlula) {
 
 // get direct
 function test2(client: Arlula) {
-    return client.orders().get("1e71e2ff-507b-4fde-accc-f31bc6136afc")
+    return client.orders().get(orderID)
     .then((order) => {
         if (!order.id) {
             console.error("order get 2, got empty order");
@@ -68,7 +70,8 @@ function test2(client: Arlula) {
 // get invalid ID
 // changing version to 6 (invalid version) to invalidate ID
 function test3(client: Arlula) {
-    return client.orders().get("1e71e2ff-507b-6fde-accc-f31bc6136afc")
+    const id = `${orderID.substr(0,14)}6${orderID.substr(15)}`;
+    return client.orders().get(id)
     .then((order) => {
         console.error("order get 3, got order from invalid ID: ", order);
         return Promise.reject();

@@ -1,4 +1,5 @@
 import Arlula from "../../dist/index";
+import { orderID, resourceID } from "../credentials";
 
 export default function runOrderResourceTests(client: Arlula): Promise<unknown> {
 
@@ -8,7 +9,7 @@ export default function runOrderResourceTests(client: Arlula): Promise<unknown> 
 
 // order get => child resource => download
 function test1(client: Arlula) {
-    return client.orders().get("1e71e2ff-507b-4fde-accc-f31bc6136afc")
+    return client.orders().get(orderID)
     .then((order) => {
         if (!order.resources.length) {
             console.error("resource 1, Get order returned no resources");
@@ -39,7 +40,7 @@ function test1(client: Arlula) {
 
 // client => resource download
 function test2(client: Arlula) {
-    return client.orders().downloadResource("d1c7e039-d394-4c92-af70-5f05f4f85f86")
+    return client.orders().downloadResource(resourceID)
     .then((data) => {
         if (!(data instanceof ArrayBuffer || data instanceof Buffer)) {
             console.error("resource 2, unexpected resource data type: ", arrayBufferToString(data));

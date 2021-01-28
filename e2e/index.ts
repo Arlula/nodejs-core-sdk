@@ -1,10 +1,15 @@
-import { Key, Secret } from "./credentials";
+import { Key, Secret, host } from "./credentials";
 import Arlula from "../dist";
+import { setCustomHost } from "../dist/util/paths";
 import runSearchTests from "./archive/search-tests";
 import runOrderTests from "./archive/order-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
+
+if (host) {
+    setCustomHost(host);
+}
 
 const client = new Arlula(Key, Secret);
 

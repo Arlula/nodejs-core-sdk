@@ -3,8 +3,7 @@ import Arlula from "../../dist";
 import OrderRequest from "../../dist/archive/order-request";
 import { OrderStatus } from "../../dist/orders/order";
 
-const orderID = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJMQzA4X0wxVFBfMDg5MDg0XzIwMTgwMTE5XzIwMTgwMTIwXzAxX1JUIiwiaWF0IjoxNjExMDM4NTYzLCJpc3MiOiJBcmx1bGEgQXJjaGl2ZSIsInR5cGUiOiJhcmNoaXZlIiwic3VwcGxpZXIiOiJsYW5kc2F0IiwiZXVsYSI6Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS8zLjAvbGVnYWxjb2RlIiwicHJpY2UiOnsiYmFzZSI6MCwic2VhdHMiOm51bGx9LCJwb2x5Z29uIjpbWzE1MS4yMTA3LC0zMy44NTIxOTk5OTk5OTk5OTZdLFsxNTEuMjEwNywtMzMuODUyNF0sWzE1MS4yMTA5LC0zMy44NTI0XSxbMTUxLjIxMDksLTMzLjg1MjE5OTk5OTk5OTk5Nl1dfQ.uY14s09Mr9xRMnQdnHEURCqmuL5oP9Xaa3eswIu7Mh4";
-const eula = "https://creativecommons.org/licenses/by/3.0/legalcode";
+import { orderingID, orderEULA } from "../credentials";
 
 export default function runOrderTests(client: Arlula): Promise<unknown> {
 
@@ -14,7 +13,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
 
 // basic order
 function test1(client: Arlula) {
-    const req = new OrderRequest(orderID, eula, 1);
+    const req = new OrderRequest(orderingID, orderEULA, 1);
     return client.archive().order(req)
     .then((resp) => {
         if (!resp.id) {

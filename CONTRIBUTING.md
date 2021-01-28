@@ -21,4 +21,9 @@ All contributions should pass tests, and if adding a new feature, should test it
 If you identify a test case that is not currently covered, please bring it to our attention, or make a merge request to correct it.
 
 Note: as the system calls the API, credentials are needed for testing.  
-To test, a credentials.ts file needs to be created at `e2e/credentials.ts` which should export `Key` and `Secret` corresponding to the API Key and Secret.
+To test, a credentials.ts file needs to be created at `e2e/credentials.ts` which should export the following:
+ - `Key` and `Secret` corresponding to the API Key and Secret.
+ - `orderingID` being a search result `id` value to test ordering
+ - `orderEULA` which contains the corresponding EULA to the above ID
+ - `orderID` which contains the order to load in get order tests
+ - `resourceID` the id of a resource to load for resource download tests
