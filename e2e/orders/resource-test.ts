@@ -48,7 +48,7 @@ export default function runOrderResourceTests(client: Arlula): void {
 
 function arrayBufferToString(buf: ArrayBuffer): string {
     // std lib typings enforce an argument of 'number[]' and dont handle
-    // the newer numeric array types like Uint16Array
+    // the newer numeric array types like Uint8Array 
     // as a result this converts to unknown then to number array for type purposes
-    return String.fromCharCode.apply(null, new Uint16Array(buf) as unknown as number[]);
+    return String.fromCharCode.apply(null, new Uint8Array (buf) as unknown as number[]);
   }
