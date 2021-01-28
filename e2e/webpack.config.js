@@ -1,11 +1,13 @@
 const path = require("path");
 
+const outPath = path.resolve(__dirname, "dist");
+
 const baseConfig = {
     entry: {
-        index: "./e2e/index.ts",
+        index: "./index.ts",
     },
     output: {
-        path: path.resolve(__dirname, "e2e/dist"),
+        path: outPath,
     },
     mode: "development",
     resolve: {
@@ -17,15 +19,10 @@ const baseConfig = {
         rules: [{
             test: /\.tsx?$/,
             loader: "ts-loader",
-            exclude: /node_modules/,
-            options: {
-                configFile: "tests.tsconfig.json"
-            }
+            exclude: /node_modules/
         }]
     }
 };
-
-const outPath = path.resolve(__dirname, "e2e/build");
 
 const testModules = [
     {
@@ -39,7 +36,7 @@ const testModules = [
         ...baseConfig,
         target: "node",
         output: {
-            path: ourPath,
+            path: outPath,
             filename: "node.js"
         }
     }
