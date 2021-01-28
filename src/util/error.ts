@@ -7,5 +7,5 @@ import { AxiosError } from "axios";
  * @returns {Promise<never>} a rejected promise containing either the error string, or the axios error
  */
 export function handleError(e: AxiosError): Promise<never> {
-    return Promise.reject(e.response?.data || e);
+    return Promise.reject(e?.response?.data || e);
 }
