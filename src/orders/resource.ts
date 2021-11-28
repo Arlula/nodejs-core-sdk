@@ -41,8 +41,20 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unk
     if (!isResourceType(json.type)) {
         return `Invalid resource type '${json.type}' not recognized`;
     }
+    if (typeof json.size !== "number") {
+        return "Resource size missing";
+    }
+    if (typeof json.format !== "string") {
+        return "Resource format missing";
+    }
+    if (!json.roles || !Array.isArray(json.roles)) {
+        return "Resource roles missing";
+    }
+    if (typeof json.checksum !== "string") {
+        return "Resource checksum missing";
+    }
 
-    return new Resource(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.order, json.name, json.type)
+    return new Resource(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.order, json.name, json.type, json.size, json.format, json.roles, json.checksum)
 }
 
 /**
@@ -58,6 +70,10 @@ export default class Resource {
     private _order: string;
     private _name: string;
     private _type: ResourceType;
+    private _size: number;
+    private _format: string;
+    private _roles: string[];
+    private _checksum: string;
     /**
      * create a new resource instance
      * @constructor
@@ -70,7 +86,7 @@ export default class Resource {
      * @param {string}        name    An identifiable name/filename for this resource
      * @param {ResourceType}  type    Identifier for the type of resource (imagery, metadata, etc @see ResourceType )
      */
-    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType) {
+    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType, size: number, format: string, roles: string[], checksum: string) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
@@ -78,6 +94,10 @@ export default class Resource {
         this._order = order;
         this._name = name;
         this._type = type;
+        this._size = size;
+        this._format = format;
+        this._roles = roles;
+        this._checksum = checksum;
     }
 
      // public getters
@@ -101,6 +121,18 @@ export default class Resource {
     }
     public get type(): ResourceType {
         return this._type;
+    }
+    public get size(): number {
+        return this._size;
+    }
+    public get format(): string {
+        return this._format;
+    }
+    public get roles(): string[] {
+        return this._roles;
+    }
+    public get checksum(): string {
+        return this._checksum;
     }
 
     // actual functions
@@ -194,5 +226,5 @@ function arrayBufferToString(buf: ArrayBuffer): string {
     // the newer numeric array types like Uint8Array 
     // as a result this converts to unknown then to number array for type purposes
     return String.fromCharCode.apply(null, new Uint8Array (buf) as unknown as number[]);
-  }
+}
 
