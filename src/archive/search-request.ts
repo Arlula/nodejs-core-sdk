@@ -14,6 +14,9 @@ export default class SearchRequest {
     private _res: number = Resolution.veryLow;
     private _point?: {long:number,lat:number};
     private _box?: {west: number, north: number, east: number, south: number};
+    private _supplier?: string;
+    private _cloud?: number;
+    private _offNadir?: number;
     /**
      * Construct a new search request
      * @param {Date} [date] the target date to search
@@ -107,11 +110,54 @@ export default class SearchRequest {
     }
 
     /**
+     * Supplier to restrict results to, must be a match for a valid value of a search results "supplier" field (in any case)
+     * @param supplier 
+     * @returns {SearchRequest} The current request for chaining
+     */
+    withSupplier(supplier: string): SearchRequest {
+        this._supplier = supplier;
+        return this;
+    }
+
+    /**
+     * Level of cloud cover to restrict scenes to being less than.
+     * 
+     * NOTE: must be between 0 and 100%
+     * 
+     * @param cloud 
+     * @returns {SearchRequest} The current request for chaining
+     */
+    withCloudCover(cloud: number): SearchRequest {
+        this._cloud = cloud;
+        return this;
+    }
+
+    /**
+     * Off Nadir angle (offset angle from directly below the sensor) to get imagery less than.  
+     * Values are symmetric, 30 will return results with an angle -30 to 30 if the supplier uses signed off nadir.
+     * 
+     * NOTE: must be within -45 to 45
+     * 
+     * @param offNadir 
+     * @returns {SearchRequest} The current request for chaining
+     */
+    withOffNadir(offNadir: number): SearchRequest {
+        this._offNadir = Math.abs(offNadir);
+        return this;
+    }
+
+    /**
      * Check whether the request meets the minimum requirements to be valid
      * @returns {boolean} whether the request is currently valid
      */
     valid(): boolean {
-        return !!(this._start && this._res > 0.1 && (this._point || this._box));
+        return !!(
+            this._start &&
+            this._res > 0.1 &&
+            (this._point || this._box) &&
+            (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) &&
+            (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45))
+            );
     }
 
     /**
@@ -142,6 +188,19 @@ export default class SearchRequest {
             query.east = this._box.east.toString();
             query.south = this._box.south.toString();
         }
+
+        if (this._supplier) {
+            query.supplier = this._supplier.toString();
+        }
+
+        if (this._cloud) {
+            query.cloud = this._cloud.toString();
+        }
+
+        if (this._offNadir) {
+            query["off-nadir"] = this._offNadir.toString();
+        }
+
 
         return query;
     }
