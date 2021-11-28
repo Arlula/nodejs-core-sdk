@@ -11,6 +11,9 @@ import axios, { AxiosInstance } from "axios";
  * Currently this client supports the
  *  - Archive imagery API `archive`
  *  - Order management API `orders`
+ * 
+ * Full API documentation is available at
+ * https://arlula.com/documentation/
  */
 export default class Arlula {
     private _client: AxiosInstance

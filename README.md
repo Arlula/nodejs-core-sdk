@@ -4,6 +4,9 @@ The Arlula Node and client side JS SDK provides convenient access to the Arlula 
 
 ## Documentation
 
+The full API reference documentation is available on the arlula website  
+[https://arlula.com/documentation/](https://arlula.com/documentation/)
+
 ### Credentials
 
 Before using the SDK, you will need to create an API account and have its credentials.
