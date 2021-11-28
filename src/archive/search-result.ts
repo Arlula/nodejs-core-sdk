@@ -10,6 +10,7 @@ export default interface SearchResult {
     eula: string;
     id: string;
     sceneID: string;
+    platform: string;
     date: Date;
     center: {
         lat: number;
@@ -33,9 +34,10 @@ export default interface SearchResult {
             additional: number;
         }[];
     };
-    fulfillment: number;
+    fulfillmentTime: number;
     resolution: number;
     thumbnail: string;
     cloud: number;
+    offNadir: number;
     annotations: string[];
 }
