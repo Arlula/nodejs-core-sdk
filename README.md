@@ -120,15 +120,15 @@ After initializing the search request, its details can be controlled by several 
 
 The temporal constraints can be controlled with the following methods;
 
- - atDate(date) -------------> discards any date range and sets a single date search to the given date
- - from(date) ---------------> sets the search date, or start of a date range (ignoring any set end date)
- - to(date) -----------------> sets the end date of a date range (converting a single date search to a range)
- - betweenDates(start, end) -> discards all current dates and sets a date range to search
+ - `atDate(date)` -------------> discards any date range and sets a single date search to the given date
+ - `from(date)` ---------------> sets the search date, or start of a date range (ignoring any set end date)
+ - `to(date)` -----------------> sets the end date of a date range (converting a single date search to a range)
+ - `betweenDates(start, end)` -> discards all current dates and sets a date range to search
 
 To constrain the search in space and search your specific area of interest, you can specify with the following methods;
 
- - point(long, lat) ----------------------> set the center point of your area of interest with its latitude and longitude
- - boundingBox(west, north, east, south) -> set a bounding box containing your area of interest by its cardinal boundaries
+ - `point(long, lat)` ----------------------> set the center point of your area of interest with its latitude and longitude
+ - `boundingBox(west, north, east, south)` -> set a bounding box containing your area of interest by its cardinal boundaries
 
 Additionally, if you're only interested in results of a certain resolution, you can specify a maximum resolution for search results.  
 You can specify a resolution in meters/pixel, or use the labels of predefined common resolutions in the `Resolution` enumeration
