@@ -1,16 +1,15 @@
-import { AxiosInstance } from "axios";
 import Resource, {fromJSON as resourceFromJSON} from "./resource";
 import paths from "../util/paths";
-import { handleError } from "../util/error";
+import { jsonOrError, requestBuilder } from "../util/request";
 
 /**
  * Utility class to construct Orders from JSON data
  * 
  * Note: only to be used internally, not by end users
- * @param {AxiosInstance} client the dialer
+ * @param {requestBuilder} client the dialer
  * @param json the JSON content to attempt to parse into an Order
  */
-export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Order|string {
+export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Order|string {
     if (typeof json === "string") {
         json = JSON.parse(json);
     }
@@ -74,7 +73,7 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unk
  * Note: construction of this class is to only be done internally to the library
  */
 export default class Order {
-    private _client: AxiosInstance;
+    private _client: requestBuilder;
     private _id: string;
     private _createdAt: Date;
     private _updatedAt: Date;
@@ -91,7 +90,7 @@ export default class Order {
      * Create a new order instance
      * @constructor
      * 
-     * @param {AxiosInstance} client    The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {requestBuilder} client    The initiated http transport for the API, created and initialized with credentials by the root Arlula client
      * @param {string}        id        The Order ID
      * @param {Date}          created   The timestamp when the order was created (UTC timezone)
      * @param {Date}          updated   The timestamp when the order was last updated (UTC timezone)
@@ -104,7 +103,7 @@ export default class Order {
      * @param {Resource[]}    resources List of resource for this supplier (if available)
      * @param {Date}          [exp]     Expiration date for this orders resources
      */
-    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
+    constructor(client: requestBuilder, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
         this._createdAt = created;

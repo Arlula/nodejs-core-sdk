@@ -1,15 +1,14 @@
-import axios, { AxiosInstance } from "axios";
 import paths from "../util/paths";
-import { handleError } from "../util/error";
+import { requestBuilder, bufferOrError } from "../util/request";
 
 /**
  * Utility class to construct Resources from JSON data
  * 
  * Note: only to be used internally, not by end users
- * @param {AxiosInstance} client the dialer 
+ * @param {requestBuilder} client the dialer 
  * @param json the JSON content to attempt to parse into a Resource
  */
-export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unknown}): Resource|string {
+export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Resource|string {
     
     if (typeof json === "string") {
         json = JSON.parse(json);
@@ -63,7 +62,7 @@ export function fromJSON(client: AxiosInstance, json: string|{[key: string]: unk
  * Note: construction of this class is to only be done internally to the library
  */
 export default class Resource {
-    private _client: AxiosInstance;
+    private _client: requestBuilder;
     private _id: string;
     private _createdAt: Date;
     private _updatedAt: Date;
@@ -78,7 +77,7 @@ export default class Resource {
      * create a new resource instance
      * @constructor
      * 
-     * @param {AxiosInstance} client  The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {requestBuilder} client  The initiated http transport for the API, created and initialized with credentials by the root Arlula client
      * @param {string}        id      The Resource ID
      * @param {Date}          created The timestamp when the resource was created (UTC timezone)
      * @param {Date}          updated The timestamp when the resource was last updated (UTC timezone)
@@ -86,7 +85,7 @@ export default class Resource {
      * @param {string}        name    An identifiable name/filename for this resource
      * @param {ResourceType}  type    Identifier for the type of resource (imagery, metadata, etc @see ResourceType )
      */
-    constructor(client: AxiosInstance, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType, size: number, format: string, roles: string[], checksum: string) {
+    constructor(client: requestBuilder, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType, size: number, format: string, roles: string[], checksum: string) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
