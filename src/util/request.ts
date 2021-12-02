@@ -1,11 +1,17 @@
 import fetch, { RequestInit, Response } from "node-fetch";
 
+let defaultTimeout = 12_000;
+
+export function setDefaultTimeout(timeout: number): void {
+    defaultTimeout = timeout;
+}
+
 export function authProvider(user: string, pass:string): requestBuilder {
     return function (method: string, path: string, body: unknown, timeout?: number, external?: boolean): Promise<Response> {
         const controller = new AbortController();
         const timeoutCtrl = setTimeout(() => {
             controller.abort();
-        }, timeout || 12_000);
+        }, timeout ? (timeout * (defaultTimeout/12_000)) : defaultTimeout);
         const options: RequestInit = {
             method: method,
             headers: {
