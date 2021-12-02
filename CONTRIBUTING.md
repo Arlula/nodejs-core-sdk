@@ -27,3 +27,7 @@ To test, a credentials.ts file needs to be created at `e2e/credentials.ts` which
  - `orderEULA` which contains the corresponding EULA to the above ID
  - `orderID` which contains the order to load in get order tests
  - `resourceID` the id of a resource to load for resource download tests
+ - `resourceOutput` is a path to download `resourceID` to, when testing download to file path
+ - `resourceOutput2` is a path to download `resourceID` to, when testing download to a file reference
+
+Optionally, if operating behind a proxy, the `host`, and `timeout` options can be provided to set an aliased host/basepath for testing, or extend the default timeout to account for the proxy's round trip.
