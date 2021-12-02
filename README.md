@@ -270,6 +270,6 @@ The return types and several of their enumerations are also exposed
 import SearchResult from "@arlula/core/archive/search-result";
 // orders and their status enumeration
 import Order, { OrderStatus } from "@arlula/core/orders/order";
-// resources and their supported types enumeration
+// resources and their supported legacy types enumeration (see documentation for new roles mechanism)
 import Resource, { ResourceType } from "@arlula/core/orders/resource";
 ```
