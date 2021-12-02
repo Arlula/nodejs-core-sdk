@@ -141,10 +141,16 @@ req.setMaximumResolution(Resolution.high)
 req.setMaximumResolution(3)
 ```
 
+Results can also be filtered by the imagery source, or properties such as
+
+ - `withSupplier("<supplier key>")` --> Limit results to only the identified supplier
+ - `withCloudCover(cloudPercentage)` -> Limit results to those with a whole scene cloud coverage less than the provided percentage
+ - `withOffNadir(OffNadirAngle)` -----> Limit results to only those with an off nadir pointing within &plusmn; the provided value
+
 Lastly, these calls may be chained to generate your request, i.e.
 
 ```
-req = new SearchRequest(new Date("2020-12-16")).to(new Date("2020-12-30")).point(151.209439, -33.854259);
+req = new SearchRequest(new Date("2020-12-16")).to(new Date("2020-12-30")).point(151.209439, -33.854259).withCloudCover(50);
 ```
 
 ###### Order Requests
