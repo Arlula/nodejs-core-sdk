@@ -26,6 +26,10 @@ export default class Archive {
      * 
      * @param {SearchRequest} req the details of the search request
      * @returns {Promise<SearchResult[]>} The list of search results
+     * 
+     * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
      */
     search(req: SearchRequest): Promise<SearchResult[]> {
         if (!req.valid()) {
@@ -50,6 +54,10 @@ export default class Archive {
      * 
      * @param {OrderRequest} req the details of the order to be placed
      * @returns {Promise<Order>} The order that was placed
+     * 
+     * @see {https://arlula.com/documentation/#archive-order|Archive Order endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-order-request|Archive order request structure reference}
      */
     order(req: OrderRequest): Promise<Order> {
         if (!req.valid()) {

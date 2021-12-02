@@ -23,6 +23,10 @@ export default class Orders {
     /**
      * list orders previously placed by this API from newest to oldest
      * @returns {Promise<Order[]>} the list of orders
+     * 
+     * @see {https://arlula.com/documentation/#order-list|Orders List endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
      */
     list(): Promise<Order[]> {
         return this._client("GET", paths.OrderList)
@@ -49,6 +53,10 @@ export default class Orders {
      * Gets a specific order from the server from its ID
      * @param {string} id the ID of the order to retrieve
      * @returns {Promise<Order>} the order retrieved
+     * 
+     * @see {https://arlula.com/documentation/#order-get|Orders Get endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
      */
     get(id: string): Promise<Order> {
         return this._client("GET", paths.OrderGet+"?id="+id)
@@ -75,6 +83,10 @@ export default class Orders {
      * 
      * @param {string} id The ID of the resource to download
      * @returns {Promise<ArrayBuffer>} the content of the resource as a Buffer
+     * 
+     * @see {https://arlula.com/documentation/#order-resource|Order Resource Get endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference}
      */
     downloadResource(id: string): Promise<ArrayBuffer> {
         return resourceDownloader(this._client, id);
@@ -89,6 +101,10 @@ export default class Orders {
      * 
      * @param {string} id The ID of the resource to download
      * @returns {Promise<WriteStream>} file the resource was written to
+     * 
+     * @see {https://arlula.com/documentation/#order-resource|Order Resource Get endpoint documentation}
+     * or
+     * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference}
      */
     downloadResourceToFile(id: string, ref: string|WriteStream): Promise<WriteStream> {
         return downloadFileHelper(this._client, id, ref);

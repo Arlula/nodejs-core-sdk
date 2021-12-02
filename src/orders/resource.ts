@@ -61,6 +61,8 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
  * @class Resource wraps the data that represents an order resource
  * 
  * Note: construction of this class is to only be done internally to the library
+ * 
+ * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference}
  */
 export default class Resource {
     private _client: requestBuilder;
@@ -184,6 +186,16 @@ export function downloadHelper(client: requestBuilder, id: string): Promise<Arra
     .then(bufferOrError);
 }
 
+/**
+ * helper function to allow the download call both form a resource and from the orders API client
+ * resources downloaded through this helper are piped into a file rather than an in memory buffer.
+ * 
+ * Note: an internal helper not intended to be called directly
+ * 
+ * @param {requestBuilder} client The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+ * @param {string}        id     ID of the resource to download
+ * @param {string|fs.WriteStream} fileRef File stream or path at which to create the file that the resource will be downloaded to
+ */
 export function downloadFileHelper(client: requestBuilder, id: string, fileRef: string|WriteStream): Promise<WriteStream> {
     return new Promise((resolve, reject) => {
         let file: WriteStream;

@@ -71,6 +71,8 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
  * @class Order wraps the data that makes up an order
  * 
  * Note: construction of this class is to only be done internally to the library
+ * 
+ * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
  */
 export default class Order {
     private _client: requestBuilder;

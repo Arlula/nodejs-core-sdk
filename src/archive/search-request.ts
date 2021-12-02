@@ -7,6 +7,8 @@
  *  - Similarly a target point or bounding box must be set.
  * 
  * The current validity of the request may be tested with the "valid" method.
+ * 
+ * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
  */
 export default class SearchRequest {
     private _start: Date;
@@ -111,7 +113,8 @@ export default class SearchRequest {
 
     /**
      * Supplier to restrict results to, must be a match for a valid value of a search results "supplier" field (in any case)
-     * @param supplier 
+     * 
+     * @param {string} supplier supplier key to filter results for
      * @returns {SearchRequest} The current request for chaining
      */
     withSupplier(supplier: string): SearchRequest {
@@ -124,7 +127,7 @@ export default class SearchRequest {
      * 
      * NOTE: must be between 0 and 100%
      * 
-     * @param cloud 
+     * @param {number} cloud cloud cover percentage to filter results to be less than
      * @returns {SearchRequest} The current request for chaining
      */
     withCloudCover(cloud: number): SearchRequest {
@@ -138,7 +141,7 @@ export default class SearchRequest {
      * 
      * NOTE: must be within -45 to 45
      * 
-     * @param offNadir 
+     * @param {number} offNadir offNadir angle to filter results to be less than
      * @returns {SearchRequest} The current request for chaining
      */
     withOffNadir(offNadir: number): SearchRequest {
@@ -205,6 +208,13 @@ export default class SearchRequest {
         return query;
     }
 
+    /**
+     * convert the request into a query string in preparation for sending
+     * 
+     * Note: this is for internal use and is not intended for use by end users
+     * 
+     * @returns {string}
+     */
     _toQueryString(): string {
         const query = this._toQuery()
         const arr: string[] = [];
