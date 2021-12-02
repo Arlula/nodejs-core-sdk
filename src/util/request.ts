@@ -3,9 +3,9 @@ import fetch, { Response } from "node-fetch";
 export function authProvider(user: string, pass:string): requestBuilder {
     return function (method: string, path: string, body: unknown, timeout?: number): Promise<Response> {
         const controller = new AbortController();
-        // const timeoutCtrl = setTimeout(() => {
-        //     controller.abort();
-        // }, timeout || 12_000);
+        const timeoutCtrl = setTimeout(() => {
+            controller.abort();
+        }, timeout || 12_000);
         return fetch(path, {
             method: method,
             headers: {
@@ -16,9 +16,9 @@ export function authProvider(user: string, pass:string): requestBuilder {
             body: body ? (typeof body != "string" ? JSON.stringify(body) : body) : undefined,
             signal: controller.signal,
         })
-        // .finally(() => {
-        //     clearTimeout(timeoutCtrl);
-        // });
+        .finally(() => {
+            clearTimeout(timeoutCtrl);
+        });
     }
 }
 
