@@ -1,22 +1,21 @@
 import Order, { fromJSON } from "./order";
 import { downloadHelper as resourceDownloader } from "./resource";
 import paths from "../util/paths";
-import { AxiosInstance } from "axios";
-import { handleError } from "../util/error";
+import { jsonOrError, requestBuilder } from "../util/request";
 
 /**
  * @class Orders wraps the API requests to the order management API
  */
 export default class Orders {
-    private _client: AxiosInstance;
+    private _client: requestBuilder;
     /**
      * creates a new orders API client
      * @constructor
-     * @param {AxiosInstance} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {requestBuilder} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
      * 
      * @see {@link ../index|Arlula}
      */
-    constructor(client: AxiosInstance) {
+    constructor(client: requestBuilder) {
         this._client = client;
     }
 
@@ -25,19 +24,16 @@ export default class Orders {
      * @returns {Promise<Order[]>} the list of orders
      */
     list(): Promise<Order[]> {
-        return this._client.get(paths.OrderList)
+        return this._client("GET", paths.OrderList)
+        .then(jsonOrError)
         .then((resp) => {
-            if (resp.status < 200 || resp.status >= 300) {
-                return Promise.reject(resp.data);
-            }
-
-            if (!Array.isArray(resp.data)) {
+            if (!Array.isArray(resp)) {
                 return Promise.reject("Orders list response is not array");
             }
 
             const orders: Order[] = [];
-            for (let i=0; i<resp.data.length; i++) {
-                const ord = fromJSON(this._client, resp.data[i])
+            for (let i=0; i<resp.length; i++) {
+                const ord = fromJSON(this._client, resp[i])
                 if (!(ord instanceof Order)) {
                     return Promise.reject(ord);
                 }
@@ -45,8 +41,7 @@ export default class Orders {
             }
 
             return orders;
-        })
-        .catch(handleError);
+        });
     }
 
     /**
@@ -55,19 +50,19 @@ export default class Orders {
      * @returns {Promise<Order>} the order retrieved
      */
     get(id: string): Promise<Order> {
-        return this._client.get(paths.OrderGet, {params: {id: id}})
+        return this._client("GET", paths.OrderGet+"?id="+id)
+        .then(jsonOrError)
         .then((resp) => {
-            if (typeof resp.data !== "object") {
+            if (typeof resp !== "object") {
                 return Promise.reject("Order is not an object");
             }
 
-            const ord = fromJSON(this._client, resp.data);
+            const ord = fromJSON(this._client, resp as {[key: string]: unknown});
             if (!(ord instanceof Order)) {
                 return Promise.reject(ord);
             }
             return ord;
-        })
-        .catch(handleError);
+        });
     }
 
     /**
