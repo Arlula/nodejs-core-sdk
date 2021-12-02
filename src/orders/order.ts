@@ -180,24 +180,32 @@ export default class Order {
             return Promise.resolve(this._resources);
         }
 
-        return this._client.get(paths.OrderGet, {params: {id: this._id}})
+        return this._client("GET", paths.OrderGet+"?id="+this._id)
+        .then(jsonOrError)
         .then((resp) => {
-            if (typeof resp.data !== "object") {
+            if (typeof resp !== "object") {
                 return Promise.reject("Order response is not an object");
             }
-            if (!("resources" in resp.data)) {
+            if (!resp) {
+                return Promise.reject("Order response is not an object")
+            }
+
+            // JSON structure not known, use iterable form
+            const r = (resp  as {[key: string]: unknown})
+
+            if (!("resources" in r)) {
                 // order has no resources
                 this.detailed = true;
                 return [];
             }
-            
-            if (!Array.isArray(resp.data.resources)) {
+
+            if (!Array.isArray(r.resources)) {
                 return Promise.reject("Resources is not an array");
             }
 
             const resources: Resource[] = [];
-            for (let i=0; i<resp.data.resources.length; i++) {
-                const res = resourceFromJSON(this._client, resp.data.resources[i]);
+            for (let i=0; i<r.resources.length; i++) {
+                const res = resourceFromJSON(this._client, r.resources[i]);
                 if (!(res instanceof Resource)) {
                     // error in decoding, pass error up the chain
                     return Promise.reject(res);
@@ -208,8 +216,7 @@ export default class Order {
             this.detailed = true;
             this._resources = resources;
             return resources;
-        })
-        .catch(handleError);
+        });
     }
 
 }
