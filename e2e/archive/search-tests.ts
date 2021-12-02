@@ -20,6 +20,7 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
 
 // search single date and point
 function test1(client: Arlula) {
+    console.log("search 1")
     const search = new SearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
@@ -27,9 +28,9 @@ function test1(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res.length < 1) {
-            console.error("Insufficient results for search, ", res.length);
+            console.error("search 1 - Insufficient results for search, ", res.length);
             console.log(res);
-            return Promise.reject("insufficient results");
+            return Promise.reject("search 1 - insufficient results");
         }
     })
     .catch(exceptionHandler("search 1 - point, date"));
@@ -37,6 +38,7 @@ function test1(client: Arlula) {
 
 // search date range and point
 function test2(client: Arlula) {
+    console.log("search 2")
     const search = new SearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -45,9 +47,9 @@ function test2(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
-                console.error("Insufficient results for search, ", res.length);
+                console.error("search 2 - Insufficient results for search, ", res.length);
                 console.log(res);
-                return Promise.reject("insufficient results");
+                return Promise.reject("search 2 - insufficient results");
             }
         })
         .catch(exceptionHandler("search 2 - point, date range"));
@@ -55,6 +57,7 @@ function test2(client: Arlula) {
 
 // check lower res
 function test3(client: Arlula) {
+    console.log("search 3")
     const search = new SearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -63,9 +66,9 @@ function test3(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res.length < 10) {
-            console.error("Insufficient results for search, ", res.length);
+            console.error("search 3 - Insufficient results for search, ", res.length);
             console.log(res)
-            return Promise.reject("insufficient results");
+            return Promise.reject("search 3 - insufficient results");
         }
     })
     .catch(exceptionHandler("search 3 - point, date range (low res)"));
@@ -73,6 +76,7 @@ function test3(client: Arlula) {
 
 // search date range and bounding box
 function test4(client: Arlula) {
+    console.log("search 4")
     const search = new SearchRequest(new Date(2020, 5, 15))
         .to(new Date(2018, 6, 13))
         .boundingBox(14.658508, 50.392761, 14.032288, 50.021858)
@@ -81,9 +85,9 @@ function test4(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res.length < 1) {
-            console.error("Insufficient results for search, ", res.length);
+            console.error("search 4 - Insufficient results for search, ", res.length);
             console.log(res)
-            return Promise.reject("insufficient results");
+            return Promise.reject("search 4 - insufficient results");
         }
     })
     .catch(exceptionHandler("search 4 - box, date"));
@@ -91,6 +95,7 @@ function test4(client: Arlula) {
 
 // search single date and bounding box
 function test5(client: Arlula) {
+    console.log("search 5")
     const search = new SearchRequest(new Date(2020, 5, 15))
         .to(new Date(2020, 8, 13))
     const search = new SearchRequest(new Date("2020-05-15"))
@@ -101,9 +106,9 @@ function test5(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res.length < 1) {
-                console.error("Insufficient results for search, ", res.length);
+                console.error("search 5 - Insufficient results for search, ", res.length);
                 console.log(res)
-                return Promise.reject("insufficient results");
+                return Promise.reject("search 5 - insufficient results");
             }
         })
         .catch(exceptionHandler("search 5 - box, date range"));
@@ -113,65 +118,70 @@ function test5(client: Arlula) {
     
 // end before start
 function test6(client: Arlula) {
+    console.log("search 6")
     const search = new SearchRequest(new Date(2020, 6, 13))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
     
     return client.archive().search(search)
-    .then(expectedError("search error 1 - error, end before start"))
+    .then((r) => {
+        return Promise.reject("search 6, error 1 - got results from invalid search");
+    })
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 1): ", e?.response?.data)
+            console.error("search 6, error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
             console.dir(e)
-            return Promise.reject(e);
+            return Promise.reject("search 6, error 1 - "+e);
         }
         if (!e.startsWith("End date must be after start date")) {
-            console.error("Unexpected error response (search error 1): ", e)
-            return Promise.reject(e);
+            console.error("search 6, error 1 - Unexpected error response (search error 1): ", e)
+            return Promise.reject("search 6, error 1 - "+e);
         }
     });
 }
 
 // future date
 function test7(client: Arlula) {
+    console.log("search 7")
     const search = new SearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
 
     return client.archive().search(search)
-    .then(expectedError("search error 2 - date future"))
+    .then(expectedError("search 7, error 2 - date future"))
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 2): ", e?.response?.data)
+            console.error("search 7, error 2 - Unexpected error response object (search error 2): ", e?.response?.data)
             console.dir(e)
-            return Promise.reject(e);
+            return Promise.reject("search 7, error 2 - "+e);
         }
         if (!e.startsWith("Start Date must be in the past")) {
             console.error("Unexpected error response (search error 2): ", e)
-            return Promise.reject(e);
+            return Promise.reject("search 7, error 2 - "+e);
         }
     });
 }
 
 // invalid long/lat
 function test8(client: Arlula) {
+    console.log("search 8")
     const search = new SearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
         .setMaximumResolution(Resolution.medium);
     
     return client.archive().search(search)
-    .then(expectedError("search error 3 - invalid lat/long"))
+    .then(expectedError("search 8, error 3 - invalid lat/long"))
     .catch((e) => {
         if (typeof e !== "string") {
-            console.error("Unexpected error response object (search error 3): ", e?.response?.data)
+            console.error("search 8, error 3 - Unexpected error response object (search error 3): ", e?.response?.data)
             console.dir(e)
-            return Promise.reject(e);
+            return Promise.reject("search 8, error 3 - "+e);
         }
         if (!e.startsWith("Invalid Latitude")) {
-            console.error("Unexpected error response (search error 3): ", e)
-            return Promise.reject(e);
+            console.error("search 8, error 3 - Unexpected error response (search error 3): ", e)
+            return Promise.reject("search 8, error 3 - "+e);
         }
     });
 }
