@@ -2,8 +2,13 @@ import fetch, { RequestInit, Response } from "node-fetch";
 
 let defaultTimeout = 12_000;
 
+/**
+ * override the default timeout for requests by the SDK, for use with slow proxies to prevent unintended timeout
+ * 
+ * @param {number} timeout number of milliseconds for timeout (defaults to 12000, 12 seconds)
+ */
 export function setDefaultTimeout(timeout: number): void {
-    defaultTimeout = timeout;
+    defaultTimeout = timeout || defaultTimeout;
 }
 
 export function authProvider(user: string, pass:string): requestBuilder {
