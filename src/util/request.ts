@@ -6,15 +6,18 @@ export function authProvider(user: string, pass:string): requestBuilder {
         const timeoutCtrl = setTimeout(() => {
             controller.abort();
         }, timeout || 12_000);
+        // TODO: refactor this after testing correctness
+        const headers = {
+            "Authorization": "Basic " + Buffer.from(user + ":" + pass).toString("base64"),
+            "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
+            "Content-Type": typeof body != "string" ? "application/json" : "text/plain",
+        };
         return fetch(path, {
             method: method,
-            headers: {
-                "Authorization": "Basic " + Buffer.from(user + ":" + pass).toString("base64"),
-                "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
-                "Content-Type": typeof body != "string" ? "application/json" : "text/plain",
-            },
+            headers: path.includes("//api.arlula.com") ? headers : undefined,
             body: body ? (typeof body != "string" ? JSON.stringify(body) : body) : undefined,
-            signal: controller.signal,
+            signal: path.includes("//api.arlula.com") ? controller.signal : undefined,
+            redirect: path.includes("//api.arlula.com") ? "manual" : "follow",
         })
         .finally(() => {
             clearTimeout(timeoutCtrl);
