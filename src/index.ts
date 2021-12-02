@@ -1,7 +1,7 @@
 import Archive from "./archive/index";
 import Orders from "./orders/index";
+import {authProvider, requestBuilder} from "./util/request";
 import paths from "./util/paths";
-import axios, { AxiosInstance } from "axios";
 
 /** 
  * @class Arlula is the root client for connecting to the Arlula API
@@ -16,7 +16,7 @@ import axios, { AxiosInstance } from "axios";
  * https://arlula.com/documentation/
  */
 export default class Arlula {
-    private _client: AxiosInstance
+    private readonly builder: requestBuilder;
     private _archive: Archive;
     private _orders: Orders;
 
@@ -30,33 +30,34 @@ export default class Arlula {
      * @param {string} secret The API users API Secret
      */
     constructor(key: string, secret: string) {
-        this._client = axios.create({
-            method: "GET",
-            auth: {
-                username: key,
-                password: secret,
-            },
-            timeout: 10000,
-            headers: getPlatformHeaders(),
-        });
-        this._archive = new Archive(this._client);
-        this._orders = new Orders(this._client);
+        this.builder = authProvider(key, secret);
+        this._archive = new Archive(this.builder);
+        this._orders = new Orders(this.builder);
     }
 
     /**
      * tests connection to server by making an authenticated no-op request
      * determines if credentials are correctly configured
      * 
-     * @returns {Promise<boolean>} Whether the requests authentication was successful
+     * @returns {Promise<boolean>} Whether the requests authentication was successful, error message will be passed to rejection
      */
     test(): Promise<boolean> {
-        return this._client.get(paths.Test)
-        .then((resp) => {
-            return resp.status >= 200 && resp.status < 300; 
+        return new Promise((resolve, reject) => {
+            this.builder("GET", paths.Test)
+            .then((res) => {
+                if (res.ok) {
+                    resolve(res.ok);
+                    return
+                }
+                res.text()
+                .then((msg) => {
+                    reject(msg)
+                })
+            })
+            .catch((e) => {
+                reject(e)
+            })
         })
-        .catch(() => {
-            return false;
-        });
     }
 
     /**
@@ -80,19 +81,4 @@ export default class Arlula {
     orders(): Orders {
         return this._orders;
     }
-}
-
-// utility to construct user agent string for node and browser environment
-function getPlatformHeaders(): {[key: string]: string} {
-    if (typeof process !== "undefined") {
-        // is node
-        return {
-            "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
-        };
-    }
-    // in browser
-    return {
-        "X-User-Agent": "arlula-js 1.0.0, API-ver 2020-12, client, user-agent: "+navigator.userAgent,
-        "X-Download-Manual": "true",
-    };
 }
