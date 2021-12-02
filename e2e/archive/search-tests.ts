@@ -20,7 +20,7 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
 
 // search single date and point
 function test1(client: Arlula) {
-    const search = new SearchRequest(new Date("2018-04-03"))
+    const search = new SearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
     return client.archive().search(search)
@@ -37,8 +37,8 @@ function test1(client: Arlula) {
 
 // search date range and point
 function test2(client: Arlula) {
-    const search = new SearchRequest(new Date("2018-04-03"))
-        .to(new Date("2018-06-13"))
+    const search = new SearchRequest(new Date(2018, 4, 3))
+        .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
     return client.archive().search(search)
@@ -55,8 +55,8 @@ function test2(client: Arlula) {
 
 // check lower res
 function test3(client: Arlula) {
-    const search = new SearchRequest(new Date("2018-04-03"))
-        .to(new Date("2018-06-13"))
+    const search = new SearchRequest(new Date(2018, 4, 3))
+        .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.veryLow);
     client.archive().search(search)
@@ -73,8 +73,8 @@ function test3(client: Arlula) {
 
 // search date range and bounding box
 function test4(client: Arlula) {
-    const search = new SearchRequest(new Date("2020-05-15"))
-        .to(new Date("2018-06-13"))
+    const search = new SearchRequest(new Date(2020, 5, 15))
+        .to(new Date(2018, 6, 13))
         .boundingBox(14.658508, 50.392761, 14.032288, 50.021858)
         .setMaximumResolution(Resolution.medium);
     client.archive().search(search)
@@ -91,6 +91,8 @@ function test4(client: Arlula) {
 
 // search single date and bounding box
 function test5(client: Arlula) {
+    const search = new SearchRequest(new Date(2020, 5, 15))
+        .to(new Date(2020, 8, 13))
     const search = new SearchRequest(new Date("2020-05-15"))
         .to(new Date("2020-06-13"))
         .boundingBox(14.658508, 50.392761, 14.032288, 50.021858)
@@ -111,8 +113,8 @@ function test5(client: Arlula) {
     
 // end before start
 function test6(client: Arlula) {
-    const search = new SearchRequest(new Date("2018-06-13"))
-        .to(new Date("2020-06-13"))
+    const search = new SearchRequest(new Date(2020, 6, 13))
+        .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
     
@@ -133,7 +135,7 @@ function test6(client: Arlula) {
 
 // future date
 function test7(client: Arlula) {
-    const search = new SearchRequest(new Date("3000-01-01"))
+    const search = new SearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
         .setMaximumResolution(Resolution.medium);
 
@@ -154,8 +156,8 @@ function test7(client: Arlula) {
 
 // invalid long/lat
 function test8(client: Arlula) {
-    const search = new SearchRequest(new Date("2020-05-15"))
-        .to(new Date("2018-06-13"))
+    const search = new SearchRequest(new Date(2018, 5, 15))
+        .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
         .setMaximumResolution(Resolution.medium);
     
