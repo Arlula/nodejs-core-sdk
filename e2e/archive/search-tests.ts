@@ -76,9 +76,9 @@ function test3(client: Arlula) {
 // search date range and bounding box
 function test4(client: Arlula) {
     console.log("search 4")
-    const search = new SearchRequest(new Date(2020, 5, 15))
-        .to(new Date(2018, 6, 13))
-        .boundingBox(14.658508, 50.392761, 14.032288, 50.021858)
+    const search = new SearchRequest(new Date(2018, 5, 15))
+        .to(new Date(2020, 6, 13))
+        .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
         .setMaximumResolution(Resolution.medium);
     client.archive().search(search)
     .then((res) => {
@@ -123,6 +123,7 @@ function test6(client: Arlula) {
     
     return client.archive().search(search)
     .then((r) => {
+        console.dir(r);
         return Promise.reject("search 6, error 1 - got results from invalid search");
     })
     .catch((e) => {
