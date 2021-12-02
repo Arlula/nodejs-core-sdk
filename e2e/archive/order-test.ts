@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import Arlula from "../../dist";
 import OrderRequest from "../../dist/archive/order-request";
 import { OrderStatus } from "../../dist/orders/order";
@@ -41,8 +40,8 @@ function test1(client: Arlula) {
 
 
 function exceptionHandler(label: string) {
-    return function (e: string|AxiosError) {
+    return function (e: string) {
         console.error("Error executing " + label + ": ", e);
-        return Promise.reject(e);
+        return Promise.reject(label+": "+e);
     }
 }
