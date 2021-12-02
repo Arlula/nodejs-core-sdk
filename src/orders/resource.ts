@@ -1,3 +1,4 @@
+import fs, { WriteStream } from "fs";
 import paths from "../util/paths";
 import { requestBuilder, bufferOrError } from "../util/request";
 
@@ -148,6 +149,19 @@ export default class Resource {
     download(): Promise<ArrayBuffer> {
         return downloadHelper(this._client, this._id);
     }
+
+    /**
+     * Download the content of a resource (imagery, metadata, etc)
+     * Data is piped into the provided fs.WriteStream or one is created at the provided filepath.
+     * 
+     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * passed, this request will fail as the resource has expired and is no longer hosted in the platform
+     * 
+     * @returns {Promise<WriteStream>} file the resource was written to
+     */
+    downloadToFile(ref: string|WriteStream): Promise<WriteStream> {
+        return downloadFileHelper(this._client, this._id, ref);
+    }
 }
 
 /**
@@ -168,6 +182,38 @@ export function downloadHelper(client: requestBuilder, id: string): Promise<Arra
         return client("GET", redirect);
     })
     .then(bufferOrError);
+}
+
+export function downloadFileHelper(client: requestBuilder, id: string, fileRef: string|WriteStream): Promise<WriteStream> {
+    return new Promise((resolve, reject) => {
+        let file: WriteStream;
+        if (typeof fileRef === "string") {
+            file = fs.createWriteStream(fileRef, { 
+                flags: "w+",
+                mode: 0o644,
+            });
+        } else {
+            file = fileRef;
+        }
+
+        client("GET", paths.ResourceDownload+"?id="+id)
+        .then((r) => {
+            const redirect = r.headers.get("location");
+            if (!redirect) {
+                return r;
+            }
+            return client("GET", redirect);
+        })
+        .then((res) => {
+            res.body?.pipe(file);
+            res.body?.on("error", (e) => {
+                reject(e)
+            });
+            file.on("finish", () => {
+                resolve(file);
+            });
+        });
+    });
 }
 
 /**

@@ -1,5 +1,6 @@
+import { WriteStream } from "fs";
 import Order, { fromJSON } from "./order";
-import { downloadHelper as resourceDownloader } from "./resource";
+import { downloadHelper as resourceDownloader, downloadFileHelper } from "./resource";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
 
@@ -77,5 +78,19 @@ export default class Orders {
      */
     downloadResource(id: string): Promise<ArrayBuffer> {
         return resourceDownloader(this._client, id);
+    }
+
+    /**
+     * Download the content of a resource (imagery, metadata, etc)
+     * Data is piped into the provided fs.WriteStream or one is created at the provided filepath.
+     * 
+     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * passed, this request will fail as the resource has expired and is no longer hosted in the platform
+     * 
+     * @param {string} id The ID of the resource to download
+     * @returns {Promise<WriteStream>} file the resource was written to
+     */
+    downloadResourceToFile(id: string, ref: string|WriteStream): Promise<WriteStream> {
+        return downloadFileHelper(this._client, id, ref);
     }
 }
