@@ -179,7 +179,7 @@ export function downloadHelper(client: requestBuilder, id: string): Promise<Arra
         if (!redirect) {
             return r;
         }
-        return client("GET", redirect);
+        return client("GET", redirect, undefined, undefined, true);
     })
     .then(bufferOrError);
 }
@@ -202,7 +202,7 @@ export function downloadFileHelper(client: requestBuilder, id: string, fileRef: 
             if (!redirect) {
                 return r;
             }
-            return client("GET", redirect);
+            return client("GET", redirect, undefined, undefined, true);
         })
         .then((res) => {
             res.body?.pipe(file);

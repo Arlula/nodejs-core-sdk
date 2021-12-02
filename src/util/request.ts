@@ -1,31 +1,36 @@
-import fetch, { Response } from "node-fetch";
+import fetch, { RequestInit, Response } from "node-fetch";
 
 export function authProvider(user: string, pass:string): requestBuilder {
-    return function (method: string, path: string, body: unknown, timeout?: number): Promise<Response> {
+    return function (method: string, path: string, body: unknown, timeout?: number, external?: boolean): Promise<Response> {
         const controller = new AbortController();
         const timeoutCtrl = setTimeout(() => {
             controller.abort();
         }, timeout || 12_000);
-        // TODO: refactor this after testing correctness
-        const headers = {
-            "Authorization": "Basic " + Buffer.from(user + ":" + pass).toString("base64"),
-            "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
-            "Content-Type": typeof body != "string" ? "application/json" : "text/plain",
-        };
-        return fetch(path, {
+        const options: RequestInit = {
             method: method,
-            headers: path.includes("//api.arlula.com") ? headers : undefined,
+            headers: {
+                "Authorization": "Basic " + Buffer.from(user + ":" + pass).toString("base64"),
+                "X-User-Agent": `arlula-js 1.0.0, API-ver 2020-12, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
+                "Content-Type": typeof body != "string" ? "application/json" : "text/plain",
+            },
             body: body ? (typeof body != "string" ? JSON.stringify(body) : body) : undefined,
-            signal: path.includes("//api.arlula.com") ? controller.signal : undefined,
-            redirect: path.includes("//api.arlula.com") ? "manual" : "follow",
-        })
+            signal: controller.signal,
+            redirect: "manual",
+        }
+        if (external) {
+            // delete internal extras
+            delete options.headers;
+            delete options.signal;
+            delete options.redirect;
+        }
+        return fetch(path, options)
         .finally(() => {
             clearTimeout(timeoutCtrl);
         });
     }
 }
 
-export type requestBuilder = (method: string, path: string, body?: unknown, timeout?: number) => Promise<Response>
+export type requestBuilder = (method: string, path: string, body?: unknown, timeout?: number, external?: boolean) => Promise<Response>
 
 export function jsonOrError(r: Response): Promise<unknown> {
     return new Promise((resolve, reject) => {
