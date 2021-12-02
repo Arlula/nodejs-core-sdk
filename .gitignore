@@ -2,6 +2,7 @@ node_modules
 credentials.*
 **/credentials.*
 e2e/dist
+e2e/temp
 dist
 build
 *.tgz
