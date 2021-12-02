@@ -1,6 +1,6 @@
-# Arlula JS/TS SDK
+# Arlula NodeJS/TS SDK
 
-The Arlula Node and client side JS SDK provides convenient access to the Arlula satellite imagery APIs.
+The Arlula NodeJS SDK provides convenient access to the Arlula satellite imagery APIs.
 
 ## Links
 
