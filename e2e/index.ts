@@ -1,6 +1,7 @@
-import { Key, Secret, host } from "./credentials";
+import { Key, Secret, host, timeout } from "./credentials";
 import Arlula from "../dist";
 import { setCustomHost } from "../dist/util/paths";
+import { setDefaultTimeout } from "../dist/util/request";
 import runSearchTests from "./archive/search-tests";
 import runOrderTests from "./archive/order-test";
 import runOrderListTests from "./orders/list-tests";
@@ -9,6 +10,10 @@ import runOrderResourceTests from "./orders/resource-test";
 
 if (host) {
     setCustomHost(host);
+}
+
+if (timeout) {
+    setDefaultTimeout(timeout)
 }
 
 console.log("starting tests")
