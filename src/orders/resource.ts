@@ -138,14 +138,14 @@ export default class Resource {
 
     /**
      * Download the content of a resource (imagery, metadata, etc)
-     * Data is made available as an ArrayBuffer or Buffer depending upon platform.
+     * Data is made available as an ArrayBuffer.
      * 
      * Note: If the order this resource is for has its `expiration` field set and that date has
      * passed, this request will fail as the resource has expired and is no longer hosted in the platform
      * 
-     * @returns {Promise<ArrayBuffer|Buffer>} the content of the resource as a Buffer
+     * @returns {Promise<ArrayBuffer>} the content of the resource as a Buffer
      */
-    download(): Promise<ArrayBuffer|Buffer> {
+    download(): Promise<ArrayBuffer> {
         return downloadHelper(this._client, this._id);
     }
 }
@@ -155,25 +155,19 @@ export default class Resource {
  * 
  * Note: an internal helper not intended to be called directly
  * 
- * @param {AxiosInstance} client The initiated http transport for the API, created and initialized with credentials by the root Arlula client
+ * @param {requestBuilder} client The initiated http transport for the API, created and initialized with credentials by the root Arlula client
  * @param {string}        id     ID of the resource to download
  */
-export function downloadHelper(client: AxiosInstance, id: string): Promise<ArrayBuffer|Buffer> {
-    return client.get(paths.ResourceDownload, {params: {id: id}, responseType: "arraybuffer"})
-    .then((resp) => {
-        if (resp.status === 203) {
-            // fallback for browser where headers would get included in redirect
-            // custom header X-Download-Manual tells the server to send the redirect
-            // url that makes a subsequent request here without the headers configured
-            return axios.get(arrayBufferToString(resp.data), {responseType: "arraybuffer"})
-            .then((r) => {
-                return r.data as ArrayBuffer;
-            })
-            .catch(handleError);
+export function downloadHelper(client: requestBuilder, id: string): Promise<ArrayBuffer> {
+    return client("GET", paths.ResourceDownload+"?id="+id)
+    .then((r) => {
+        const redirect = r.headers.get("location");
+        if (!redirect) {
+            return r;
         }
-        return resp.data as ArrayBuffer;
+        return client("GET", redirect);
     })
-    .catch(handleError);
+    .then(bufferOrError);
 }
 
 /**
@@ -219,11 +213,3 @@ export enum ResourceType {
 function isResourceType(token: string): token is ResourceType {
     return Object.values(ResourceType).includes(token as ResourceType);
 }
-
-function arrayBufferToString(buf: ArrayBuffer): string {
-    // std lib typings enforce an argument of 'number[]' and dont handle
-    // the newer numeric array types like Uint8Array 
-    // as a result this converts to unknown then to number array for type purposes
-    return String.fromCharCode.apply(null, new Uint8Array (buf) as unknown as number[]);
-}
-
