@@ -67,15 +67,15 @@ export default class Orders {
 
     /**
      * Download the content of a resource (imagery, metadata, etc) based on its ID
-     * Data is made available as an ArrayBuffer or Buffer depending upon platform.
+     * Data is made available as an ArrayBuffer.
      * 
      * Note: If the order this resource is for has its `expiration` field set and that date has
      * passed, this request will fail as the resource has expired and is no longer hosted in the platform
      * 
      * @param {string} id The ID of the resource to download
-     * @returns {Promise<ArrayBuffer|Buffer>} the content of the resource as a Buffer
+     * @returns {Promise<ArrayBuffer>} the content of the resource as a Buffer
      */
-    downloadResource(id: string): Promise<ArrayBuffer|Buffer> {
+    downloadResource(id: string): Promise<ArrayBuffer> {
         return resourceDownloader(this._client, id);
     }
 }
