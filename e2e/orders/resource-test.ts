@@ -1,11 +1,13 @@
+import { WriteStream } from "fs";
 import Arlula from "../../dist/index";
-import { orderID, resourceID } from "../credentials";
+import { orderID, resourceID, resourceOutput } from "../credentials";
 
 export default function runOrderResourceTests(client: Arlula): Promise<unknown> {
 
     return Promise.all([
         test1(client),
         test2(client),
+        test3(client),
     ]);
 
 }
@@ -57,6 +59,29 @@ function test2(client: Arlula) {
             console.error("resource 2, unexpected error getting resource: ", arrayBufferToString(e));
         } else {
             console.error("resource 2, unexpected error getting resource: ", e);
+        }
+        return Promise.reject(e);
+    });
+}
+
+// client => resource download to file
+function test3(client: Arlula) {
+    console.log("resource get 3");
+    return client.orders().downloadResourceToFile(resourceID, resourceOutput)
+    .then((data) => {
+        if (!(data instanceof WriteStream)) {
+            console.error("resource 3, unexpected resource data type: ", data);
+            return Promise.reject(data);
+        }
+        if (data.path != resourceOutput) {
+            console.error("resource 3, unexpected download path: ", data.path);
+        }
+    })
+    .catch((e) => {
+        if (e instanceof ArrayBuffer || e instanceof Buffer) {
+            console.error("resource 3, unexpected error getting resource: ", arrayBufferToString(e));
+        } else {
+            console.error("resource 3, unexpected error getting resource: ", e);
         }
         return Promise.reject(e);
     });
