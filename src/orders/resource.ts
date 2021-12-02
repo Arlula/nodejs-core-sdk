@@ -121,6 +121,14 @@ export default class Resource {
     public get name(): string {
         return this._name;
     }
+    /**
+     * @deprecated legacy `resource.type` is deprecated
+     * field will be provided for orders during transition.
+     * 
+     * roles field is the recommended replacement, see
+     * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference} 
+     * and the "resource roles" section for details on the new role field and its use.
+     */
     public get type(): ResourceType {
         return this._type;
     }
