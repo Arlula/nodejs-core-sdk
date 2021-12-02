@@ -204,6 +204,16 @@ export default class SearchRequest {
 
         return query;
     }
+
+    _toQueryString(): string {
+        const query = this._toQuery()
+        const arr: string[] = [];
+        for (const key in query) {
+            arr.push(`${key}=${query[key]}`);
+        }
+
+        return "?"+arr.join("&")
+    }
 }
 
 /**
