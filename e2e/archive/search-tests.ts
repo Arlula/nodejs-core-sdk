@@ -177,15 +177,15 @@ function test8(client: Arlula) {
 }
 
 function exceptionHandler(label: string) {
-    return function (e: string|AxiosError) {
+    return function (e: string) {
         console.error("Error executing " + label + ": ", e);
-        return Promise.reject(e);
+        return Promise.reject(label+": "+e);
     }
 }
 
 function expectedError(label: string) {
     return function (result: SearchResult[]) {
         console.error("Error executing"+label+": ", result);
-        return Promise.reject(result);
+        return Promise.reject(label+": "+result);
     }
 }
