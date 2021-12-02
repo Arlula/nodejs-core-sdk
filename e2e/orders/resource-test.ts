@@ -1,6 +1,6 @@
-import { WriteStream } from "fs";
+import fs, { WriteStream } from "fs";
 import Arlula from "../../dist/index";
-import { orderID, resourceID, resourceOutput } from "../credentials";
+import { orderID, resourceID, resourceOutput, resourceOutput2 } from "../credentials";
 
 export default function runOrderResourceTests(client: Arlula): Promise<unknown> {
 
@@ -8,6 +8,7 @@ export default function runOrderResourceTests(client: Arlula): Promise<unknown> 
         test1(client),
         test2(client),
         test3(client),
+        test4(client),
     ]);
 
 }
@@ -37,7 +38,7 @@ function test1(client: Arlula) {
                     } else {
                         console.error("resource 1, unexpected error getting resource: ", e);
                     }
-                    return Promise.reject(e);
+                    return Promise.reject("resource 1, unexpected error getting resource: "+e);
                 });
             }
         })
@@ -60,7 +61,7 @@ function test2(client: Arlula) {
         } else {
             console.error("resource 2, unexpected error getting resource: ", e);
         }
-        return Promise.reject(e);
+        return Promise.reject("resource 2, unexpected error getting resource: "+e);
     });
 }
 
@@ -75,6 +76,7 @@ function test3(client: Arlula) {
         }
         if (data.path != resourceOutput) {
             console.error("resource 3, unexpected download path: ", data.path);
+            return Promise.reject("resource 3, unexpected download path: " + data.path);
         }
     })
     .catch((e) => {
@@ -83,7 +85,39 @@ function test3(client: Arlula) {
         } else {
             console.error("resource 3, unexpected error getting resource: ", e);
         }
-        return Promise.reject(e);
+        return Promise.reject("resource 3, unexpected error getting resource: "+e);
+    });
+}
+
+// client => resource download to file (with file)
+function test4(client: Arlula) {
+    console.log("resource get 4");
+    const file = fs.createWriteStream(resourceOutput2, { 
+        flags: "w+",
+        mode: 0o644,
+    });
+    return client.orders().downloadResourceToFile(resourceID, file)
+    .then((data) => {
+        if (!(data instanceof WriteStream)) {
+            console.error("resource 4, unexpected resource data type: ", data);
+            return Promise.reject(data);
+        }
+        if (data.path != resourceOutput2) {
+            console.error("resource 4, unexpected download path: ", data.path);
+            return Promise.reject("resource 4, unexpected download path: " + data.path);
+        }
+        if (data !== file) {
+            console.error("resource 4, file reference has changed");
+            return Promise.reject("resource 4, file reference has changed");
+        }
+    })
+    .catch((e) => {
+        if (e instanceof ArrayBuffer || e instanceof Buffer) {
+            console.error("resource 4, unexpected error getting resource: ", arrayBufferToString(e));
+        } else {
+            console.error("resource 4, unexpected error getting resource: ", e);
+        }
+        return Promise.reject("resource 3, unexpected error getting resource: "+e);
     });
 }
 
