@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import Arlula from "../../dist";
 import SearchRequest, { Resolution } from "../../dist/archive/search-request";
 import SearchResult from "../../dist/archive/search-result";
