@@ -2,10 +2,16 @@
 
 The Arlula Node and client side JS SDK provides convenient access to the Arlula satellite imagery APIs.
 
-## Documentation
+## Links
 
 The full API reference documentation is available on the arlula website  
 [https://arlula.com/documentation/](https://arlula.com/documentation/)
+
+The package can be found on npm at  
+[https://www.npmjs.com/package/@arlula/core](https://www.npmjs.com/package/@arlula/core)
+
+The source can be found on github at  
+[https://github.com/Arlula/nodejs-core-sdk](https://github.com/Arlula/nodejs-core-sdk)
 
 ### Credentials
 
