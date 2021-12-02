@@ -27,13 +27,6 @@ const baseConfig = {
 const testModules = [
     {
         ...baseConfig,
-        output: {
-            path: outPath,
-            filename: "browser.js"
-        }
-    },
-    {
-        ...baseConfig,
         target: "node",
         output: {
             path: outPath,
