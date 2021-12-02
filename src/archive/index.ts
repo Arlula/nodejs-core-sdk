@@ -3,22 +3,21 @@ import SearchResult from "./search-result";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
 import paths from "../util/paths";
-import { AxiosInstance } from "axios";
-import { handleError } from "../util/error";
+import { jsonOrError, requestBuilder } from "../util/request";
 
 /**
  * @class Archive wraps the API requests to the archive imagery API
  */
 export default class Archive {
-    private _client: AxiosInstance;
+    private _client: requestBuilder;
     /**
      * creates a new archive API client
      * @constructor
-     * @param {AxiosInstance} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
+     * @param {requestBuilder} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
      * 
      * @see {@link ../index|Arlula}
      */
-    constructor(client: AxiosInstance) {
+    constructor(client: requestBuilder) {
         this._client = client;
     }
 
@@ -32,15 +31,15 @@ export default class Archive {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
-        return this._client.get(paths.ArchiveSearch, {params: req._toQuery()})
+        return this._client("GET", paths.ArchiveSearch+req._toQueryString())
+        .then(jsonOrError)
         .then((resp) => {
-            if (!Array.isArray(resp.data)) {
+            if (!Array.isArray(resp)) {
                 return Promise.reject("response was not an array of results");
             }
 
-            return resp.data as SearchResult[];
-        })
-        .catch(handleError);
+            return resp as SearchResult[];
+        });
     }
 
     /**
@@ -58,16 +57,16 @@ export default class Archive {
         }
         // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
         // give a longer timeout to respect this and not timeout a successful order
-        return this._client.post(paths.ArchiveOrder, req._toJSON(false), {timeout: 120*1000})
+        return this._client("POST", paths.ArchiveOrder, req._toJSON(true), 120*1000)
+        .then(jsonOrError)
         .then((resp) => {
 
-            const ord = OrderFromJSON(this._client, resp.data);
+            const ord = OrderFromJSON(this._client, resp as {[key: string]: unknown});
             if (!(ord instanceof Order)) {
                 return Promise.reject(ord);
             }
 
             return ord;
-        })
-        .catch(handleError);
+        });
     }
 }
