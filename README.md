@@ -72,11 +72,11 @@ request.point(151.209439, -33.854259);
 request.setMaximumResolution(Resolution.medium)
 client.archive().search(request)
 .then((scenes) => {
-    console.log(searches);
+    console.log(scenes);
 });
 ```
 
-The search request will return an array of available scenes as a `SearchResult` object ([see API documentation](https://arlula.com/documentation))
+The search request will return an array of available scenes as `SearchResult` objects ([see structure reference](https://arlula.com/documentation/#ref-search-result))
 
 Searches can be done by a target date, date range, point and bounding box searches, as well as restricting the maximum allowable resolution.  
 Full details on constructing searches is available below.
@@ -97,7 +97,7 @@ client.archive().order(request)
 ```
 
 Ordering requires confirming the eula of the supplier for the given scene, the URL of the eula can be found in the search result.  
-Similarly, the number of seats to license the image for must be provided, and may affect pricing ([see API documentation for details on eulas and pricing](https://arlula.com/documentation)).
+Similarly, the number of seats to license the image for must be provided, and may affect pricing ([see API documentation for details on eulas and pricing](https://arlula.com/documentation/#archive-order)).
 
 NOTE: search results have a `fulfillment` field which estimates how long it will take the supplier to provide the imagery for the order.  
 The imagery will not be available immediately in the promise for all suppliers
