@@ -11,6 +11,9 @@ if (host) {
     setCustomHost(host);
 }
 
+console.log("starting tests")
+const start = new Date()
+
 const client = new Arlula(Key, Secret);
 
 Promise.all([
@@ -34,10 +37,10 @@ Promise.all([
     runOrderResourceTests(client),
 ])
 .then(() => {
-    console.log("tests successful");
+    console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "]");
 })
 .catch((errors) => {
-    console.log("tests failed");
+    console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "]");
     console.log(errors)
 });
 
