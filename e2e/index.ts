@@ -36,9 +36,9 @@ Promise.all([
 .then(() => {
     console.log("tests successful");
 })
-.catch(() => {
+.catch((errors) => {
     console.log("tests failed");
-    // TODO: return failure status 
+    console.log(errors)
 });
 
 function testEndpoint(client: Arlula) {
