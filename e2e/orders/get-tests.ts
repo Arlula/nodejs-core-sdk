@@ -89,9 +89,11 @@ function test3(client: Arlula) {
         if (typeof e !== "string") {
             console.error("order get 3, unexpected error object: ", e);
         }
-        if (!e.startsWith("No permission to order")) {
-            console.error("order get 3, unexpected error: ", e);
+        if (e.startsWith("No permission to order")) {
+            // success case
+            return;
         }
-        return Promise.reject(e);
+        console.error("order get 3, unexpected error: ", e);
+        return Promise.reject("order get 3: "+e);
     });
 }
