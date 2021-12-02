@@ -45,8 +45,7 @@ function testEndpoint(client: Arlula) {
     return client.test()
     .then((res) => {
         if (!res) {
-            console.error("Connection test failed")
-            return Promise.reject("Connection test failed");
+            return Promise.reject("Connection test failed: " + res);
         }
     });
 }
