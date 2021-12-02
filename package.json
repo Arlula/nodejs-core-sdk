@@ -18,10 +18,10 @@
     "geospatial"
   ],
   "homepage": "https://www.arlula.com",
-  "bugs": "https://github.com/Arlula/jsSDK/issues",
+  "bugs": "https://github.com/Arlula/nodejs-core-sdk/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Arlula/jsSDK.git"
+    "url": "https://github.com/Arlula/nodejs-core-sdk.git"
   },
   "scripts": {
     "compile": "tsc",
