@@ -202,7 +202,7 @@ export function downloadHelper(client: AxiosInstance, id: string): Promise<Array
  * License -----------> "license",
  */
 export enum ResourceType {
-    ImageryTiff       = "img_tiff",
+    ImageryTiff       = "img_tif",
     ImageryJP2        = "img_jp2",
     Thumb             = "thumb",
     Overview          = "gdal_tiff_overview",
