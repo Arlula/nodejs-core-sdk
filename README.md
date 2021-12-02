@@ -211,12 +211,43 @@ This is accessible via the method `resource.download()`
 
 ###### Download Resource
 
-Downloads the resources contents and presents it as an ArrayBuffer (or simply Buffer in environments without ArrayBuffer).
+Resources can be downloaded in two ways, to a file on system, or to an in memory ArrayBuffer.
+
+Before starting a download, check a resources `size` field and ensure it is not larger than the available memory of the application.
+
+**Download to Memory**
+
+Downloads the resources contents and presents it as an ArrayBuffer.
 
 ```
 client.orders().downloadResource("<resource id>")
 .then((body) => {
     console.log(body);
+})
+```
+
+**Download to Disk**
+
+Download the resource piping the result to a file on disk, or creates a file at the provided path.
+
+```
+client.orders().downloadResourceToFile("<resource id>", "<filepath>")
+.then((fileReference) => {
+    // use the resource file
+})
+```
+
+or 
+
+```
+const file = fs.createWriteStream("<filepath>", { 
+    flags: "w+",
+    mode: 0o644,
+});
+client.orders().downloadResourceToFile("<resource id>", file)
+.then((fileReference) => {
+    // use the resource file
+    // note: fileReference === file
 })
 ```
 
