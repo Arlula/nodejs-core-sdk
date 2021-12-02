@@ -6,7 +6,6 @@ export function authProvider(user: string, pass:string): requestBuilder {
         // const timeoutCtrl = setTimeout(() => {
         //     controller.abort();
         // }, timeout || 12_000);
-        console.log("req: ", method, path);
         return fetch(path, {
             method: method,
             headers: {
