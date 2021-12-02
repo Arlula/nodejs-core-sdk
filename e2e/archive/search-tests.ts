@@ -97,9 +97,7 @@ function test5(client: Arlula) {
     console.log("search 5")
     const search = new SearchRequest(new Date(2020, 5, 15))
         .to(new Date(2020, 8, 13))
-    const search = new SearchRequest(new Date("2020-05-15"))
-        .to(new Date("2020-06-13"))
-        .boundingBox(14.658508, 50.392761, 14.032288, 50.021858)
+        .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
         .setMaximumResolution(Resolution.medium);
     return client.archive().search(search)
         .then((res) => {
