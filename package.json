@@ -26,9 +26,9 @@
   "scripts": {
     "compile": "tsc",
     "clean": "rm -rf dist",
-    "prebuildpackage": "npm run clean && npm run compile && node helpers/publishHelper.js",
-    "buildpackage": "cd dist && npm pack",
-    "test": "npm run buildpackage && cd e2e && rm -rf dist && rm -rf temp  && mkdir temp && npx webpack --env tests && node ./dist/node.js && cd .."
+    "build-package": "npm run clean && npm run compile && node helpers/publishHelper.js",
+    "local-build": "npm run build-package && cd dist && npm pack",
+    "test": "npm run local-build && cd e2e && rm -rf dist && rm -rf temp  && mkdir temp && npx webpack --env tests && node ./dist/node.js && cd .."
   },
   "license": "MIT",
   "dependencies": {
