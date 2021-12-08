@@ -9,11 +9,11 @@ import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
 
 if (host || process.env.host) {
-    setCustomHost(host);
+    setCustomHost(host || process.env.host);
 }
 
 if (timeout || process.env.timeout) {
-    setDefaultTimeout(timeout)
+    setDefaultTimeout(timeout || parseInt(process.env.timeout || "12000"));
 }
 
 console.log("starting tests")
