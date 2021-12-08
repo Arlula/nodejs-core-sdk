@@ -15,7 +15,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
 // basic order
 function test1(client: Arlula) {
     console.log("order 1");
-    const req = new OrderRequest(orderingID, orderEULA, 1);
+    const req = new OrderRequest(orderingID || process.env.order_key, orderEULA || process.env.order_eula || "", 1);
     return client.archive().order(req)
     .then((resp) => {
         if (!resp.id) {

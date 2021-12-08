@@ -16,7 +16,7 @@ export default function runOrderResourceTests(client: Arlula): Promise<unknown> 
 // order get => child resource => download
 function test1(client: Arlula) {
     console.log("resource get 1");
-    return client.orders().get(orderID)
+    return client.orders().get(orderID || process.env.order_id)
     .then((order) => {
         if (!order.resources.length) {
             console.error("resource 1, Get order returned no resources");
@@ -48,7 +48,7 @@ function test1(client: Arlula) {
 // client => resource download
 function test2(client: Arlula) {
     console.log("resource get 2");
-    return client.orders().downloadResource(resourceID)
+    return client.orders().downloadResource(resourceID || process.env.resource_id)
     .then((data) => {
         if (!(data instanceof ArrayBuffer)) {
             console.error("resource 2, unexpected resource data type: ", arrayBufferToString(data));
@@ -68,7 +68,7 @@ function test2(client: Arlula) {
 // client => resource download to file
 function test3(client: Arlula) {
     console.log("resource get 3");
-    return client.orders().downloadResourceToFile(resourceID, resourceOutput)
+    return client.orders().downloadResourceToFile(resourceID || process.env.resource_id, resourceOutput || process.env.resource_file2)
     .then((data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 3, unexpected resource data type: ", data);
@@ -96,7 +96,7 @@ function test4(client: Arlula) {
         flags: "w+",
         mode: 0o644,
     });
-    return client.orders().downloadResourceToFile(resourceID, file)
+    return client.orders().downloadResourceToFile(resourceID || process.env.resource_id, file || process.env.resource_file1)
     .then((data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 4, unexpected resource data type: ", data);

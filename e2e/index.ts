@@ -8,18 +8,18 @@ import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
 
-if (host) {
+if (host || process.env.host) {
     setCustomHost(host);
 }
 
-if (timeout) {
+if (timeout || process.env.timeout) {
     setDefaultTimeout(timeout)
 }
 
 console.log("starting tests")
 const start = new Date()
 
-const client = new Arlula(Key, Secret);
+const client = new Arlula(Key || process.env.api_key, Secret || process.env.api_secret);
 
 Promise.all([
     // run tests
