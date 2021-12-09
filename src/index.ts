@@ -50,7 +50,7 @@ export default class Arlula {
                     return
                 }
                 res.text()
-                .then((msg) => {
+                .then((msg: string) => {
                     reject(msg)
                 })
             })

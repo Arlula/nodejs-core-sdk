@@ -50,7 +50,7 @@ export function jsonOrError(r: Response): Promise<unknown> {
             return;
         }
         r.text()
-        .then((resp) => {
+        .then((resp: string) => {
             reject(resp);
         });
     })
@@ -63,7 +63,7 @@ export function textOrError(r: Response): Promise<string> {
             return;
         }
         r.text()
-        .then((resp) => {
+        .then((resp: string) => {
             reject(resp);
         });
     })
@@ -76,7 +76,7 @@ export function bufferOrError(r: Response): Promise<ArrayBuffer> {
             return;
         }
         r.text()
-        .then((resp) => {
+        .then((resp: string) => {
             reject(resp);
         });
     })
