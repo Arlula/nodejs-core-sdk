@@ -42,11 +42,12 @@ Promise.all([
     runOrderResourceTests(client),
 ])
 .then(() => {
-    console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "]");
+    console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
 })
 .catch((errors) => {
-    console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "]");
-    console.log(errors)
+    console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
+    console.log(errors);
+    process.exit(1);
 });
 
 function testEndpoint(client: Arlula) {
