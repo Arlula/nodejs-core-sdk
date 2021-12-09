@@ -21,13 +21,13 @@ All contributions should pass tests, and if adding a new feature, should test it
 If you identify a test case that is not currently covered, please bring it to our attention, or make a merge request to correct it.
 
 Note: as the system calls the API, credentials are needed for testing.  
-To test, a credentials.ts file needs to be created at `e2e/credentials.ts` which should export the following:
- - `Key` and `Secret` corresponding to the API Key and Secret.
- - `orderingID` being a search result `id` value to test ordering
- - `orderEULA` which contains the corresponding EULA to the above ID
- - `orderID` which contains the order to load in get order tests
- - `resourceID` the id of a resource to load for resource download tests
- - `resourceOutput` is a path to download `resourceID` to, when testing download to file path
- - `resourceOutput2` is a path to download `resourceID` to, when testing download to a file reference
+To test, a .env file needs to be created at `e2e/.env` which should export the following:
+ - `api_key` and `api_secret` corresponding to the API Key and Secret.
+ - `order_id` being a search result `id` value to test ordering
+ - `order_eula` which contains the corresponding EULA to the above ID
+ - `order_key` which contains the order to load in get order tests
+ - `resource_id` the id of a resource to load for resource download tests
+ - `resource_file1` is a path to download `resource_id` to, when testing download to file path
+ - `resource_file2` is a path to download `resource_id` to, when testing download to a file reference
 
 Optionally, if operating behind a proxy, the `host`, and `timeout` options can be provided to set an aliased host/basepath for testing, or extend the default timeout to account for the proxy's round trip.
