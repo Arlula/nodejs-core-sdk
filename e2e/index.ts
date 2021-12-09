@@ -1,4 +1,4 @@
-import { Key, Secret, host, timeout } from "./credentials";
+import dotenv from "dotenv";
 import Arlula from "../dist";
 import { setCustomHost } from "../dist/util/paths";
 import { setDefaultTimeout } from "../dist/util/request";
@@ -8,18 +8,20 @@ import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
 
-if (host || process.env.host) {
-    setCustomHost(host || process.env.host);
+dotenv.config();
+
+if (process.env.host) {
+    setCustomHost(process.env.host);
 }
 
-if (timeout || process.env.timeout) {
-    setDefaultTimeout(timeout || parseInt(process.env.timeout || "12000"));
+if (process.env.timeout) {
+    setDefaultTimeout(parseInt(process.env.timeout || "12000"));
 }
 
 console.log("starting tests")
 const start = new Date()
 
-const client = new Arlula(Key || process.env.api_key, Secret || process.env.api_secret);
+const client = new Arlula(process.env.api_key || "", process.env.api_secret || "");
 
 Promise.all([
     // run tests

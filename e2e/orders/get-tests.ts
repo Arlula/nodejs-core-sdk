@@ -1,8 +1,6 @@
 import Arlula from "../../dist/index";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
-import { orderID } from "../credentials";
-
 export default function runOrderGetTests(client: Arlula): Promise<unknown> {
 
     return Promise.all([
@@ -57,7 +55,7 @@ function test1(client: Arlula) {
 // get direct
 function test2(client: Arlula) {
     console.log("order get 2")
-    return client.orders().get(orderID || process.env.order_id)
+    return client.orders().get(process.env.order_id || "")
     .then((order) => {
         if (!order.id) {
             console.error("order get 2, got empty order");
@@ -79,7 +77,7 @@ function test2(client: Arlula) {
 // changing version to 6 (invalid version) to invalidate ID
 function test3(client: Arlula) {
     console.log("order get 3")
-    const tmpID = orderID || process.env.order_id;
+    const tmpID = process.env.order_id || "";
     const id = `${tmpID.substr(0,14)}6${tmpID.substr(15)}`;
     return client.orders().get(id)
     .then((order) => {

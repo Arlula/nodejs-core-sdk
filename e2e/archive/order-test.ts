@@ -2,8 +2,6 @@ import Arlula from "../../dist";
 import OrderRequest from "../../dist/archive/order-request";
 import { OrderStatus } from "../../dist/orders/order";
 
-import { orderingID, orderEULA } from "../credentials";
-
 export default function runOrderTests(client: Arlula): Promise<unknown> {
 
     return Promise.all([
@@ -15,7 +13,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
 // basic order
 function test1(client: Arlula) {
     console.log("order 1");
-    const req = new OrderRequest(orderingID || process.env.order_key, orderEULA || process.env.order_eula || "", 1);
+    const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", 1);
     return client.archive().order(req)
     .then((resp) => {
         if (!resp.id) {

@@ -1,6 +1,5 @@
 import fs, { WriteStream } from "fs";
 import Arlula from "../../dist/index";
-import { orderID, resourceID, resourceOutput, resourceOutput2 } from "../credentials";
 
 export default function runOrderResourceTests(client: Arlula): Promise<unknown> {
 
@@ -16,7 +15,7 @@ export default function runOrderResourceTests(client: Arlula): Promise<unknown> 
 // order get => child resource => download
 function test1(client: Arlula) {
     console.log("resource get 1");
-    return client.orders().get(orderID || process.env.order_id)
+    return client.orders().get(process.env.order_id || "")
     .then((order) => {
         if (!order.resources.length) {
             console.error("resource 1, Get order returned no resources");
@@ -48,7 +47,7 @@ function test1(client: Arlula) {
 // client => resource download
 function test2(client: Arlula) {
     console.log("resource get 2");
-    return client.orders().downloadResource(resourceID || process.env.resource_id)
+    return client.orders().downloadResource(process.env.resource_id || "")
     .then((data) => {
         if (!(data instanceof ArrayBuffer)) {
             console.error("resource 2, unexpected resource data type: ", arrayBufferToString(data));
@@ -68,13 +67,13 @@ function test2(client: Arlula) {
 // client => resource download to file
 function test3(client: Arlula) {
     console.log("resource get 3");
-    return client.orders().downloadResourceToFile(resourceID || process.env.resource_id, resourceOutput || process.env.resource_file2)
+    return client.orders().downloadResourceToFile(process.env.resource_id || "", process.env.resource_file1 || "res_dl_test_1")
     .then((data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 3, unexpected resource data type: ", data);
             return Promise.reject(data);
         }
-        if (data.path != resourceOutput) {
+        if (data.path != (process.env.resource_file1 || "res_dl_test_1")) {
             console.error("resource 3, unexpected download path: ", data.path);
             return Promise.reject("resource 3, unexpected download path: " + data.path);
         }
@@ -92,17 +91,17 @@ function test3(client: Arlula) {
 // client => resource download to file (with file)
 function test4(client: Arlula) {
     console.log("resource get 4");
-    const file = fs.createWriteStream(resourceOutput2, { 
+    const file = fs.createWriteStream(process.env.resource_file2 || "res_dl_test_2", { 
         flags: "w+",
         mode: 0o644,
     });
-    return client.orders().downloadResourceToFile(resourceID || process.env.resource_id, file || process.env.resource_file1)
+    return client.orders().downloadResourceToFile(process.env.resource_id || "", file)
     .then((data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 4, unexpected resource data type: ", data);
             return Promise.reject(data);
         }
-        if (data.path != resourceOutput2) {
+        if (data.path != (process.env.resource_file2 || "res_dl_test_2")) {
             console.error("resource 4, unexpected download path: ", data.path);
             return Promise.reject("resource 4, unexpected download path: " + data.path);
         }
