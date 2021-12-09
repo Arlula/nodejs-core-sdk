@@ -4,7 +4,7 @@ on:
     types: [published]
 jobs:
   test:
-    uses: Arlula/nodejs-core-sdk/.github/workflows/test-pr.yml@v1
+    uses: Arlula/nodejs-core-sdk/.github/workflows/test-pr.yml@main
     secrets:
       test_host: ${{ secrets.test_host }}
       test_timeout: ${{ secrets.test_timeout }}
