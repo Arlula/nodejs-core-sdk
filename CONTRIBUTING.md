@@ -31,3 +31,16 @@ To test, a .env file needs to be created at `e2e/.env` which should export the f
  - `resource_file2` is a path to download `resource_id` to, when testing download to a file reference
 
 Optionally, if operating behind a proxy, the `host`, and `timeout` options can be provided to set an aliased host/basepath for testing, or extend the default timeout to account for the proxy's round trip.
+
+## Merging
+
+When opening a pull request to contribute an automated test will occur through github actions.
+
+Pull Requests must pass testing before being merged.  
+
+## Releasing
+
+releases occur through the github releases mechanism.
+
+The new release commit should be tagged using semver `v<mv>.<sv>.<pv>` and pushed.  
+a release should then be created, after which CI/CD will run tests and release to npm.
