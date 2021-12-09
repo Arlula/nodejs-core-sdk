@@ -3,6 +3,7 @@ credentials.*
 **/credentials.*
 e2e/dist
 e2e/temp
+e2e/.env
 dist
 build
 *.tgz
