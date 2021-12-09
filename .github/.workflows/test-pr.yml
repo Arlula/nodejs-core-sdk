@@ -1,0 +1,47 @@
+name: Test package on PR, or as reusable workflow
+on:
+  workflow_call:
+    secrets:
+      test_host:
+        required: true
+      test_timeout:
+        required: true
+      test_api_key:
+        required: true
+      test_api_secret:
+        required: true
+      test_order_key:
+        required: true
+      test_order_eula:
+        required: true
+      test_order_id:
+        required: true
+      test_resource_id:
+        required: true
+      test_resource_file1:
+        required: true
+      test_resource_file2:
+        required: true
+  pull_request:
+    types: [opened,edited,synchronize,reopened,ready_for_review,review_requested,]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm test
+        env:
+          host: ${{ secrets.test_host }}
+          timeout: ${{ secrets.test_timeout }}
+          api_key: ${{ secrets.test_api_key }}
+          api_secret: ${{ secrets.test_api_secret }}
+          order_key: ${{ secrets.test_order_key }}
+          order_eula: ${{ secrets.test_order_eula }}
+          order_id: ${{ secrets.test_order_id }}
+          resource_id: ${{ secrets.test_resource_id }}
+          resource_file1: ${{ secrets.test_resource_file1 }}
+          resource_file2: ${{ secrets.test_resource_file2 }}
