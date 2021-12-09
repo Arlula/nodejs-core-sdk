@@ -1,17 +1,25 @@
-import { Key, Secret, host } from "./credentials";
+import { Key, Secret, host, timeout } from "./credentials";
 import Arlula from "../dist";
 import { setCustomHost } from "../dist/util/paths";
+import { setDefaultTimeout } from "../dist/util/request";
 import runSearchTests from "./archive/search-tests";
 import runOrderTests from "./archive/order-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
 
-if (host) {
-    setCustomHost(host);
+if (host || process.env.host) {
+    setCustomHost(host || process.env.host);
 }
 
-const client = new Arlula(Key, Secret);
+if (timeout || process.env.timeout) {
+    setDefaultTimeout(timeout || parseInt(process.env.timeout || "12000"));
+}
+
+console.log("starting tests")
+const start = new Date()
+
+const client = new Arlula(Key || process.env.api_key, Secret || process.env.api_secret);
 
 Promise.all([
     // run tests
@@ -34,19 +42,19 @@ Promise.all([
     runOrderResourceTests(client),
 ])
 .then(() => {
-    console.log("tests successful");
+    console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
 })
-.catch(() => {
-    console.log("tests failed");
-    // TODO: return failure status 
+.catch((errors) => {
+    console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
+    console.log(errors);
+    process.exit(1);
 });
 
 function testEndpoint(client: Arlula) {
     return client.test()
     .then((res) => {
         if (!res) {
-            console.error("Connection test failed")
-            return Promise.reject("Connection test failed");
+            return Promise.reject("Connection test failed: " + res);
         }
     });
 }

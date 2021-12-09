@@ -1,8 +1,17 @@
-# Arlula JS/TS SDK
+# Arlula NodeJS/TS SDK
 
-The Arlula Node and client side JS SDK provides convenient access to the Arlula satellite imagery APIs.
+The Arlula NodeJS SDK provides convenient access to the Arlula satellite imagery APIs.
 
-## Documentation
+## Links
+
+The full API reference documentation is available on the arlula website  
+[https://arlula.com/documentation/](https://arlula.com/documentation/)
+
+The package can be found on npm at  
+[https://www.npmjs.com/package/@arlula/core](https://www.npmjs.com/package/@arlula/core)
+
+The source can be found on github at  
+[https://github.com/Arlula/nodejs-core-sdk](https://github.com/Arlula/nodejs-core-sdk)
 
 ### Credentials
 
@@ -63,11 +72,11 @@ request.point(151.209439, -33.854259);
 request.setMaximumResolution(Resolution.medium)
 client.archive().search(request)
 .then((scenes) => {
-    console.log(searches);
+    console.log(scenes);
 });
 ```
 
-The search request will return an array of available scenes as a `SearchResult` object ([see API documentation](https://arlula.com/documentation))
+The search request will return an array of available scenes as `SearchResult` objects ([see structure reference](https://arlula.com/documentation/#ref-search-result))
 
 Searches can be done by a target date, date range, point and bounding box searches, as well as restricting the maximum allowable resolution.  
 Full details on constructing searches is available below.
@@ -88,7 +97,7 @@ client.archive().order(request)
 ```
 
 Ordering requires confirming the eula of the supplier for the given scene, the URL of the eula can be found in the search result.  
-Similarly, the number of seats to license the image for must be provided, and may affect pricing ([see API documentation for details on eulas and pricing](https://arlula.com/documentation)).
+Similarly, the number of seats to license the image for must be provided, and may affect pricing ([see API documentation for details on eulas and pricing](https://arlula.com/documentation/#archive-order)).
 
 NOTE: search results have a `fulfillment` field which estimates how long it will take the supplier to provide the imagery for the order.  
 The imagery will not be available immediately in the promise for all suppliers
@@ -111,15 +120,15 @@ After initializing the search request, its details can be controlled by several 
 
 The temporal constraints can be controlled with the following methods;
 
- - atDate(date) -------------> discards any date range and sets a single date search to the given date
- - from(date) ---------------> sets the search date, or start of a date range (ignoring any set end date)
- - to(date) -----------------> sets the end date of a date range (converting a single date search to a range)
- - betweenDates(start, end) -> discards all current dates and sets a date range to search
+ - `atDate(date)` -------------> discards any date range and sets a single date search to the given date
+ - `from(date)` ---------------> sets the search date, or start of a date range (ignoring any set end date)
+ - `to(date)` -----------------> sets the end date of a date range (converting a single date search to a range)
+ - `betweenDates(start, end)` -> discards all current dates and sets a date range to search
 
 To constrain the search in space and search your specific area of interest, you can specify with the following methods;
 
- - point(long, lat) ----------------------> set the center point of your area of interest with its latitude and longitude
- - boundingBox(west, north, east, south) -> set a bounding box containing your area of interest by its cardinal boundaries
+ - `point(long, lat)` ----------------------> set the center point of your area of interest with its latitude and longitude
+ - `boundingBox(west, north, east, south)` -> set a bounding box containing your area of interest by its cardinal boundaries
 
 Additionally, if you're only interested in results of a certain resolution, you can specify a maximum resolution for search results.  
 You can specify a resolution in meters/pixel, or use the labels of predefined common resolutions in the `Resolution` enumeration
@@ -132,10 +141,16 @@ req.setMaximumResolution(Resolution.high)
 req.setMaximumResolution(3)
 ```
 
+Results can also be filtered by the imagery source, or properties such as
+
+ - `withSupplier("<supplier key>")` --> Limit results to only the identified supplier
+ - `withCloudCover(cloudPercentage)` -> Limit results to those with a whole scene cloud coverage less than the provided percentage
+ - `withOffNadir(OffNadirAngle)` -----> Limit results to only those with an off nadir pointing within &plusmn; the provided value
+
 Lastly, these calls may be chained to generate your request, i.e.
 
 ```
-req = new SearchRequest(new Date("2020-12-16")).to(new Date("2020-12-30")).point(151.209439, -33.854259);
+req = new SearchRequest(new Date("2020-12-16")).to(new Date("2020-12-30")).point(151.209439, -33.854259).withCloudCover(50);
 ```
 
 ###### Order Requests
@@ -196,12 +211,43 @@ This is accessible via the method `resource.download()`
 
 ###### Download Resource
 
-Downloads the resources contents and presents it as an ArrayBuffer (or simply Buffer in environments without ArrayBuffer).
+Resources can be downloaded in two ways, to a file on system, or to an in memory ArrayBuffer.
+
+Before starting a download, check a resources `size` field and ensure it is not larger than the available memory of the application.
+
+**Download to Memory**
+
+Downloads the resources contents and presents it as an ArrayBuffer.
 
 ```
 client.orders().downloadResource("<resource id>")
 .then((body) => {
     console.log(body);
+})
+```
+
+**Download to Disk**
+
+Download the resource piping the result to a file on disk, or creates a file at the provided path.
+
+```
+client.orders().downloadResourceToFile("<resource id>", "<filepath>")
+.then((fileReference) => {
+    // use the resource file
+})
+```
+
+or 
+
+```
+const file = fs.createWriteStream("<filepath>", { 
+    flags: "w+",
+    mode: 0o644,
+});
+client.orders().downloadResourceToFile("<resource id>", file)
+.then((fileReference) => {
+    // use the resource file
+    // note: fileReference === file
 })
 ```
 
@@ -224,6 +270,6 @@ The return types and several of their enumerations are also exposed
 import SearchResult from "@arlula/core/archive/search-result";
 // orders and their status enumeration
 import Order, { OrderStatus } from "@arlula/core/orders/order";
-// resources and their supported types enumeration
+// resources and their supported legacy types enumeration (see documentation for new roles mechanism)
 import Resource, { ResourceType } from "@arlula/core/orders/resource";
 ```

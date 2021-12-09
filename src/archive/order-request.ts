@@ -2,6 +2,10 @@ import SearchResult from "./search-result";
 
 /**
  * @class OrderRequest wraps the details of an order request
+ * 
+ * @see {https://arlula.com/documentation/#archive-order|Archive Order endpoint documentation}
+ * or
+ * @see {https://arlula.com/documentation/#ref-order-request|Archive order request structure reference}
  */
 export default class OrderRequest {
     private _req?: SearchResult;
