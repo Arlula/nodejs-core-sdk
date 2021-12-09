@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm i
       - run: npm test
         env:
           host: ${{ secrets.test_host }}

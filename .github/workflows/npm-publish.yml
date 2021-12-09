@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: npm i
       - run: npm build-package
       - run: npm publish dist --access public
         env:
