@@ -1,5 +1,4 @@
 export default function decodePolygon(json: unknown): number[][][]|null {
-    // TODO: handle depth 2 legacy format
 
     const result: number[][][] = [];
 
@@ -18,7 +17,15 @@ export default function decodePolygon(json: unknown): number[][][]|null {
 
         loop.forEach((point) => {
             if (!Array.isArray(point)) {
-                error = true;
+                if (typeof point !== "number") {
+                    error = true;
+                    return;
+                }
+
+                if (!loop.length) {
+                    loop.push([]);
+                }
+                loop[0].push(point);
                 return;
             }
 
