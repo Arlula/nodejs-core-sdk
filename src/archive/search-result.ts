@@ -1,5 +1,9 @@
 
 
+export interface SearchResponse {
+    results: SearchResult[];
+}
+
 /**
  * SearchResult contains information on a scene that may be ordered through the archive API
  * full details can be found in the Arlula Documentation
@@ -9,25 +13,28 @@
  * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
  */
 export default interface SearchResult {
-    supplier: string;
-    eula: string;
-    id: string;
     sceneID: string;
+    supplier: string;
     platform: string;
     date: Date;
+    thumbnail: string;
+    cloud: number;
+    offNadir: number;
+    gsd: number;
+    bands: Band[];
+    area: number;
     center: {
         lat: number;
         long: number;
     };
-    bounding: number[][];
-    area: number;
+    bounding: number[][][];
     overlap: {
         area: number;
         percent: {
             scene: number;
             search?: number;
         },
-        polygon: number[][];
+        polygon: number[][][];
     };
     price: {
         base: number;
@@ -38,9 +45,28 @@ export default interface SearchResult {
         }[];
     };
     fulfillmentTime: number;
-    resolution: number;
-    thumbnail: string;
-    cloud: number;
-    offNadir: number;
+    orderingID: string;
+    bundles: BundleOption[];
+    license: License[];
     annotations: string[];
+}
+
+export interface Band {
+    name: string;
+    id: string;
+    min: number;
+    max: number;
+}
+
+export interface BundleOption {
+    key: string;
+    bands: string[];
+    price: number;
+}
+
+export interface License {
+    name: string;
+    href: string;
+    loadingPercent: number;
+    loadingAmount: number;
 }
