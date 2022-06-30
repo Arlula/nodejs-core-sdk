@@ -1,6 +1,6 @@
 import Arlula from "../../dist";
 import SearchRequest, { Resolution } from "../../dist/archive/search-request";
-import SearchResult from "../../dist/archive/search-result";
+import SearchResponse from "../../dist/archive/search/response";
 
 export default function runSearchTests(client: Arlula): Promise<unknown> {
 
@@ -26,8 +26,8 @@ function test1(client: Arlula) {
     return client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.length < 1) {
-            console.error("search 1 - Insufficient results for search, ", res.length);
+        if (res.results.length < 1) {
+            console.error("search 1 - Insufficient results for search, ", res.results.length);
             console.log(res);
             return Promise.reject("search 1 - insufficient results");
         }
@@ -45,8 +45,8 @@ function test2(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-            if (res.length < 1) {
-                console.error("search 2 - Insufficient results for search, ", res.length);
+            if (res.results.length < 1) {
+                console.error("search 2 - Insufficient results for search, ", res.results.length);
                 console.log(res);
                 return Promise.reject("search 2 - insufficient results");
             }
@@ -64,8 +64,8 @@ function test3(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.length < 10) {
-            console.error("search 3 - Insufficient results for search, ", res.length);
+        if (res.results.length < 10) {
+            console.error("search 3 - Insufficient results for search, ", res.results.length);
             console.log(res)
             return Promise.reject("search 3 - insufficient results");
         }
@@ -83,8 +83,8 @@ function test4(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.length < 1) {
-            console.error("search 4 - Insufficient results for search, ", res.length);
+        if (res.results.length < 1) {
+            console.error("search 4 - Insufficient results for search, ", res.results.length);
             console.log(res)
             return Promise.reject("search 4 - insufficient results");
         }
@@ -102,8 +102,8 @@ function test5(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-            if (res.length < 1) {
-                console.error("search 5 - Insufficient results for search, ", res.length);
+            if (res.results.length < 1) {
+                console.error("search 5 - Insufficient results for search, ", res.results.length);
                 console.log(res)
                 return Promise.reject("search 5 - insufficient results");
             }
@@ -192,7 +192,7 @@ function exceptionHandler(label: string) {
 }
 
 function expectedError(label: string) {
-    return function (result: SearchResult[]) {
+    return function (result: SearchResponse) {
         console.error("Error executing"+label+": ", result);
         return Promise.reject(label+": "+result);
     }
