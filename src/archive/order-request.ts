@@ -11,7 +11,7 @@ export default class OrderRequest {
     private _req?: SearchResult;
     private _id: string;
     private _eula: string;
-    private _seats: number;
+    private _bundleKey: string;
     private _webhooks?: string[];
     private _emails?: string[];
 
@@ -19,20 +19,20 @@ export default class OrderRequest {
      * creates a new order request
      * @param {string|SearchResult} searchID   The search result (scene) to order, or its corresponding ID
      * @param {string}              eula       The EULA for the order to confirm acceptance
-     * @param {number}              seats      The number of seats to license the scene for
+     * @param {string}              bundleKey  the bundle of imagery bands and processing to order
      * @param {string[]}            [webhooks] Any webhooks to notify of the orders status
      * @param {string[]}            [emails]   Any emails to notify of the orders status
      */
-    constructor(searchID: string|SearchResult, eula: string, seats: number, webhooks?: string[], emails?: string[]) {
+    constructor(searchID: string|SearchResult, eula: string, bundleKey: string, webhooks?: string[], emails?: string[]) {
         if (typeof searchID === "string") {
             this._id = searchID
         } else {
-            this._id = searchID.id;
+            this._id = searchID.orderingID;
             this._req = searchID;
         }
         
         this._eula = eula;
-        this._seats = seats;
+        this._bundleKey = bundleKey;
 
         if (webhooks) {
             this._webhooks = webhooks;
@@ -94,11 +94,18 @@ export default class OrderRequest {
             return false;
         }
 
-        if (this._req && this._eula !== this._req.eula) {
+        let found = false;
+        this._req?.license.some((v) => {
+            if (v.href === this._eula) {
+                found = true;
+                return found;
+            }
+        })
+        if (this._req && !found) {
             return false;
         }
 
-        if (this._seats < 1) {
+        if (this._bundleKey == "") {
             return false;
         }
 
@@ -119,7 +126,8 @@ export default class OrderRequest {
         const res: orderRequest = {
             id: this._id,
             eula: this._eula,
-            seats: this._seats,
+            bundleKey: this._bundleKey,
+            seats: 1,
             webhooks: this._webhooks,
             emails: this._emails,
         };
@@ -134,7 +142,8 @@ export default class OrderRequest {
 interface orderRequest {
     id: string;
     eula: string;
-    seats: number;
+    bundleKey: string;
+    seats: number; // deprecated as of 2022-07, retained for temporary support
     webhooks?: string[];
     emails?: string[];
 }
