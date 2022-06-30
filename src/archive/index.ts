@@ -1,5 +1,5 @@
 import SearchRequest from "./search-request";
-import SearchResult from "./search-result";
+import { SearchResponse } from "./search-result";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
 import paths from "../util/paths";
@@ -31,18 +31,21 @@ export default class Archive {
      * or
      * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
      */
-    search(req: SearchRequest): Promise<SearchResult[]> {
+    search(req: SearchRequest): Promise<SearchResponse> {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
         return this._client("GET", paths.ArchiveSearch+req._toQueryString())
         .then(jsonOrError)
         .then((resp) => {
-            if (!Array.isArray(resp)) {
-                return Promise.reject("response was not an array of results");
+            // if (!Array.isArray(resp)) {
+            //     return Promise.reject("response was not an array of results");
+            // }
+            if (typeof resp !== "object") {
+                return Promise.reject("response was not a valid search response object");
             }
 
-            return resp as SearchResult[];
+            return resp as SearchResponse;
         });
     }
 
