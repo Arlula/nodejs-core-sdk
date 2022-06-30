@@ -98,6 +98,8 @@ export function decodeResult(json: unknown): SearchResult|null {
     // gsd
     if (argMap?.gsd && typeof argMap.gsd == "number") {
         gsd = argMap.gsd;
+    } else if (argMap?.resolution && typeof argMap.resolution == "number") {
+        gsd = argMap.resolution;
     } else {
         return null;
     }
@@ -111,8 +113,6 @@ export function decodeResult(json: unknown): SearchResult|null {
                 return null;
             }
         });
-    } else {
-        return null;
     }
     // area
     if (argMap?.area && typeof argMap.area == "number") {
@@ -159,6 +159,8 @@ export function decodeResult(json: unknown): SearchResult|null {
     // orderingID
     if (argMap?.orderingID && typeof argMap.orderingID == "string") {
         orderingID = argMap.orderingID;
+    } else if (argMap?.id && typeof argMap.id == "string") {
+        orderingID = argMap.id;
     } else {
         return null;
     }
@@ -172,8 +174,6 @@ export function decodeResult(json: unknown): SearchResult|null {
                 return null;
             }
         });
-    } else {
-        return null;
     }
     // license
     if (argMap?.license && Array.isArray(argMap.license)) {
@@ -185,8 +185,6 @@ export function decodeResult(json: unknown): SearchResult|null {
                 return null;
             }
         });
-    } else {
-        return null;
     }
     // annotations
     if (argMap?.annotations && Array.isArray(argMap.annotations)) {
@@ -199,6 +197,18 @@ export function decodeResult(json: unknown): SearchResult|null {
         });
     } else {
         return null;
+    }
+
+    // LEGACY FIELDS
+    // eula
+    if (argMap?.eula && typeof argMap.eula == "string") {
+        license.push(new License("default", argMap.eula, 0, 0));
+    }
+    // price
+    if (argMap?.price && typeof argMap.price == "object") {
+        const arg = argMap as {[key: string]: unknown};
+        
+        bundles.push({key: "default", bands: [], price: arg.base ? Number(arg.base) : 0})
     }
 
     return {

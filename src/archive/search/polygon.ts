@@ -1,4 +1,5 @@
 export default function decodePolygon(json: unknown): number[][][]|null {
+    // TODO: handle depth 2 legacy format
 
     const result: number[][][] = [];
 
