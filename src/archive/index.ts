@@ -1,5 +1,5 @@
 import SearchRequest from "./search-request";
-import { SearchResponse } from "./search-result";
+import SearchResponse, { decodeResponse, decodeResultSet } from "./search/response";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
 import paths from "../util/paths";
@@ -38,14 +38,22 @@ export default class Archive {
         return this._client("GET", paths.ArchiveSearch+req._toQueryString())
         .then(jsonOrError)
         .then((resp) => {
-            // if (!Array.isArray(resp)) {
-            //     return Promise.reject("response was not an array of results");
-            // }
-            if (typeof resp !== "object") {
+            if (Array.isArray(resp)) {
+                const results = decodeResultSet(resp);
+                if (!results) {
+                    return Promise.reject("error decoding search results");
+                }
+                return {results};
+            } else if (typeof resp === "object") {
+                const response = decodeResponse(resp);
+                if (!response) {
+                    return Promise.reject("error decoding search response");
+                }
+    
+                return response;
+            } else {
                 return Promise.reject("response was not a valid search response object");
             }
-
-            return resp as SearchResponse;
         });
     }
 

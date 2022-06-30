@@ -1,4 +1,4 @@
-import SearchResult from "./search-result";
+import SearchResult from "./search/result";
 
 /**
  * @class OrderRequest wraps the details of an order request
