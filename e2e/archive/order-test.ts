@@ -1,11 +1,14 @@
 import Arlula from "../../dist";
 import OrderRequest from "../../dist/archive/order-request";
+import SearchRequest from "../../dist/archive/search-request";
+import SearchResult from "../../dist/archive/search/result";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
 export default function runOrderTests(client: Arlula): Promise<unknown> {
 
     return Promise.all([
         test1(client),
+        test2(client),
         testError1(client),
         testError2(client),
         // TODO: enable this once 2022-07 is live on all servers
@@ -38,8 +41,48 @@ function test1(client: Arlula) {
 
 }
 
-// TODO: add more tests here
-//  - order from search result
+function test2(client: Arlula) {
+    console.log("order 2");
+    return client.archive().search(new SearchRequest(new Date(2018, 4, 3)).point(151.2108, -33.8523).setMaximumResolution(5))
+    .then((resp) => {
+        if (!resp.results) {
+            console.error("order 2 - no results for test search");
+            return Promise.reject("order 2 - no results for test search");
+        }
+        let scene: SearchResult|null = null;
+        for (let i=0; i<resp.results.length; i++) {
+            if (resp.results[i].license[0].href == (process.env.order_eula || "") || resp.results[i].bundles[0].price == 0) {
+                scene = resp.results[i];
+                break;
+            }
+        }
+        if (!scene) {
+            console.error("order 2 - no valid orders found");
+            return Promise.reject("order 2 - no valid orders found");
+        }
+        const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", process.env.order_bundle || "default");
+        return client.archive().order(req)
+    })
+    .then((resp) => {
+        if (!resp.id) {
+            console.error("order 2 - Receives order without ID");
+            return Promise.reject("order 2 - Receives order without ID");
+        }
+        // pre defined landsat order, will be complete and have resource results
+        if (resp.status !== OrderStatus.Complete) {
+            console.error("order 2 - order not complete");
+            return Promise.reject("order 2 - order not complete");
+        }
+        if (!resp.resources) {
+            console.error("order 2 - Landsat order with no resources");
+            return Promise.reject("order 2 - Landsat order with no resources");
+        }
+    })
+    .catch(exceptionHandler("order 2 - chained free"));
+    
+    
+
+}
 
 function testError1(client: Arlula) {
     console.log("order error 1");
