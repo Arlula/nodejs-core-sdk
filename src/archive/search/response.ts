@@ -3,6 +3,10 @@ import SearchResult, { decodeResult } from "./result";
 /**
  * SearchResponse is a response envelope that includes the search result set
  * This envelope will be expanded in coming updates
+ * 
+ * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
+ * or
+ * @see {https://arlula.com/documentation/#search-response|Archive Search Response}
  */
 export default interface SearchResponse {
     // status: string;
