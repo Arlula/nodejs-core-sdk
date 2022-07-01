@@ -22,7 +22,7 @@ function test1(client: Arlula) {
     console.log("search 1")
     const search = new SearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumResolution(Resolution.veryLow);
     return client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
