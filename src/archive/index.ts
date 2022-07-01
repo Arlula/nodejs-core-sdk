@@ -41,20 +41,23 @@ export default class Archive {
             if (Array.isArray(resp)) {
                 const results = decodeResultSet(resp);
                 if (!results) {
-                    return Promise.reject("error decoding search results");
+                    return Promise.reject({errors: ["error decoding search results"]});
                 }
                 return {results};
             } else if (typeof resp === "object") {
                 const response = decodeResponse(resp);
                 if (!response) {
-                    return Promise.reject("error decoding search response");
+                    return Promise.reject({errors: ["error decoding search response"]});
                 }
     
                 return response;
             } else {
-                return Promise.reject("response was not a valid search response object");
+                return Promise.reject({errors: ["response was not a valid search response object"]});
             }
-        });
+        })
+        .catch((msg: string) => {
+            return Promise.reject({errors: [msg]});
+        })
     }
 
     /**

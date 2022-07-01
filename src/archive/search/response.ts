@@ -6,9 +6,9 @@ import SearchResult, { decodeResult } from "./result";
  */
 export default interface SearchResponse {
     // status: string;
-    // errors: string[];
+    errors?: string[];
     // warnings: string[];
-    results: SearchResult[];
+    results?: SearchResult[];
 }
 
 // decodeResponse is a helper for reading results from JSON, it is not intended for public use.
