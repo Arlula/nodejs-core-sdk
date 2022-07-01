@@ -87,6 +87,7 @@ function test3(client: Arlula) {
             console.error("resource 3, unexpected download path: ", data.path);
             return Promise.reject("resource 3, unexpected download path: " + data.path);
         }
+        data.close()
     })
     .catch((e) => {
         if (e instanceof ArrayBuffer || e instanceof Buffer) {
@@ -119,6 +120,7 @@ function test4(client: Arlula) {
             console.error("resource 4, file reference has changed");
             return Promise.reject("resource 4, file reference has changed");
         }
+        data.close()
     })
     .catch((e) => {
         if (e instanceof ArrayBuffer || e instanceof Buffer) {
