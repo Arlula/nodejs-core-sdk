@@ -98,6 +98,21 @@ function test3(client: Arlula) {
             return Promise.reject("resource 3, unexpected download path: " + data.path);
         }
         data.close()
+        
+        return new Promise((resolve, reject) => {
+            fs.stat(process.env.resource_file2 || "temp/res_dl_test_1", (err, stat) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+    
+                if (stat.size < 100) {
+                    reject("unexpected resource length: "+ stat.size);
+                    return;
+                }
+                resolve(null);
+            })
+        });
     })
     .catch((e) => {
         if (e instanceof ArrayBuffer || e instanceof Buffer) {
@@ -131,6 +146,21 @@ function test4(client: Arlula) {
             return Promise.reject("resource 4, file reference has changed");
         }
         data.close()
+
+        return new Promise((resolve, reject) => {
+            fs.stat(process.env.resource_file2 || "temp/res_dl_test_2", (err, stat) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+    
+                if (stat.size < 100) {
+                    reject("unexpected resource length: "+ stat.size);
+                    return;
+                }
+                resolve(null);
+            })
+        });
     })
     .catch((e) => {
         if (e instanceof ArrayBuffer || e instanceof Buffer) {
