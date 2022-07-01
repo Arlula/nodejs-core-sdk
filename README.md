@@ -167,10 +167,10 @@ req = new OrderRequest("<id>", "<eula>", <seats>, [<webhooks...>], [<emails...>]
 
 or may be set/added to via methods on the order request;
 
- - setWebhooks(string[]) -> removes all existing webhooks and adds the provided list
- - addWebhook(string) ----> adds a webhook to the existing list
- - setEmails(string[]) ---> removes all existing emails and adds the provided list
- - addEmail(string) ------> adds an email to the existing list
+ - `setWebhooks(string[])` -> removes all existing webhooks and adds the provided list
+ - `addWebhook(string)` ----> adds a webhook to the existing list
+ - `setEmails(string[])` ---> removes all existing emails and adds the provided list
+ - `addEmail(string)` ------> adds an email to the existing list
 
 ##### Order management
 
