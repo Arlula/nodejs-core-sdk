@@ -22,8 +22,10 @@ function test1(client: Arlula) {
             return Promise.reject("Get order returned no resources");
         }
 
+        let found = false;
         order.resources.forEach((resource) => {
             if (resource.type == "meta_json") {
+                found = true;
                 resource.download()
                 .then((data) => {
                     if (!(data instanceof ArrayBuffer)) {
@@ -45,8 +47,16 @@ function test1(client: Arlula) {
                     return Promise.reject("resource 1, unexpected error getting resource: "+e);
                 });
             }
-        })
-    });
+        });
+        if (!found) {
+            console.error("error, no valid resource found to retrieve");
+            return Promise.reject("no valid resource found to retrieve");
+        }
+    })
+    .catch((e) => {
+        console.error("resource 1, unexpected outer error getting resource: ",e);
+        return Promise.reject("resource 1, unexpected outer error getting resource: "+e);
+    })
 }
 
 // client => resource download
