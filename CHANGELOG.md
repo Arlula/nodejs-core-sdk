@@ -19,3 +19,17 @@ Resource changes:
  - added new fields `roles`, `format`, `size` and `checksum`
  - added resource "download to file" support.
 
+## 2.0.0 - 01/07/2022
+
+Major version release to match server API version `2022-07`
+
+Search changes:
+ - endpoint response object is now `SearchResponse` not `SearchResult[]`
+ - removed the `eula` and `price` fields
+ - renamed the fields `id` to `orderingID` and `resolution` to `gsd`
+ - added new fields `bands` `bundles` and `license`
+ - rewrote decoder to allow structure to be backward compatible with APIs running previous version
+
+Order changes:
+ - removed `seats` argument
+ - added `bundleKey` argument
