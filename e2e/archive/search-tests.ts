@@ -37,10 +37,37 @@ function test1(client: Arlula) {
         }
         for (let i=0; i<res.results.length; i++) {
             const r = res.results[i];
-            if (r.bands.length == 0) {
-                console.error("search 1 - no bands in result");
+            // bounding
+            if (r.bounding.length == 0) {
+                console.error("search 1 - scene polygon is not populated");
                 console.log(r);
-                return Promise.reject("search 1 - no bands in result");
+                return Promise.reject("search 1 - scene polygon is not populated");
+            }
+            if (!JSON.stringify(r.bounding).startsWith("[[[")) {
+                console.error("search 1 - scene polygon is not valid");
+                console.log(r);
+                return Promise.reject("search 1 - scene polygon is not valid");
+            }
+            // overlap
+            if (r.overlap.area === 0) {
+                console.error("search 1 - scene overlap area is below the expected threshold");
+                console.log(r);
+                return Promise.reject("search 1 - scene overlap area is below the expected threshold");
+            }
+            if (r.overlap.percent.scene < 1) {
+                console.error("search 1 - scene overlap percent is below the expected threshold");
+                console.log(r);
+                return Promise.reject("search 1 - scene overlap percent is below the expected threshold");
+            }
+            if (r.overlap.polygon.length == 0) {
+                console.error("search 1 - overlap polygon not populated");
+                console.log(r);
+                return Promise.reject("search 1 - overlap polygon not populated");
+            }
+            if (!JSON.stringify(r.overlap.polygon).startsWith("[[[")) {
+                console.error("search 1 - overlap polygon not valid");
+                console.log(r);
+                return Promise.reject("search 1 - overlap polygon not valid");
             }
             // bands
             // TODO: enable this once 2022-07 is live on all servers
