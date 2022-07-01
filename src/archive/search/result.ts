@@ -85,13 +85,13 @@ export function decodeResult(json: unknown): SearchResult|null {
         return null;
     }
     // cloud
-    if (argMap?.cloud && typeof argMap.cloud == "number") {
+    if (argMap?.cloud !== undefined && typeof argMap.cloud == "number") {
         cloud = argMap.cloud;
     } else {
         return null;
     }
     // offNadir
-    if (argMap?.offNadir && typeof argMap.offNadir == "number") {
+    if (argMap?.offNadir !== undefined && typeof argMap.offNadir == "number") {
         offNadir = argMap.offNadir;
     } else {
         return null;
@@ -132,7 +132,7 @@ export function decodeResult(json: unknown): SearchResult|null {
         return null;
     }
     // bounding
-    if (argMap?.bounding && typeof argMap.bounding == "number") {
+    if (argMap?.bounding && Array.isArray(argMap.bounding)) {
         const p = decodePolygon(argMap.bounding);
         if (!p) {
             return null;
@@ -142,7 +142,7 @@ export function decodeResult(json: unknown): SearchResult|null {
         return null;
     }
     // overlap
-    if (argMap?.overlap && typeof argMap.overlap == "number") {
+    if (argMap?.overlap && typeof argMap.overlap == "object") {
         const o = decodeOverlap(argMap.overlap);
         if (!o) {
             return null;
@@ -152,7 +152,7 @@ export function decodeResult(json: unknown): SearchResult|null {
         return null;
     }
     // fulfillmentTime
-    if (argMap?.fulfillmentTime && typeof argMap.fulfillmentTime == "number") {
+    if (argMap?.fulfillmentTime !== undefined && typeof argMap.fulfillmentTime == "number") {
         fulfillmentTime = argMap.fulfillmentTime;
     } else {
         return null;
@@ -196,8 +196,6 @@ export function decodeResult(json: unknown): SearchResult|null {
                 return null;
             }
         });
-    } else {
-        return null;
     }
 
     // LEGACY FIELDS
