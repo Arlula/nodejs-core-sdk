@@ -30,6 +30,11 @@ function test1(client: Arlula) {
                         console.error("resource 1, unexpected resource data type: ", arrayBufferToString(data));
                         return Promise.reject(data);
                     }
+                    if (data.byteLength < 100) {
+                        console.error("resource 1, unexpected resource length: ", data.byteLength);
+                        console.log(arrayBufferToString(data))
+                        return Promise.reject("resource 1, unexpected resource length: "+ data.byteLength);
+                    }
                 })
                 .catch((e) => {
                     if (e instanceof ArrayBuffer || e instanceof Buffer) {
@@ -52,6 +57,11 @@ function test2(client: Arlula) {
         if (!(data instanceof ArrayBuffer)) {
             console.error("resource 2, unexpected resource data type: ", arrayBufferToString(data));
             return Promise.reject(data);
+        }
+        if (data.byteLength < 100) {
+            console.error("resource 2, unexpected resource length: ", data.byteLength);
+            console.log(arrayBufferToString(data))
+            return Promise.reject("resource 2, unexpected resource length: "+ data.byteLength);
         }
     })
     .catch((e) => {
