@@ -57,10 +57,21 @@ function test2(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+            if (res?.errors) {
+                console.error("search 2 - returned errors, ", res.errors);
+                return Promise.reject("search 2 - returned error");
+            }
             if (!res.results || res.results.length < 1) {
                 console.error("search 2 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
                 return Promise.reject("search 2 - insufficient results");
+            }
+            let msg: string;
+            for (let i=0; i<res.results.length; i++) {
+                msg = testResult("search 2", res.results[i]);
+                if (msg) {
+                    return Promise.reject("search 2 - " + msg);
+                }
             }
         })
         .catch(exceptionHandler("search 2 - point, date range"));
@@ -76,10 +87,21 @@ function test3(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (!res.results || res.results.length < 10) {
+        if (res?.errors) {
+            console.error("search 3 - returned errors, ", res.errors);
+            return Promise.reject("search 3 - returned error");
+        }
+        if (!res.results || res.results.length < 1) {
             console.error("search 3 - Insufficient results for search, ", res.results?.length);
-            console.log(res)
+            console.log(res);
             return Promise.reject("search 3 - insufficient results");
+        }
+        let msg: string;
+        for (let i=0; i<res.results.length; i++) {
+            msg = testResult("search 3", res.results[i]);
+            if (msg) {
+                return Promise.reject("search 3 - " + msg);
+            }
         }
     })
     .catch(exceptionHandler("search 3 - point, date range (low res)"));
@@ -95,10 +117,21 @@ function test4(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+        if (res?.errors) {
+            console.error("search 4 - returned errors, ", res.errors);
+            return Promise.reject("search 4 - returned error");
+        }
         if (!res.results || res.results.length < 1) {
             console.error("search 4 - Insufficient results for search, ", res.results?.length);
-            console.log(res)
+            console.log(res);
             return Promise.reject("search 4 - insufficient results");
+        }
+        let msg: string;
+        for (let i=0; i<res.results.length; i++) {
+            msg = testResult("search 4", res.results[i]);
+            if (msg) {
+                return Promise.reject("search 4 - " + msg);
+            }
         }
     })
     .catch(exceptionHandler("search 4 - box, date"));
@@ -114,10 +147,21 @@ function test5(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+            if (res?.errors) {
+                console.error("search 5 - returned errors, ", res.errors);
+                return Promise.reject("search 5 - returned error");
+            }
             if (!res.results || res.results.length < 1) {
                 console.error("search 5 - Insufficient results for search, ", res.results?.length);
-                console.log(res)
+                console.log(res);
                 return Promise.reject("search 5 - insufficient results");
+            }
+            let msg: string;
+            for (let i=0; i<res.results.length; i++) {
+                msg = testResult("search 5", res.results[i]);
+                if (msg) {
+                    return Promise.reject("search 5 - " + msg);
+                }
             }
         })
         .catch(exceptionHandler("search 5 - box, date range"));
