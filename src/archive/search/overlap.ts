@@ -16,12 +16,19 @@ export function decodeOverlap(json: unknown): Overlap|null {
         area = argMap.area;
     }
 
-    if (argMap?.scene && typeof argMap.scene == "number") {
-        scene = argMap.scene;
-    }
+    if (argMap?.percent) {
+        if (typeof argMap.percent !== "object") {
+            return null;
+        }
 
-    if (argMap?.search && typeof argMap.search == "number") {
-        search = argMap.search;
+        const percent = argMap.percent as {[key: string]: unknown};
+        if (percent?.scene && typeof percent.scene == "number") {
+            scene = percent.scene;
+        }
+    
+        if (percent?.search && typeof percent.search == "number") {
+            search = percent.search;
+        }
     }
 
     if (!(argMap?.polygon)) {
