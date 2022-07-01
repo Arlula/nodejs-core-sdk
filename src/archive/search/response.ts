@@ -15,6 +15,10 @@ export default interface SearchResponse {
     results?: SearchResult[];
 }
 
+export function isResponse(object: unknown): object is SearchResponse {
+    return !!object && (typeof object === "object") && ('errors' in object || 'results' in object);
+}
+
 // decodeResponse is a helper for reading results from JSON, it is not intended for public use.
 export function decodeResponse(json: unknown): SearchResponse|null {
     let results: SearchResult[];

@@ -1,6 +1,6 @@
 import Arlula from "../../dist";
 import SearchRequest, { Resolution } from "../../dist/archive/search-request";
-import SearchResponse from "../../dist/archive/search/response";
+import SearchResponse, { isResponse } from "../../dist/archive/search/response";
 
 export default function runSearchTests(client: Arlula): Promise<unknown> {
 
@@ -26,10 +26,32 @@ function test1(client: Arlula) {
     return client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.results.length < 1) {
-            console.error("search 1 - Insufficient results for search, ", res.results.length);
+        if (res?.errors) {
+            console.error("search 1 - returned errors, ", res.errors);
+            return Promise.reject("search 1 - returned error");
+        }
+        if (!res.results || res.results.length < 1) {
+            console.error("search 1 - Insufficient results for search, ", res.results?.length);
             console.log(res);
             return Promise.reject("search 1 - insufficient results");
+        }
+        for (let i=0; i<res.results.length; i++) {
+            const r = res.results[i];
+            if (r.bands.length == 0) {
+                console.error("search 1 - no bands in result");
+                console.log(r);
+                return Promise.reject("search 1 - no bands in result");
+            }
+            if (r.bundles.length == 0) {
+                console.error("search 1 - no ordering bundles in result");
+                console.log(r);
+                return Promise.reject("search 1 - no ordering bundles in result");
+            }
+            if (r.license.length == 0) {
+                console.error("search 1 - no license in result");
+                console.log(r);
+                return Promise.reject("search 1 - no license in result");
+            }
         }
     })
     .catch(exceptionHandler("search 1 - point, date"));
@@ -45,8 +67,8 @@ function test2(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-            if (res.results.length < 1) {
-                console.error("search 2 - Insufficient results for search, ", res.results.length);
+            if (!res.results || res.results.length < 1) {
+                console.error("search 2 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
                 return Promise.reject("search 2 - insufficient results");
             }
@@ -64,8 +86,8 @@ function test3(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.results.length < 10) {
-            console.error("search 3 - Insufficient results for search, ", res.results.length);
+        if (!res.results || res.results.length < 10) {
+            console.error("search 3 - Insufficient results for search, ", res.results?.length);
             console.log(res)
             return Promise.reject("search 3 - insufficient results");
         }
@@ -83,8 +105,8 @@ function test4(client: Arlula) {
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-        if (res.results.length < 1) {
-            console.error("search 4 - Insufficient results for search, ", res.results.length);
+        if (!res.results || res.results.length < 1) {
+            console.error("search 4 - Insufficient results for search, ", res.results?.length);
             console.log(res)
             return Promise.reject("search 4 - insufficient results");
         }
@@ -102,8 +124,8 @@ function test5(client: Arlula) {
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
-            if (res.results.length < 1) {
-                console.error("search 5 - Insufficient results for search, ", res.results.length);
+            if (!res.results || res.results.length < 1) {
+                console.error("search 5 - Insufficient results for search, ", res.results?.length);
                 console.log(res)
                 return Promise.reject("search 5 - insufficient results");
             }
@@ -127,12 +149,12 @@ function test6(client: Arlula) {
         return Promise.reject("search 6, error 1 - got results from invalid search");
     })
     .catch((e) => {
-        if (typeof e !== "string") {
+        if (!isResponse(e)) {
             console.error("search 6, error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
             console.dir(e)
             return Promise.reject("search 6, error 1 - "+e);
         }
-        if (!e.startsWith("End date must be after start date")) {
+        if (!e.errors || !e.errors[0].startsWith("End date must be after start date")) {
             console.error("search 6, error 1 - Unexpected error response (search error 1): ", e)
             return Promise.reject("search 6, error 1 - "+e);
         }
@@ -149,13 +171,12 @@ function test7(client: Arlula) {
     return client.archive().search(search)
     .then(expectedError("search 7, error 2 - date future"))
     .catch((e) => {
-        if (typeof e !== "string") {
-            console.error("search 7, error 2 - Unexpected error response object (search error 2): ", e?.response?.data)
-            console.dir(e)
+        if (!isResponse(e)) {
+            console.error("search 7, error 2 - Unexpected error response object (search error 2): ", e);
             return Promise.reject("search 7, error 2 - "+e);
         }
-        if (!e.startsWith("Start Date must be in the past")) {
-            console.error("Unexpected error response (search error 2): ", e)
+        if (!e.errors || !e.errors[0].startsWith("Start Date must be in the past")) {
+            console.error("Unexpected error response (search error 2): ", e);
             return Promise.reject("search 7, error 2 - "+e);
         }
     });
@@ -172,12 +193,11 @@ function test8(client: Arlula) {
     return client.archive().search(search)
     .then(expectedError("search 8, error 3 - invalid lat/long"))
     .catch((e) => {
-        if (typeof e !== "string") {
-            console.error("search 8, error 3 - Unexpected error response object (search error 3): ", e?.response?.data)
-            console.dir(e)
+        if (!isResponse(e)) {
+            console.error("search 8, error 3 - Unexpected error response object (search error 3): ", e);
             return Promise.reject("search 8, error 3 - "+e);
         }
-        if (!e.startsWith("Invalid Latitude")) {
+        if (!e.errors || !e.errors[0].startsWith("Invalid Latitude")) {
             console.error("search 8, error 3 - Unexpected error response (search error 3): ", e)
             return Promise.reject("search 8, error 3 - "+e);
         }
