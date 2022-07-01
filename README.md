@@ -89,7 +89,7 @@ Ordering can either be done using a `SearchResult` object, or the value of its `
 ```
 import OrderRequest from "@arlula/core/archive/order-request";
 
-const request = new OrderRequest("<scene id>", "<respective eula>", 1);
+const request = new OrderRequest("<scene id>", "<selected license eula>", "<selected bundle key>");
 client.archive().order(request)
 .then((order) => {
     console.log(order);
