@@ -234,12 +234,19 @@ export default class Order {
  * Complete -------> "complete",
  */
 export enum OrderStatus {
-    New            = "created",
-    Pending        = "pending",
-    Processing     = "processing",
-    Manual         = "manual",
-    PostProcessing = "post-processing",
-    Complete       = "complete",
+    // common + archive orders
+    New             = "created",
+    Pending         = "pending",
+    Processing      = "processing",
+    PostProcessing  = "post-processing",
+    Complete        = "complete",
+    // custom orders
+    Manual          = "manual",
+    // tasking orders
+    PendingApproval = "pending-approval",
+    Rejected        = "rejected",
+    Failed          = "failed",
+    Rescheduled     = "rescheduled",
 }
 
 function isOrderStatus(token: string): token is OrderStatus {
