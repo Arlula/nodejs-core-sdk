@@ -24,7 +24,7 @@ function test1(client: Arlula) {
 
         let found = false;
         order.resources.forEach((resource) => {
-            if (resource.type == "meta_json") {
+            if (resource.format.includes("application/json")) {
                 found = true;
                 resource.download()
                 .then((data) => {
