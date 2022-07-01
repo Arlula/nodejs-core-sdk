@@ -1,6 +1,7 @@
 import Arlula from "../../dist";
 import SearchRequest, { Resolution } from "../../dist/archive/search-request";
 import SearchResponse, { isResponse } from "../../dist/archive/search/response";
+import SearchResult from "../../dist/archive/search/result";
 
 export default function runSearchTests(client: Arlula): Promise<unknown> {
 
@@ -35,58 +36,11 @@ function test1(client: Arlula) {
             console.log(res);
             return Promise.reject("search 1 - insufficient results");
         }
+        let msg: string;
         for (let i=0; i<res.results.length; i++) {
-            const r = res.results[i];
-            // bounding
-            if (r.bounding.length == 0) {
-                console.error("search 1 - scene polygon is not populated");
-                console.log(r);
-                return Promise.reject("search 1 - scene polygon is not populated");
-            }
-            if (!JSON.stringify(r.bounding).startsWith("[[[")) {
-                console.error("search 1 - scene polygon is not valid");
-                console.log(r);
-                return Promise.reject("search 1 - scene polygon is not valid");
-            }
-            // overlap
-            if (r.overlap.area === 0) {
-                console.error("search 1 - scene overlap area is below the expected threshold");
-                console.log(r);
-                return Promise.reject("search 1 - scene overlap area is below the expected threshold");
-            }
-            if (r.overlap.percent.scene < 1) {
-                console.error("search 1 - scene overlap percent is below the expected threshold");
-                console.log(r);
-                return Promise.reject("search 1 - scene overlap percent is below the expected threshold");
-            }
-            if (r.overlap.polygon.length == 0) {
-                console.error("search 1 - overlap polygon not populated");
-                console.log(r);
-                return Promise.reject("search 1 - overlap polygon not populated");
-            }
-            if (!JSON.stringify(r.overlap.polygon).startsWith("[[[")) {
-                console.error("search 1 - overlap polygon not valid");
-                console.log(r);
-                return Promise.reject("search 1 - overlap polygon not valid");
-            }
-            // bands
-            // TODO: enable this once 2022-07 is live on all servers
-            // if (r.bands.length == 0) {
-            //     console.error("search 1 - no bands in result");
-            //     console.log(r);
-            //     return Promise.reject("search 1 - no bands in result");
-            // }
-            // bundles
-            if (r.bundles.length == 0) {
-                console.error("search 1 - no ordering bundles in result");
-                console.log(r);
-                return Promise.reject("search 1 - no ordering bundles in result");
-            }
-            // license
-            if (r.license.length == 0) {
-                console.error("search 1 - no license in result");
-                console.log(r);
-                return Promise.reject("search 1 - no license in result");
+            msg = testResult("search 1", res.results[i]);
+            if (msg) {
+                return Promise.reject("search 1 - " + msg);
             }
         }
     })
@@ -252,4 +206,60 @@ function expectedError(label: string) {
         console.error("Error executing"+label+": ", result);
         return Promise.reject(label+": "+result);
     }
+}
+
+function testResult(prefix: string, r: SearchResult): string {
+    // bounding
+    if (r.bounding.length == 0) {
+        console.error(prefix, " is not populated");
+        console.log(r);
+        return "scene polygon is not populated"
+    }
+    if (!JSON.stringify(r.bounding).startsWith("[[[")) {
+        console.error(prefix, " - scene polygon is not valid");
+        console.log(r);
+        return "scene polygon is not valid"
+    }
+    // overlap
+    if (r.overlap.area === 0) {
+        console.error(prefix, " - scene overlap area is below the expected threshold");
+        console.log(r);
+        return "scene overlap area is below the expected threshold"
+    }
+    if (r.overlap.percent.scene < 1) {
+        console.error(prefix, " - scene overlap percent is below the expected threshold");
+        console.log(r);
+        return "scene overlap percent is below the expected threshold"
+    }
+    if (r.overlap.polygon.length == 0) {
+        console.error(prefix, " - overlap polygon not populated");
+        console.log(r);
+        return "overlap polygon not populated"
+    }
+    if (!JSON.stringify(r.overlap.polygon).startsWith("[[[")) {
+        console.error(prefix, " - overlap polygon not valid");
+        console.log(r);
+        return "overlap polygon not valid"
+    }
+    // bands
+    // TODO: enable this once 2022-07 is live on all servers
+    // if (r.bands.length == 0) {
+    //     console.error(prefix, " - no bands in result");
+    //     console.log(r);
+    //     return "no bands in result"
+    // }
+    // bundles
+    if (r.bundles.length == 0) {
+        console.error(prefix, " - no ordering bundles in result");
+        console.log(r);
+        return "no ordering bundles in result"
+    }
+    // license
+    if (r.license.length == 0) {
+        console.error(prefix, " - no license in result");
+        console.log(r);
+        return "no license in result"
+    }
+
+    return ""
 }
