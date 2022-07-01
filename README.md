@@ -76,7 +76,7 @@ client.archive().search(request)
 });
 ```
 
-The search request will return an array of available scenes as `SearchResult` objects ([see structure reference](https://arlula.com/documentation/#ref-search-result))
+The search request will return a `SearchResponse` object, containing an array of available scenes as `SearchResult` objects ([see structure reference](https://arlula.com/documentation/#ref-search-response)), or any errors returned by the request.
 
 Searches can be done by a target date, date range, point and bounding box searches, as well as restricting the maximum allowable resolution.  
 Full details on constructing searches is available below.
