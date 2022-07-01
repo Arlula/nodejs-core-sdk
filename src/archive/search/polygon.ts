@@ -10,57 +10,59 @@ export default function decodePolygon(json: unknown): number[][][]|null {
     if (!Array.isArray(json)) {
         return null;
     }
+    const pseudoLoop: number[][] = [];
 
-    let error = false;
-    json.forEach((loop) => {
-        const resultLoop: number[][] = [];
-
-        if (!Array.isArray(loop)) {
-            error = true;
-            return;
+    for (let i=0; i<json.length; i++) {
+        const l = decodeLoop(json[i])
+        if (l) {
+            result.push(l);
+            continue;
         }
-
-        loop.forEach((point) => {
-            if (!Array.isArray(point)) {
-                if (typeof point !== "number") {
-                    error = true;
-                    return;
-                }
-
-                if (!loop.length) {
-                    loop.push([]);
-                }
-                loop[0].push(point);
-                return;
-            }
-
-            if (point.length < 2) {
-                error = true;
-                return;
-            }
-
-            if (typeof point[0] == "number") {
-                error = true;
-                return;
-            }
-
-            if (typeof point[1] == "number") {
-                error = true;
-                return;
-            }
-
-            resultLoop.push([point[0], point[1]]);
-        });
-
-        result.push(resultLoop);
-
-        if (error) {
-            return;
+        const p = decodePoint(json[i]);
+        if (p) {
+            pseudoLoop.push(p);
+            continue;
         }
-    });
-    if (error) {
+        return null
+    }
+
+    if (pseudoLoop.length) {
+        result.push(pseudoLoop);
+    }
+
+    return result;
+}
+
+function decodeLoop(loop: unknown[]): number[][]|null {
+    const result: number[][] = [];
+
+    for (let i=0; i<loop.length; i++) {
+        const point = loop[i];
+        if (!Array.isArray(point)) {
+            return null;
+        }
+        const p = decodePoint(point)
+        if (!p) {
+            return null;
+        }
+        result.push(p);
+    }
+
+    return result;
+}
+
+function decodePoint(point: unknown[]): number[]|null {
+    if (point.length < 2) {
         return null;
     }
 
-    return null;
+    if (typeof point[0] !== "number") {
+        return null;
+    }
+
+    if (typeof point[1] !== "number") {
+        return null;
+    }
+
+    return [point[0], point[1]]
 }
