@@ -17,7 +17,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
 // basic order
 function test1(client: Arlula) {
     console.log("order 1");
-    const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", "default");
+    const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", process.env.order_bundle || "default");
     return client.archive().order(req)
     .then((resp) => {
         if (!resp.id) {
@@ -43,7 +43,7 @@ function test1(client: Arlula) {
 
 function testError1(client: Arlula) {
     console.log("order error 1");
-    const req = new OrderRequest("<invalid>", process.env.order_eula || "", "default");
+    const req = new OrderRequest("<invalid>", process.env.order_eula || "", process.env.order_bundle || "default");
     return client.archive().order(req)
     .then(expectedError("order error 1 - invalid ordering id"))
     .catch((e) => {
@@ -60,7 +60,7 @@ function testError1(client: Arlula) {
 
 function testError2(client: Arlula) {
     console.log("order error 2");
-    const req = new OrderRequest(process.env.order_key || "", "<invalid>", "default");
+    const req = new OrderRequest(process.env.order_key || "", "<invalid>", process.env.order_bundle || "default");
     return client.archive().order(req)
     .then(expectedError("order error 2 - invalid eula"))
     .catch((e) => {
