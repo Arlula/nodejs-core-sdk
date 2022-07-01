@@ -46,14 +46,18 @@ export function decodeResponse(json: unknown): SearchResponse|null {
 export function decodeResultSet(json: unknown[]): SearchResult[]|null {
     const results: SearchResult[] = [];
 
+    let error = false
     json.forEach((b) => {
         const r = decodeResult(b);
         if (r) {
             results.push(r);
         } else {
-            return null;
+            error = true;
         }
     });
+    if (error) {
+        return null
+    }
 
     return results;
 }
