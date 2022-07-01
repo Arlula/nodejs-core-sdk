@@ -42,11 +42,20 @@ function test1(client: Arlula) {
                 console.log(r);
                 return Promise.reject("search 1 - no bands in result");
             }
+            // bands
+            // TODO: enable this once 2022-07 is live on all servers
+            // if (r.bands.length == 0) {
+            //     console.error("search 1 - no bands in result");
+            //     console.log(r);
+            //     return Promise.reject("search 1 - no bands in result");
+            // }
+            // bundles
             if (r.bundles.length == 0) {
                 console.error("search 1 - no ordering bundles in result");
                 console.log(r);
                 return Promise.reject("search 1 - no ordering bundles in result");
             }
+            // license
             if (r.license.length == 0) {
                 console.error("search 1 - no license in result");
                 console.log(r);
