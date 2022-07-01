@@ -35,6 +35,14 @@ export function decodeOverlap(json: unknown): Overlap|null {
     return {area, percent: {scene, search}, polygon};
 }
 
+/**
+ * Overlap contains information about how a given scene overlaps with your search area and the polygon that will be delivered if the scene is ordered.
+ * Full details can be found on the API documentation
+ * 
+ * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
+ * or
+ * @see {https://arlula.com/documentation/#ref-overlap|Archive Overlap structure reference}
+ */
 export default interface Overlap {
     area: number;
     percent: {

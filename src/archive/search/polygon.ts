@@ -1,3 +1,8 @@
+/**
+ * decodePolygon reads a depth 2 or 3 JSON polygon coordinates.
+ * It returns the polygon or null if any issues were found while decoding.
+ * This is a helper for reading results from JSON, it is not intended for public use.
+ */ 
 export default function decodePolygon(json: unknown): number[][][]|null {
 
     const result: number[][][] = [];

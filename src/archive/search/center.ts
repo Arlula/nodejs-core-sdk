@@ -23,7 +23,13 @@ export function decodeCenter(json: unknown): Center|null {
     return {lat, long};
 }
 
+/**
+ * Center is a lat long reference point that is the centre of a scene
+ * Full details can be found on the API documentation
+ * 
+ * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
+ */
 export default interface Center {
-    lat: number;
     long: number;
+    lat: number;
 }

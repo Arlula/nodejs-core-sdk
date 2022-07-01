@@ -34,6 +34,7 @@ export default interface SearchResult {
     annotations: string[];
 }
 
+// decodeResult is a helper for reading results from JSON, it is not intended for public use.
 export function decodeResult(json: unknown): SearchResult|null {
     let sceneID = "", supplier = "", platform = "", thumbnail = "", orderingID = "";
     let date: Date = new Date();
