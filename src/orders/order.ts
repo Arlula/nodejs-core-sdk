@@ -18,6 +18,8 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         return "JSON does not correspond to an Order object";
     }
 
+    let orderKey: string;
+
     if (typeof json.id !== "string") {
         return "No ID for order";
     }
@@ -30,8 +32,12 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
     if (typeof json.supplier !== "string") {
         return "Order supplier missing";
     }
-    if (typeof json.imageryID !== "string") {
-        return "Imagery ID missing from Order";
+    if (typeof json.imageryID === "string") {
+        orderKey = json.imageryID;
+    } else if (typeof json.orderingID === "string") {
+        orderKey = json.orderingID;
+    } else {
+        return "ordering ID missing from Order";
     }
     if (typeof json.sceneID !== "string") {
         return "Scene ID missing form Order";
@@ -64,7 +70,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         }
     }
 
-    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, json.imageryID, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
+    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, orderKey, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
 }
 
 /**
@@ -80,7 +86,7 @@ export default class Order {
     private _createdAt: Date;
     private _updatedAt: Date;
     private _supplier: string;
-    private _imageryID: string;
+    private _orderingID: string;
     private _sceneID: string;
     private _status: OrderStatus;
     private _total: number;
@@ -105,13 +111,13 @@ export default class Order {
      * @param {Resource[]}    resources List of resource for this supplier (if available)
      * @param {Date}          [exp]     Expiration date for this orders resources
      */
-    constructor(client: requestBuilder, id: string, created: Date, updated: Date, supplier: string, imgID: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
+    constructor(client: requestBuilder, id: string, created: Date, updated: Date, supplier: string, orderKey: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
         this._updatedAt = updated;
         this._supplier = supplier;
-        this._imageryID = imgID;
+        this._orderingID = orderKey;
         this._sceneID = scene;
         this._status = status;
         this._total = total;
@@ -139,8 +145,8 @@ export default class Order {
     public get supplier(): string {
         return this._supplier;
     }
-    public get imageryID(): string {
-        return this._imageryID;
+    public get orderingID(): string {
+        return this._orderingID;
     }
     public get sceneID(): string {
         return this._sceneID;
