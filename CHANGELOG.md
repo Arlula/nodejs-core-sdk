@@ -33,3 +33,13 @@ Search changes:
 Order changes:
  - removed `seats` argument
  - added `bundleKey` argument
+
+## 2.0.1 - 09/07/2022
+
+Fixing omitted term changes in 2.0.0
+
+Search changes:
+ - search `res` query parameter changed to gsd
+
+Order changes:
+ - order structure changed `imageryID` to `orderingID`
