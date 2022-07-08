@@ -65,11 +65,11 @@ client.archive()
 Search available Archive imagery by creating and sending a search request
 
 ```
-import SearchRequest, { Resolution } from "@arlula/core/archive/search-request";
+import SearchRequest, { GroundSampleDistance } from "@arlula/core/archive/search-request";
 
 const request = new SearchRequest(new Date("2020-08-16"));
 request.point(151.209439, -33.854259);
-request.setMaximumResolution(Resolution.medium)
+request.setMaximumGSD(GroundSampleDistance.medium)
 client.archive().search(request)
 .then((scenes) => {
     console.log(scenes);
@@ -78,7 +78,7 @@ client.archive().search(request)
 
 The search request will return a `SearchResponse` object, containing an array of available scenes as `SearchResult` objects ([see structure reference](https://arlula.com/documentation/#ref-search-response)), or any errors returned by the request.
 
-Searches can be done by a target date, date range, point and bounding box searches, as well as restricting the maximum allowable resolution.  
+Searches can be done by a target date, date range, point and bounding box searches, as well as restricting the maximum allowable ground sample distance.  
 Full details on constructing searches is available below.
 
 ###### Order
@@ -130,15 +130,15 @@ To constrain the search in space and search your specific area of interest, you 
  - `point(long, lat)` ----------------------> set the center point of your area of interest with its latitude and longitude
  - `boundingBox(west, north, east, south)` -> set a bounding box containing your area of interest by its cardinal boundaries
 
-Additionally, if you're only interested in results of a certain resolution, you can specify a maximum resolution for search results.  
-You can specify a resolution in meters/pixel, or use the labels of predefined common resolutions in the `Resolution` enumeration
+Additionally, if you're only interested in results of a certain ground sample distance, you can specify a maximum GSD for search results.  
+You can specify a GSD in meters/pixel, or use the labels of predefined common sample distances in the `GroundSampleDistance` enumeration
 
 ```
-import { Resolution } from "@arlula/core/archive/search-request";
+import { GroundSampleDistance } from "@arlula/core/archive/search-request";
 
-req.setMaximumResolution(Resolution.high)
+req.setMaximumGSD(GroundSampleDistance.high)
 // or
-req.setMaximumResolution(3)
+req.setMaximumGSD(3)
 ```
 
 Results can also be filtered by the imagery source, or properties such as
@@ -258,7 +258,7 @@ A full set of types are exported by this package to ensure type safety in TypeSc
 Beyond those covered above for search, ordering and their associated enumerations
 
 ```
-import SearchRequest, { Resolution } from "@arlula/core/archive/search-request";
+import SearchRequest, { GroundSampleDistance } from "@arlula/core/archive/search-request";
 // and
 import OrderRequest from "@arlula/core/archive/order-request";
 ```
