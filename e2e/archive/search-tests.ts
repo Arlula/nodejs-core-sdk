@@ -1,5 +1,5 @@
 import Arlula from "../../dist";
-import SearchRequest, { Resolution } from "../../dist/archive/search-request";
+import SearchRequest, { GroundSampleDistance } from "../../dist/archive/search-request";
 import SearchResponse, { isResponse } from "../../dist/archive/search/response";
 import SearchResult from "../../dist/archive/search/result";
 
@@ -23,7 +23,7 @@ function test1(client: Arlula) {
     console.log("search 1")
     const search = new SearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     return client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
@@ -53,7 +53,7 @@ function test2(client: Arlula) {
     const search = new SearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
@@ -83,7 +83,7 @@ function test3(client: Arlula) {
     const search = new SearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.veryLow);
+        .setMaximumGSD(GroundSampleDistance.veryLow);
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
@@ -113,7 +113,7 @@ function test4(client: Arlula) {
     const search = new SearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     client.archive().search(search)
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
@@ -143,7 +143,7 @@ function test5(client: Arlula) {
     const search = new SearchRequest(new Date(2020, 5, 15))
         .to(new Date(2020, 8, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     return client.archive().search(search)
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
@@ -175,7 +175,7 @@ function test6(client: Arlula) {
     const search = new SearchRequest(new Date(2020, 6, 13))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     
     return client.archive().search(search)
     .then((r) => {
@@ -200,7 +200,7 @@ function test7(client: Arlula) {
     console.log("search 7")
     const search = new SearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
 
     return client.archive().search(search)
     .then(expectedError("search 7, error 2 - date future"))
@@ -222,7 +222,7 @@ function test8(client: Arlula) {
     const search = new SearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
-        .setMaximumResolution(Resolution.medium);
+        .setMaximumGSD(GroundSampleDistance.medium);
     
     return client.archive().search(search)
     .then(expectedError("search 8, error 3 - invalid lat/long"))

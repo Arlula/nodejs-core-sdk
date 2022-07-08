@@ -43,7 +43,7 @@ function test1(client: Arlula) {
 
 function test2(client: Arlula) {
     console.log("order 2");
-    return client.archive().search(new SearchRequest(new Date(2018, 4, 3)).point(151.2108, -33.8523).setMaximumResolution(5))
+    return client.archive().search(new SearchRequest(new Date(2018, 4, 3)).point(151.2108, -33.8523).setMaximumGSD(5))
     .then((resp) => {
         if (!resp.results) {
             console.error("order 2 - no results for test search");

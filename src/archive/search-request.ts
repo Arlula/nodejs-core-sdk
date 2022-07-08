@@ -13,7 +13,7 @@
 export default class SearchRequest {
     private _start: Date;
     private _end?: Date;
-    private _res: number = Resolution.veryLow;
+    private _gsd: number = GroundSampleDistance.veryLow;
     private _point?: {long:number,lat:number};
     private _box?: {west: number, north: number, east: number, south: number};
     private _supplier?: string;
@@ -97,17 +97,17 @@ export default class SearchRequest {
     }
 
     /**
-     * Set the maximum resolution that will be returned by a search
-     * Search either by a specified resolution in m/pixel or using one of
-     * the predefined Resolution labels
+     * Set the maximum ground sample distance that will be returned by a search
+     * Search either by a specified gsd in m/pixel or using one of
+     * the predefined GroundSampleDistance labels
      * 
-     * NOTE: a minimum search of 0.1m/pixel is accepted, lower resolutions are less likely to return as many, or any results
+     * NOTE: a minimum search of 0.1m/pixel is accepted, lower sample distances are less likely to return as many, or any results
      * 
-     * @param {number|Resolution} res the resolution to limit the result set to
+     * @param {number|GroundSampleDistance} gsd the sample distance to limit the result set to
      * @returns {SearchRequest} The current request for chaining
      */
-    setMaximumResolution(res: number|Resolution): SearchRequest {
-        this._res = res;
+    setMaximumGSD(gsd: number|GroundSampleDistance): SearchRequest {
+        this._gsd = gsd;
         return this;
     }
 
@@ -156,7 +156,7 @@ export default class SearchRequest {
     valid(): boolean {
         return !!(
             this._start &&
-            this._res > 0.1 &&
+            this._gsd > 0.1 &&
             (this._point || this._box) &&
             (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) &&
             (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45))
@@ -173,7 +173,10 @@ export default class SearchRequest {
     _toQuery(): {[key: string]: string} {
         const query: {[key: string]: string} = {
             start: `${this._start.getFullYear()}-${pad(this._start.getMonth()+1, 2)}-${pad(this._start.getDate(), 2)}`,
-            res: this._res.toString(),
+            gsd: this._gsd.toString(),
+            // backwards compatibility for prior to 2022-07
+            // TODO: remove after update
+            res: this._gsd.toString(), 
         };
 
         if (this._end) {
@@ -227,7 +230,7 @@ export default class SearchRequest {
 }
 
 /**
- * Resolution labels for commonly desired imagery precisions
+ * GroundSampleDistance labels for commonly desired imagery precisions
  * 
  * veryHigh -> 0.5m/pixel or less
  * high -----> 1m/pixel or less
@@ -235,7 +238,7 @@ export default class SearchRequest {
  * low ------> 20m/pixel or less
  * veryLow --> 10km/pixel or less (arbitrary large value to return all sources)
  */
-export enum Resolution {
+export enum GroundSampleDistance {
     veryHigh = 0.5,
     high = 1,
     medium = 5,
