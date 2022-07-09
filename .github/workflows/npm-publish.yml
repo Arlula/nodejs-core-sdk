@@ -11,7 +11,7 @@ jobs:
       test_api_key: ${{ secrets.test_api_key }}
       test_api_secret: ${{ secrets.test_api_secret }}
       test_order_key: ${{ secrets.test_order_key }}
-      order_bundle: ${{ secrets.test_order_bundle }}
+      test_order_bundle: ${{ secrets.test_order_bundle }}
       test_order_eula: ${{ secrets.test_order_eula }}
       test_order_id: ${{ secrets.test_order_id }}
       test_resource_id: ${{ secrets.test_resource_id }}
