@@ -1,5 +1,6 @@
 // decodeBundle is a helper for reading results from JSON, it is not intended for public use
 export function decodeBundle(json: unknown): BundleOption|null {
+    let name = "";
     let key = "";
     const bands: string[] = [];
     let price = 0;
@@ -9,6 +10,10 @@ export function decodeBundle(json: unknown): BundleOption|null {
     }
 
     const argMap = json as {[key: string]: unknown};
+
+    if (argMap?.name && typeof argMap.name == "string") {
+        name = argMap.name;
+    }
 
     if (argMap?.key && typeof argMap.key == "string") {
         key = argMap.key;
@@ -29,7 +34,7 @@ export function decodeBundle(json: unknown): BundleOption|null {
     if (!(key||bands||price)) {
         return null;
     }
-    return {key, bands, price};
+    return {name, key, bands, price};
 }
 
 /**
@@ -41,6 +46,7 @@ export function decodeBundle(json: unknown): BundleOption|null {
  * @see {https://arlula.com/documentation/#ref-bundle|Archive Bundle structure reference}
  */
 export default interface BundleOption {
+    name: string;
     key: string;
     bands: string[];
     price: number;
