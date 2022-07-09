@@ -49,7 +49,6 @@ Promise.all([
 .catch((errors) => {
     console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
     console.log(errors);
-    process.exit(1);
 });
 
 function testEndpoint(client: Arlula) {

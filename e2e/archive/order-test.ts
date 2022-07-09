@@ -43,17 +43,20 @@ function test1(client: Arlula) {
 
 function test2(client: Arlula) {
     console.log("order 2");
-    return client.archive().search(new SearchRequest(new Date(2018, 4, 3)).point(151.2108, -33.8523).setMaximumGSD(5))
+    return client.archive().search(new SearchRequest(new Date(2018, 4, 3)).point(151.2108, -33.8523).setMaximumGSD(50))
     .then((resp) => {
         if (!resp.results) {
             console.error("order 2 - no results for test search");
             return Promise.reject("order 2 - no results for test search");
         }
         let scene: SearchResult|null = null;
+        sceneLoop:
         for (let i=0; i<resp.results.length; i++) {
-            if (resp.results[i].license[0].href == (process.env.order_eula || "") || resp.results[i].bundles[0].price == 0) {
-                scene = resp.results[i];
-                break;
+            for (let j=0; j<resp.results[i].license.length; j++) {
+                if (resp.results[i].bundles[j].price == 0 && resp.results[i].license[j].href == (process.env.order_eula || "")) {
+                    scene = resp.results[i];
+                    break sceneLoop;
+                }
             }
         }
         if (!scene) {
