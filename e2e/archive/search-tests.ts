@@ -240,8 +240,8 @@ function test8(client: Arlula) {
 
 function exceptionHandler(label: string) {
     return function (e: string) {
-        console.error("Error executing " + label + ": ", e);
-        return Promise.reject(label+": "+e);
+        console.error("Error executing " + label + ": ", JSON.stringify(e));
+        return Promise.reject(label+": "+JSON.stringify(e));
     }
 }
 
@@ -270,7 +270,7 @@ function testResult(prefix: string, r: SearchResult): string {
         console.log(r);
         return "scene overlap area is below the expected threshold"
     }
-    if (r.overlap.percent.scene < 1) {
+    if (r.overlap.percent.scene < 0.1) {
         console.error(prefix, " - scene overlap percent is below the expected threshold");
         console.log(r);
         return "scene overlap percent is below the expected threshold"

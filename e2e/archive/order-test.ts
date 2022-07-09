@@ -131,7 +131,7 @@ function testError3(client: Arlula) {
             console.error("order error 3 - unexpected error: ", e);
             return Promise.reject("order error 3 - "+e);
         }
-        if (!e.startsWith("Invalid Latitude")) {
+        if (!e.startsWith("Selected bundle is not an available option of this order")) {
             console.error("order error 3 - Unexpected error response: ", e)
             return Promise.reject("order error 3 - "+e);
         }
@@ -141,8 +141,8 @@ function testError3(client: Arlula) {
 
 function exceptionHandler(label: string) {
     return function (e: string) {
-        console.error("Error executing " + label + ": ", e);
-        return Promise.reject(label+": "+e);
+        console.error("Error executing " + label + ": ", JSON.stringify(e));
+        return Promise.reject(label+": "+JSON.stringify(e));
     }
 }
 
