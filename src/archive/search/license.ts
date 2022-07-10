@@ -53,6 +53,7 @@ export default class License {
         this.loadingAmount = loadingAmount;
     }
 
+    // apply the license loading to a price
     public loadPrice(basePrice: number): number {
         return Math.ceil((basePrice * (1+(this.loadingPercent/100)) + this.loadingAmount)/100)*100
     }

@@ -64,7 +64,7 @@ export default class Archive {
      * Order archive imagery
      * 
      * @warning this may charge your API account's credit card.  
-     * Check the relevant SearchResult's `price` field
+     * Check the relevant SearchResult's `calculatePrice` function for the intended bundle and license
      * 
      * @param {OrderRequest} req the details of the order to be placed
      * @returns {Promise<Order>} The order that was placed
