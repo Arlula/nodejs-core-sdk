@@ -257,33 +257,33 @@ function testResult(prefix: string, r: SearchResult): string {
     if (r.bounding.length == 0) {
         console.error(prefix, " is not populated");
         console.log(r);
-        return "scene polygon is not populated"
+        return "scene polygon is not populated";
     }
     if (!JSON.stringify(r.bounding).startsWith("[[[")) {
         console.error(prefix, " - scene polygon is not valid");
         console.log(r);
-        return "scene polygon is not valid"
+        return "scene polygon is not valid";
     }
     // overlap
     if (r.overlap.area === 0) {
         console.error(prefix, " - scene overlap area is below the expected threshold");
         console.log(r);
-        return "scene overlap area is below the expected threshold"
+        return "scene overlap area is below the expected threshold";
     }
     if (r.overlap.percent.scene < 0.1) {
         console.error(prefix, " - scene overlap percent is below the expected threshold");
         console.log(r);
-        return "scene overlap percent is below the expected threshold"
+        return "scene overlap percent is below the expected threshold";
     }
     if (r.overlap.polygon.length == 0) {
         console.error(prefix, " - overlap polygon not populated");
         console.log(r);
-        return "overlap polygon not populated"
+        return "overlap polygon not populated";
     }
     if (!JSON.stringify(r.overlap.polygon).startsWith("[[[")) {
         console.error(prefix, " - overlap polygon not valid");
         console.log(r);
-        return "overlap polygon not valid"
+        return "overlap polygon not valid";
     }
     // bands
     // TODO: enable this once 2022-07 is live on all servers
@@ -296,13 +296,15 @@ function testResult(prefix: string, r: SearchResult): string {
     if (r.bundles.length == 0) {
         console.error(prefix, " - no ordering bundles in result");
         console.log(r);
-        return "no ordering bundles in result"
+        return "no ordering bundles in result";
+    }
     }
     // license
     if (r.license.length == 0) {
         console.error(prefix, " - no license in result");
         console.log(r);
-        return "no license in result"
+        return "no license in result";
+    }
     }
 
     return ""
