@@ -53,26 +53,32 @@ export default class Band {
         this.max = max;
     }
 
+    // get the band min and max range as an object
     public range(): {min:number,max:number} {
         return {min: this.min, max: this.max};
     }
 
+    // get the band min and max range as an array tuple
     public rangeArray(): number[] {
         return [this.min, this.max];
     }
 
+    // get the band centre wavelength
     public centre(): number {
         return (this.min+this.max)/2;
     }
 
+    // get the band width
     public width(): number {
         return this.max-this.min;
     }
 
+    // get the band in the form centre and width (FWHM)
     public centreWidth(): {centre: number, width: number} {
         return {centre: this.centre(), width: this.width()};
     }
 
+    // get the band as a tuple of the centre wavelength and band width
     public centreWidthArray(): number[] {
         return [this.centre(), this.width()];
     }
