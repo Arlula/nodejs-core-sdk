@@ -11,8 +11,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
         test2(client),
         testError1(client),
         testError2(client),
-        // TODO: enable this once 2022-07 is live on all servers
-        // testError3(client),
+        testError3(client),
     ]);
 
 }
