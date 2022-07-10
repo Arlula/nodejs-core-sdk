@@ -13,7 +13,7 @@ import decodePolygon from "./polygon";
  * or
  * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
  */
-export default interface SearchResult {
+export default class SearchResult {
     sceneID: string;
     supplier: string;
     platform: string;
@@ -32,6 +32,71 @@ export default interface SearchResult {
     bundles: BundleOption[];
     license: License[];
     annotations: string[];
+    constructor(
+        sceneID: string,
+        supplier: string,
+        platform: string,
+        date: Date,
+        thumbnail: string,
+        cloud: number,
+        offNadir: number,
+        gsd: number,
+        bands: Band[],
+        area: number,
+        center: Center,
+        bounding: number[][][],
+        overlap: Overlap,
+        fulfillmentTime: number,
+        orderingID: string,
+        bundles: BundleOption[],
+        license: License[],
+        annotations: string[]
+    ) {
+        this.sceneID = sceneID;
+        this.supplier = supplier;
+        this.platform = platform;
+        this.date = date;
+        this.thumbnail = thumbnail;
+        this.cloud = cloud;
+        this.offNadir = offNadir;
+        this.gsd = gsd;
+        this.bands = bands;
+        this.area = area;
+        this.center = center;
+        this.bounding = bounding;
+        this.overlap = overlap;
+        this.fulfillmentTime = fulfillmentTime;
+        this.orderingID = orderingID;
+        this.bundles = bundles;
+        this.license = license;
+        this.annotations = annotations;
+    }
+
+    // calculates the price of the order if ordered with the given bundle key and license url
+    // price is returned in US cents.
+    // If the bundle key or license are not valid for this result, -1 is returned.
+    calculatePrice(bundleKey: string, licenseURL: string): number {
+        let bundle: BundleOption|undefined;
+        let license: License|undefined;
+        for (let i=0; i<this.bundles.length; i++) {
+            if (this.bundles[i].key == bundleKey) {
+                bundle = this.bundles[i];
+                break;
+            }
+        }
+        for (let i=0; i<this.license.length; i++) {
+            if (this.license[i].href == licenseURL) {
+                license = this.license[i];
+                break;
+            }
+        }
+
+        if (!bundle || !license) {
+            return -1;
+        }
+
+        return license.loadPrice(bundle.price);
+    }
 }
 
 // decodeResult is a helper for reading results from JSON, it is not intended for public use.
@@ -198,19 +263,8 @@ export function decodeResult(json: unknown): SearchResult|null {
         });
     }
 
-    // LEGACY FIELDS
-    // eula
-    if (argMap?.eula && typeof argMap.eula == "string") {
-        license.push(new License("default", argMap.eula, 0, 0));
-    }
-    // price
-    if (argMap?.price && typeof argMap.price == "object") {
-        const arg = argMap as {[key: string]: unknown};
-        
-        bundles.push({key: "default", bands: [], price: arg.base ? Number(arg.base) : 0})
-    }
 
-    return {
+    return new SearchResult(
         sceneID,
         supplier,
         platform,
@@ -229,5 +283,5 @@ export function decodeResult(json: unknown): SearchResult|null {
         bundles,
         license,
         annotations,
-    }
+    );
 }
