@@ -174,9 +174,6 @@ export default class SearchRequest {
         const query: {[key: string]: string} = {
             start: `${this._start.getFullYear()}-${pad(this._start.getMonth()+1, 2)}-${pad(this._start.getDate(), 2)}`,
             gsd: this._gsd.toString(),
-            // backwards compatibility for prior to 2022-07
-            // TODO: remove after update
-            res: this._gsd.toString(), 
         };
 
         if (this._end) {

@@ -127,7 +127,6 @@ export default class OrderRequest {
             id: this._id,
             eula: this._eula,
             bundleKey: this._bundleKey,
-            seats: 1,
             webhooks: this._webhooks,
             emails: this._emails,
         };
@@ -143,7 +142,6 @@ interface orderRequest {
     id: string;
     eula: string;
     bundleKey: string;
-    seats: number; // deprecated as of 2022-07, retained for temporary support
     webhooks?: string[];
     emails?: string[];
 }
