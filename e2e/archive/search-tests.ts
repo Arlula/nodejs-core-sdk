@@ -286,18 +286,60 @@ function testResult(prefix: string, r: SearchResult): string {
         return "overlap polygon not valid";
     }
     // bands
-    // TODO: enable this once 2022-07 is live on all servers
-    // if (r.bands.length == 0) {
-    //     console.error(prefix, " - no bands in result");
-    //     console.log(r);
-    //     return "no bands in result"
-    // }
+    if (r.bands.length == 0) {
+        console.error(prefix, " - no bands in result");
+        console.log(r);
+        return "no bands in result";
+    }
+    for (let i = 0; i<r.bands.length; i++) {
+        if (!r.bands[i].id) {
+            console.error(prefix, " - invalid band, missing id");
+            console.log(r.bands[i]);
+            return "invalid band, missing id";
+        }
+        if (!r.bands[i].name) {
+            console.error(prefix, " - invalid band, missing name");
+            console.log(r.bands[i]);
+            return "invalid band, missing name";
+        }
+        if (!r.bands[i].min) {
+            console.error(prefix, " - invalid band, missing min");
+            console.log(r.bands[i]);
+            return "invalid band, missing min";
+        }
+        if (!r.bands[i].max) {
+            console.error(prefix, " - invalid band, missing max");
+            console.log(r.bands[i]);
+            return "invalid band, missing max";
+        }
+    }
     // bundles
     if (r.bundles.length == 0) {
         console.error(prefix, " - no ordering bundles in result");
         console.log(r);
         return "no ordering bundles in result";
     }
+    for (let i = 0; i<r.bundles.length; i++) {
+        if (!r.bundles[i].name) {
+            console.error(prefix, " - invalid bundle, missing name");
+            console.log(r.bundles[i]);
+            return "invalid bundle, missing name";
+        }
+        if (!r.bundles[i].key) {
+            console.error(prefix, " - invalid bundle, missing key");
+            console.log(r.bundles[i]);
+            return "invalid bundle, missing key";
+        }
+        if (!r.bundles[i].bands) {
+            console.error(prefix, " - invalid bundle, missing bands");
+            console.log(r.bundles[i]);
+            return "invalid bundle, missing bands";
+        }
+        if (r.bundles[i].price == undefined) {
+            console.error(prefix, " - invalid bundle, missing price");
+            console.log(r.bundles[i]);
+            return "invalid bundle, missing price";
+        }
     }
     // license
     if (r.license.length == 0) {
@@ -305,6 +347,19 @@ function testResult(prefix: string, r: SearchResult): string {
         console.log(r);
         return "no license in result";
     }
+    for (let i = 0; i<r.license.length; i++) {
+        if (!r.license[i].name) {
+            console.error(prefix, " - invalid license, missing name");
+        }
+        if (!r.license[i].href) {
+            console.error(prefix, " - invalid license, missing href");
+        }
+        if (r.license[i].loadingPercent == undefined) {
+            console.error(prefix, " - invalid license, missing loadingPercent");
+        }
+        if (r.license[i].loadingAmount == undefined) {
+            console.error(prefix, " - invalid license, missing loadingAmount");
+        }
     }
 
     return ""
