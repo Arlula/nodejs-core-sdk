@@ -43,3 +43,12 @@ Search changes:
 
 Order changes:
  - order structure changed `imageryID` to `orderingID`
+
+# 2.0.2 - 11/07/2022
+
+api version `2022-09` cleanup
+
+ - removed backwards compatibility with past server version `2021-09`
+ - add optional field `name` to bundle option
+ - add `calculatePrice` on search results to get price in US Cents
+ - adding/enabling additional tests to cover new server version
