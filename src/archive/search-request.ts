@@ -170,11 +170,11 @@ export default class SearchRequest {
      */
     valid(): boolean {
         return !!(
-            this._start &&
-            this._gsd > 0.1 &&
-            (this._point || this._box || this._polygon) &&
-            (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) &&
-            (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45))
+            this._start && // when to look
+            this._gsd > 0.1 && // how close to look
+            (this._point || this._box || this._polygon) && // where to look
+            (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) && // if cloud, valid percentage?
+            (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45)) // if off-nadir, valid angle?
             );
     }
 
