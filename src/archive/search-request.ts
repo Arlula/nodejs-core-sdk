@@ -172,7 +172,7 @@ export default class SearchRequest {
         return !!(
             this._start &&
             this._gsd > 0.1 &&
-            (this._point || this._box) &&
+            (this._point || this._box || this._polygon) &&
             (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) &&
             (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45))
             );
