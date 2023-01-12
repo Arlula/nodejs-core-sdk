@@ -207,6 +207,10 @@ export default class SearchRequest {
             query.south = this._box.south.toString();
         }
 
+        if (this._polygon) {
+            query.polygon = encodeURIComponent(JSON.stringify(this._polygon));
+        }
+
         if (this._supplier) {
             query.supplier = this._supplier.toString();
         }
