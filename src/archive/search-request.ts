@@ -79,6 +79,7 @@ export default class SearchRequest {
      */
     point(long: number, lat: number): SearchRequest {
         this._box = undefined;
+        this._polygon = undefined;
         this._point = {long, lat};
         return this;
     }
@@ -93,6 +94,7 @@ export default class SearchRequest {
      */
     boundingBox(west: number, north: number, east: number, south: number): SearchRequest {
         this._point = undefined;
+        this._polygon = undefined;
         this._box = {west, north, east, south};
         return this;
     }
