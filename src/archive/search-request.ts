@@ -16,6 +16,7 @@ export default class SearchRequest {
     private _gsd: number = GroundSampleDistance.veryLow;
     private _point?: {long:number,lat:number};
     private _box?: {west: number, north: number, east: number, south: number};
+    private _polygon?: number[][][];
     private _supplier?: string;
     private _cloud?: number;
     private _offNadir?: number;
@@ -93,6 +94,18 @@ export default class SearchRequest {
     boundingBox(west: number, north: number, east: number, south: number): SearchRequest {
         this._point = undefined;
         this._box = {west, north, east, south};
+        return this;
+    }
+
+    /**
+     * search with a defined polygon
+     * @param {number[][][]} poly the series of loops (list of points) defining your search polygon in longitude, latitude ordering
+     * @returns {SearchRequest} The current request for chaining 
+     */
+    polygon(poly: number[][][]): SearchRequest {
+        this._point = undefined;
+        this._box = undefined;
+        this._polygon = poly
         return this;
     }
 
