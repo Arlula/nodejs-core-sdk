@@ -10,6 +10,7 @@ const tests = [
     test4,
     test5,
     test6,
+    test7,
     testError1,
     testError2,
     testError3,
@@ -172,7 +173,7 @@ function test5(client: Arlula) {
         .catch(exceptionHandler("search 5 - box, date range"));
 }
 
-// polygon search
+// polygon search (array)
 function test6(client: Arlula) {
     console.log("search 6")
     const search = new SearchRequest(new Date(2022, 12, 1))
@@ -200,7 +201,38 @@ function test6(client: Arlula) {
                 }
             }
         })
-        .catch(exceptionHandler("search 6 - polygon search"));
+        .catch(exceptionHandler("search 6 - polygon array search"));
+}
+
+// polygon search (WKT)
+function test7(client: Arlula) {
+    console.log("search 7")
+    const search = new SearchRequest(new Date(2022, 12, 1))
+        .to(new Date(2022, 12, 31))
+        .polygon(`POLYGON ((151.2001279312134 -33.843417236709115,151.21343168792725 -33.84334594891234,151.21969732818604 -33.84726668941343,151.2195256668091 -33.85282670379151,151.2001279312134 -33.843417236709115))`)
+        .setMaximumGSD(GroundSampleDistance.veryLow);
+    
+        return client.archive().search(search)
+        .then((res) => {
+            // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+            if (res?.errors) {
+                console.error("search 7 - returned errors, ", res.errors);
+                return Promise.reject("search 6 - returned error");
+            }
+            if (!res.results || res.results.length < 1) {
+                console.error("search 7 - Insufficient results for search, ", res.results?.length);
+                console.log(res);
+                return Promise.reject("search 7 - insufficient results");
+            }
+            let msg: string;
+            for (let i=0; i<res.results.length; i++) {
+                msg = testResult("search 7", res.results[i]);
+                if (msg) {
+                    return Promise.reject("search 7 - " + msg);
+                }
+            }
+        })
+        .catch(exceptionHandler("search 7 - polygon WKT search"));
 }
 
 // search errors
