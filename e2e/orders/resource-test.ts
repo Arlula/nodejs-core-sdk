@@ -1,14 +1,18 @@
 import fs, { WriteStream } from "fs";
 import Arlula from "../../dist/index";
 
+const tests = [
+    test1,
+    test2,
+    test3,
+    test4,
+];
+
 export default function runOrderResourceTests(client: Arlula): Promise<unknown> {
 
-    return Promise.all([
-        test1(client),
-        test2(client),
-        test3(client),
-        test4(client),
-    ]);
+    return tests.reduce((p, test) => {
+        return p.then(() => test(client));
+     }, Promise.resolve()); // initial
 
 }
 
@@ -88,7 +92,7 @@ function test2(client: Arlula) {
 function test3(client: Arlula) {
     console.log("resource get 3");
     return client.orders().downloadResourceToFile(process.env.resource_id || "", process.env.resource_file1 || "temp/res_dl_test_1")
-    .then((data) => {
+    .then(async (data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 3, unexpected resource data type: ", data);
             return Promise.reject(data);
@@ -99,8 +103,9 @@ function test3(client: Arlula) {
         }
         data.close()
         
-        return new Promise((resolve, reject) => {
-            fs.stat(process.env.resource_file2 || "temp/res_dl_test_1", (err, stat) => {
+        // can just let exception bubble to containing try, raw await
+        await new Promise((resolve, reject) => {
+            fs.stat(process.env.resource_file1 || "temp/res_dl_test_1", (err, stat) => {
                 if (err) {
                     reject(err);
                     return;
@@ -132,7 +137,7 @@ function test4(client: Arlula) {
         mode: 0o644,
     });
     return client.orders().downloadResourceToFile(process.env.resource_id || "", file)
-    .then((data) => {
+    .then(async (data) => {
         if (!(data instanceof WriteStream)) {
             console.error("resource 4, unexpected resource data type: ", data);
             return Promise.reject(data);
@@ -147,7 +152,8 @@ function test4(client: Arlula) {
         }
         data.close()
 
-        return new Promise((resolve, reject) => {
+        // can just let exception bubble to containing try, raw await
+        await new Promise((resolve, reject) => {
             fs.stat(process.env.resource_file2 || "temp/res_dl_test_2", (err, stat) => {
                 if (err) {
                     reject(err);

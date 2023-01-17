@@ -1,13 +1,17 @@
 import Arlula from "../../dist/index";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
+const tests = [
+    test1,
+    test2,
+    test3,
+];
+
 export default function runOrderGetTests(client: Arlula): Promise<unknown> {
 
-    return Promise.all([
-        test1(client),
-        test2(client),
-        test3(client),
-    ]);
+    return tests.reduce((p, test) => {
+        return p.then(() => test(client));
+     }, Promise.resolve()); // initial
 
 }
 

@@ -3,19 +3,23 @@ import SearchRequest, { GroundSampleDistance } from "../../dist/archive/search-r
 import SearchResponse, { isResponse } from "../../dist/archive/search/response";
 import SearchResult from "../../dist/archive/search/result";
 
+const tests = [
+    test1,
+    test2,
+    test3,
+    test4,
+    test5,
+    test6,
+    testError1,
+    testError2,
+    testError3,
+];
+
 export default function runSearchTests(client: Arlula): Promise<unknown> {
 
-    return Promise.all([
-        test1(client),
-        test2(client),
-        test3(client),
-        test4(client),
-        test5(client),
-        test6(client),
-        testError1(client),
-        testError2(client),
-        testError3(client),
-    ]);
+    return tests.reduce((p, test) => {
+        return p.then(() => test(client));
+     }, Promise.resolve()); // initial
 
 }
 
