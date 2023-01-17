@@ -23,35 +23,49 @@ const start = new Date()
 
 const client = new Arlula(process.env.api_key || "", process.env.api_secret || "");
 
-Promise.all([
+const errors: unknown[] = [];
+const tests = [
     // run tests
-    testEndpoint(client),
+    testEndpoint,
     // =============
     // archive tests
     // =============
     // archive search tests
-    runSearchTests(client),
+    runSearchTests,
     // archive order tests
-    runOrderTests(client),
+    runOrderTests,
     // ============
     // orders tests
     // ============
     // orders list
-    runOrderListTests(client),
+    runOrderListTests,
     // order get
-    runOrderGetTests(client),
+    runOrderGetTests,
     // resource download
-    runOrderResourceTests(client),
-])
-.then(() => {
-    console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
-})
-.catch((errors) => {
-    console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
-    console.log(errors);
-});
+    runOrderResourceTests,
+]
+
+async function runTests() {
+    for (const test of tests) {
+        try {
+            await test(client)
+        } catch(e) {
+            errors.push(e);
+        }
+        
+    }
+    if (errors.length) {
+            console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
+            console.log(errors);
+    } else {
+        console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
+    }
+}
+runTests();
+
 
 function testEndpoint(client: Arlula) {
+    console.log("connection test")
     return client.test()
     .then((res) => {
         if (!res) {

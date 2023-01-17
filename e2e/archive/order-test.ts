@@ -4,15 +4,19 @@ import SearchRequest from "../../dist/archive/search-request";
 import SearchResult from "../../dist/archive/search/result";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
+const tests = [
+    test1,
+    test2,
+    testError1,
+    testError2,
+    testError3,
+];
+
 export default function runOrderTests(client: Arlula): Promise<unknown> {
 
-    return Promise.all([
-        test1(client),
-        test2(client),
-        testError1(client),
-        testError2(client),
-        testError3(client),
-    ]);
+    return tests.reduce((p, test) => {
+        return p.then(() => test(client));
+     }, Promise.resolve()); // initial
 
 }
 
@@ -96,7 +100,7 @@ function testError1(client: Arlula) {
             console.error("order error 1 - unexpected error: ", e);
             return Promise.reject("order error 1 - "+e);
         }
-        if (!e.startsWith("Invalid Ordering ID")) {
+        if (!e.startsWith("Invalid ordering ID")) {
             console.error("order error 1 - Unexpected error response: ", e)
             return Promise.reject("order error 1 - "+e);
         }

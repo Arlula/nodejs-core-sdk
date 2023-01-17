@@ -16,6 +16,7 @@ export default class SearchRequest {
     private _gsd: number = GroundSampleDistance.veryLow;
     private _point?: {long:number,lat:number};
     private _box?: {west: number, north: number, east: number, south: number};
+    private _polygon?: number[][][];
     private _supplier?: string;
     private _cloud?: number;
     private _offNadir?: number;
@@ -78,6 +79,7 @@ export default class SearchRequest {
      */
     point(long: number, lat: number): SearchRequest {
         this._box = undefined;
+        this._polygon = undefined;
         this._point = {long, lat};
         return this;
     }
@@ -92,7 +94,20 @@ export default class SearchRequest {
      */
     boundingBox(west: number, north: number, east: number, south: number): SearchRequest {
         this._point = undefined;
+        this._polygon = undefined;
         this._box = {west, north, east, south};
+        return this;
+    }
+
+    /**
+     * search with a defined polygon
+     * @param {number[][][]} poly the series of loops (list of points) defining your search polygon in longitude, latitude ordering
+     * @returns {SearchRequest} The current request for chaining 
+     */
+    polygon(poly: number[][][]): SearchRequest {
+        this._point = undefined;
+        this._box = undefined;
+        this._polygon = poly
         return this;
     }
 
@@ -155,11 +170,11 @@ export default class SearchRequest {
      */
     valid(): boolean {
         return !!(
-            this._start &&
-            this._gsd > 0.1 &&
-            (this._point || this._box) &&
-            (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) &&
-            (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45))
+            this._start && // when to look
+            this._gsd > 0.1 && // how close to look
+            (this._point || this._box || this._polygon) && // where to look
+            (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) && // if cloud, valid percentage?
+            (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45)) // if off-nadir, valid angle?
             );
     }
 
@@ -190,6 +205,10 @@ export default class SearchRequest {
             query.north = this._box.north.toString();
             query.east = this._box.east.toString();
             query.south = this._box.south.toString();
+        }
+
+        if (this._polygon) {
+            query.polygon = encodeURIComponent(JSON.stringify(this._polygon));
         }
 
         if (this._supplier) {
