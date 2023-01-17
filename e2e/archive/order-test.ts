@@ -96,7 +96,7 @@ function testError1(client: Arlula) {
             console.error("order error 1 - unexpected error: ", e);
             return Promise.reject("order error 1 - "+e);
         }
-        if (!e.startsWith("Invalid Ordering ID")) {
+        if (!e.startsWith("Invalid ordering ID")) {
             console.error("order error 1 - Unexpected error response: ", e)
             return Promise.reject("order error 1 - "+e);
         }
