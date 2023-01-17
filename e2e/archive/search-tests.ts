@@ -11,9 +11,9 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
         test3(client),
         test4(client),
         test5(client),
-        test6(client),
-        test7(client),
-        test8(client),
+        testError1(client),
+        testError2(client),
+        testError3(client),
     ]);
 
 }
@@ -170,8 +170,8 @@ function test5(client: Arlula) {
 // search errors
     
 // end before start
-function test6(client: Arlula) {
-    console.log("search 6")
+function testError1(client: Arlula) {
+    console.log("search error 1")
     const search = new SearchRequest(new Date(2020, 6, 13))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -180,60 +180,60 @@ function test6(client: Arlula) {
     return client.archive().search(search)
     .then((r) => {
         console.dir(r);
-        return Promise.reject("search 6, error 1 - got results from invalid search");
+        return Promise.reject("search error 1 - got results from invalid search");
     })
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search 6, error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
+            console.error("search error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
             console.dir(e)
-            return Promise.reject("search 6, error 1 - "+e);
+            return Promise.reject("search error 1 - "+e);
         }
         if (!e.errors || !e.errors[0].startsWith("End date must be after start date")) {
-            console.error("search 6, error 1 - Unexpected error response (search error 1): ", e)
-            return Promise.reject("search 6, error 1 - "+e);
+            console.error("search error 1 - Unexpected error response (search error 1): ", e)
+            return Promise.reject("search error 1 - "+e);
         }
     });
 }
 
 // future date
-function test7(client: Arlula) {
-    console.log("search 7")
+function testError2(client: Arlula) {
+    console.log("search error 2")
     const search = new SearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
 
     return client.archive().search(search)
-    .then(expectedError("search 7, error 2 - date future"))
+    .then(expectedError("search error 2 - date future"))
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search 7, error 2 - Unexpected error response object (search error 2): ", e);
-            return Promise.reject("search 7, error 2 - "+e);
+            console.error("search error 2 - Unexpected error response object (search error 2): ", e);
+            return Promise.reject("search error 2 - "+e);
         }
-        if (!e.errors || !e.errors[0].startsWith("Start Date must be in the past")) {
+        if (!e.errors || !e.errors[0].startsWith("Start date must be in the past")) {
             console.error("Unexpected error response (search error 2): ", e);
-            return Promise.reject("search 7, error 2 - "+e);
+            return Promise.reject("search error 2 - "+e);
         }
     });
 }
 
 // invalid long/lat
-function test8(client: Arlula) {
-    console.log("search 8")
+function testError3(client: Arlula) {
+    console.log("search error 3")
     const search = new SearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
         .setMaximumGSD(GroundSampleDistance.medium);
     
     return client.archive().search(search)
-    .then(expectedError("search 8, error 3 - invalid lat/long"))
+    .then(expectedError("search error 3 - invalid lat/long"))
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search 8, error 3 - Unexpected error response object (search error 3): ", e);
-            return Promise.reject("search 8, error 3 - "+e);
+            console.error("search error 3 - Unexpected error response object (search error 3): ", e);
+            return Promise.reject("search error 3 - "+e);
         }
-        if (!e.errors || !e.errors[0].startsWith("Invalid Latitude")) {
-            console.error("search 8, error 3 - Unexpected error response (search error 3): ", e)
-            return Promise.reject("search 8, error 3 - "+e);
+        if (!e.errors || !e.errors[0].startsWith("Invalid latitude")) {
+            console.error("search error 3 - Unexpected error response (search error 3): ", e)
+            return Promise.reject("search error 3 - "+e);
         }
     });
 }
