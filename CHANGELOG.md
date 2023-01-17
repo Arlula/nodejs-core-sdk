@@ -52,3 +52,9 @@ api version `2022-09` cleanup
  - add optional field `name` to bundle option
  - add `calculatePrice` on search results to get price in US Cents
  - adding/enabling additional tests to cover new server version
+
+# 2.1.0 - 17/01/2023
+
+api version `2023-01` support
+
+ - added `polygon` method to search request, allowing search by WKT and array polygon
