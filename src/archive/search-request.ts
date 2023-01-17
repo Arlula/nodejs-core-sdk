@@ -16,7 +16,7 @@ export default class SearchRequest {
     private _gsd: number = GroundSampleDistance.veryLow;
     private _point?: {long:number,lat:number};
     private _box?: {west: number, north: number, east: number, south: number};
-    private _polygon?: number[][][];
+    private _polygon?: number[][][]|string;
     private _supplier?: string;
     private _cloud?: number;
     private _offNadir?: number;
@@ -104,7 +104,7 @@ export default class SearchRequest {
      * @param {number[][][]} poly the series of loops (list of points) defining your search polygon in longitude, latitude ordering
      * @returns {SearchRequest} The current request for chaining 
      */
-    polygon(poly: number[][][]): SearchRequest {
+    polygon(poly: number[][][]|string): SearchRequest {
         this._point = undefined;
         this._box = undefined;
         this._polygon = poly
@@ -172,7 +172,9 @@ export default class SearchRequest {
         return !!(
             this._start && // when to look
             this._gsd > 0.1 && // how close to look
-            (this._point || this._box || this._polygon) && // where to look
+            (this._point || this._box || (this._polygon && (// where to look
+                (Array.isArray(this._polygon) && this._polygon.length > 0) || (typeof this._polygon === "string" && !validWKTPolygon.test(this._polygon)) // polygon valid
+            ))) && 
             (!this._cloud || (this._cloud >=0 && this._cloud <= 100)) && // if cloud, valid percentage?
             (!this._offNadir || (this._offNadir >= 0 && this._offNadir <= 45)) // if off-nadir, valid angle?
             );
@@ -208,7 +210,11 @@ export default class SearchRequest {
         }
 
         if (this._polygon) {
-            query.polygon = encodeURIComponent(JSON.stringify(this._polygon));
+            if (Array.isArray(this._polygon)) {
+                query.polygon = encodeURIComponent(JSON.stringify(this._polygon));
+            } else {
+                query.polygon = this._polygon;
+            }
         }
 
         if (this._supplier) {
@@ -267,3 +273,5 @@ function pad(num: number, size: number): string {
     while (numStr.length < size) numStr = "0" + num;
     return numStr;
 }
+
+const validWKTPolygon = /^\w+\s*\(+[+|-]?\d$/;
