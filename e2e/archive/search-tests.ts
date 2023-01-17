@@ -11,6 +11,7 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
         test3(client),
         test4(client),
         test5(client),
+        test6(client),
         testError1(client),
         testError2(client),
         testError3(client),
@@ -165,6 +166,37 @@ function test5(client: Arlula) {
             }
         })
         .catch(exceptionHandler("search 5 - box, date range"));
+}
+
+// polygon search
+function test6(client: Arlula) {
+    console.log("search 6")
+    const search = new SearchRequest(new Date(2022, 12, 1))
+        .to(new Date(2022, 12, 31))
+        .polygon([[[151.2001279312134,-33.843417236709115],[151.21343168792725,-33.84334594891234],[151.21969732818604,-33.84726668941343],[151.2195256668091,-33.85282670379151],[151.2001279312134,-33.843417236709115]]])
+        .setMaximumGSD(GroundSampleDistance.veryLow);
+    
+        return client.archive().search(search)
+        .then((res) => {
+            // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+            if (res?.errors) {
+                console.error("search 6 - returned errors, ", res.errors);
+                return Promise.reject("search 6 - returned error");
+            }
+            if (!res.results || res.results.length < 1) {
+                console.error("search 6 - Insufficient results for search, ", res.results?.length);
+                console.log(res);
+                return Promise.reject("search 6 - insufficient results");
+            }
+            let msg: string;
+            for (let i=0; i<res.results.length; i++) {
+                msg = testResult("search 6", res.results[i]);
+                if (msg) {
+                    return Promise.reject("search 6 - " + msg);
+                }
+            }
+        })
+        .catch(exceptionHandler("search 6 - polygon search"));
 }
 
 // search errors
