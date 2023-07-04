@@ -252,6 +252,16 @@ export function decodeResult(json: unknown): SearchResult|null {
             }
         });
     }
+    if (argMap?.licenses && Array.isArray(argMap.licenses)) {
+        argMap.licenses.forEach((b) => {
+            const li = decodeLicense(b);
+            if (li) {
+                licenses.push(li);
+            } else {
+                return null;
+            }
+        });
+    }
     // annotations
     if (argMap?.annotations && Array.isArray(argMap.annotations)) {
         argMap.annotations.forEach((a) => {
