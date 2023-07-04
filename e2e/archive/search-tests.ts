@@ -410,22 +410,22 @@ function testResult(prefix: string, r: SearchResult): string {
         }
     }
     // license
-    if (r.license.length == 0) {
-        console.error(prefix, " - no license in result");
+    if (r.licenses.length == 0) {
+        console.error(prefix, " - no licenses in result");
         console.log(r);
-        return "no license in result";
+        return "no licenses in result";
     }
-    for (let i = 0; i<r.license.length; i++) {
-        if (!r.license[i].name) {
+    for (let i = 0; i<r.licenses.length; i++) {
+        if (!r.licenses[i].name) {
             console.error(prefix, " - invalid license, missing name");
         }
-        if (!r.license[i].href) {
+        if (!r.licenses[i].href) {
             console.error(prefix, " - invalid license, missing href");
         }
-        if (r.license[i].loadingPercent == undefined) {
+        if (r.licenses[i].loadingPercent == undefined) {
             console.error(prefix, " - invalid license, missing loadingPercent");
         }
-        if (r.license[i].loadingAmount == undefined) {
+        if (r.licenses[i].loadingAmount == undefined) {
             console.error(prefix, " - invalid license, missing loadingAmount");
         }
     }
