@@ -1,5 +1,6 @@
 import Archive from "./archive/index";
 import Orders from "./orders/index";
+import Collections from "./collections/index";
 import {authProvider, requestBuilder} from "./util/request";
 import paths from "./util/paths";
 
@@ -19,6 +20,7 @@ export default class Arlula {
     private readonly builder: requestBuilder;
     private _archive: Archive;
     private _orders: Orders;
+    private _collections: Collections;
 
     /** 
      * create a new client connection to the Arlula API
@@ -33,6 +35,7 @@ export default class Arlula {
         this.builder = authProvider(key, secret);
         this._archive = new Archive(this.builder);
         this._orders = new Orders(this.builder);
+        this._collections = new Collections(this.builder);
     }
 
     /**
@@ -80,5 +83,16 @@ export default class Arlula {
      */
     orders(): Orders {
         return this._orders;
+    }
+
+    /**
+     * accesses the collections API client
+     * 
+     * @returns {Collections} the collections API client
+     * 
+     * @see {@link ./collections|Collections}
+     */
+    collections(): Collections {
+        return this._collections;
     }
 }
