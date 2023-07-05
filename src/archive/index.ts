@@ -36,7 +36,7 @@ export default class Archive {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
-        return this._client("GET", paths.ArchiveSearch+req._toQueryString())
+        return this._client("POST", paths.ArchiveSearch, req._toJSON())
         .then(jsonOrError)
         .then((resp) => {
             if (Array.isArray(resp)) {

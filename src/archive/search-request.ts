@@ -249,6 +249,52 @@ export default class SearchRequest {
 
         return "?"+arr.join("&")
     }
+
+    _toJSON(): string {
+        if (!this.valid) {
+            return "";
+        }
+
+        // defaults
+        const body: searchRequest = {
+            startDate: this._start,
+            gsd: this._gsd,
+        };
+
+        // geometric constraint
+        if (this._point) {
+            body.latLong = {
+                latitude: this._point.lat,
+                longitude: this._point.long,
+            };
+        }
+        if (this._box) {
+            body.boundingBox = {
+                west: this._box.west,
+                south: this._box.south,
+                east: this._box.east,
+                north: this._box.north,
+            };
+        }
+        if (this._polygon) {
+            body.polygon = parsePoly(this._polygon);
+        }
+
+        if (this._end) {
+            body.endDate = this._end;
+        }
+        if (this._supplier) {
+            body.supplier = this._supplier;
+        }
+        if (this._cloud) {
+            body.cloud = this._cloud;
+        }
+        if (this._offNadir) {
+            body.offNadir = this._offNadir;
+        }
+
+        return JSON.stringify(body)
+    }
 }
 
 /**
@@ -274,4 +320,83 @@ function pad(num: number, size: number): string {
     return numStr;
 }
 
+function parsePoly(poly: number[][][]|string): number[][][] {
+    if (Array.isArray(poly)) {
+        return poly;
+    }
+
+    if (!/^polygon\s*\(/i.test(poly)) {
+        throw("polygon WKT is not a valid format");
+    }
+
+    // remove header
+    poly = poly.substring(7);
+    while (poly[0] == ' ') {
+        poly = poly.substring(1);
+    }
+
+    // remove ring wrapper
+    poly = poly.substring(1,poly.length-1);
+    poly = poly.replace("(", "");
+
+    const polygon: number[][][] = [];
+
+    const ringTokens = poly.split(")");
+    while (ringTokens.length) {
+        const ringStr = ringTokens.shift();
+        const ring: number[][] = [];
+        if (!ringStr) {
+            break;
+        }
+
+        const points = ringStr.split(",");
+
+        while (points.length) {
+            const pointStr = points.shift();
+            const point: number[] = [];
+            if (!pointStr) {
+                break;
+            }
+
+            const vals = pointStr.split(" ");
+
+            while (vals.length) {
+                const val = vals.shift();
+                if (!val) {
+                    continue;
+                }
+
+                point.push(parseFloat(val));
+            }
+
+            ring.push(point);
+        }
+
+        polygon.push(ring);
+    }
+
+    return polygon
+}
+
 const validWKTPolygon = /^\w+\s*\(+[+|-]?\d$/;
+
+interface searchRequest {
+    latLong?: {
+        latitude: number;
+        longitude: number;
+    };
+    boundingBox?: {
+        west: number;
+        south: number;
+        east: number;
+        north: number;
+    };
+    polygon?: number[][][];
+
+    startDate: Date;
+    endDate?: Date;
+    gsd: number
+    supplier?: string;
+    cloud?: number;
+    offNadir?: number;
+}
