@@ -4,6 +4,7 @@ import Order, { fromJSON as OrderFromJSON } from "../orders/order";
 import OrderRequest from "./order-request";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
+import BatchOrderRequest from "./batch-order";
 
 /**
  * @class Archive wraps the API requests to the archive imagery API
@@ -89,6 +90,34 @@ export default class Archive {
             }
 
             return ord;
+        });
+    }
+
+    batchOrder(req: BatchOrderRequest): Promise<Order[]> {
+        if (!req.valid()) {
+            return Promise.reject("invalid order request");
+        }
+        // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
+        // give a longer timeout to respect this and not timeout a successful order
+        return this._client("POST", paths.ArchiveOrderBatch, req._toJSON(true), 120*1000)
+        .then(jsonOrError)
+        .then((resp) => {
+
+            if (!Array.isArray(resp)) {
+                return Promise.reject("error placing batch order, response is not array or orders")
+            }
+
+            const ords: Order[] = [];
+
+            for (let i=0; i<resp.length; i++) {
+                const ord = OrderFromJSON(this._client, resp[i] as {[key: string]: unknown});
+                if (!(ord instanceof Order)) {
+                    return Promise.reject(ord);
+                }
+                ords.push(ord)
+            }
+
+            return ords;
         });
     }
 }
