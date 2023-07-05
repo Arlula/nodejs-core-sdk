@@ -30,7 +30,7 @@ export default class SearchResult {
     fulfillmentTime: number;
     orderingID: string;
     bundles: BundleOption[];
-    license: License[];
+    licenses: License[];
     annotations: string[];
     constructor(
         sceneID: string,
@@ -49,7 +49,7 @@ export default class SearchResult {
         fulfillmentTime: number,
         orderingID: string,
         bundles: BundleOption[],
-        license: License[],
+        licenses: License[],
         annotations: string[]
     ) {
         this.sceneID = sceneID;
@@ -68,7 +68,7 @@ export default class SearchResult {
         this.fulfillmentTime = fulfillmentTime;
         this.orderingID = orderingID;
         this.bundles = bundles;
-        this.license = license;
+        this.licenses = licenses;
         this.annotations = annotations;
     }
 
@@ -84,9 +84,9 @@ export default class SearchResult {
                 break;
             }
         }
-        for (let i=0; i<this.license.length; i++) {
-            if (this.license[i].href == licenseURL) {
-                license = this.license[i];
+        for (let i=0; i<this.licenses.length; i++) {
+            if (this.licenses[i].href == licenseURL) {
+                license = this.licenses[i];
                 break;
             }
         }
@@ -110,7 +110,7 @@ export function decodeResult(json: unknown): SearchResult|null {
     let bounding: number[][][] = [];
     let overlap: Overlap = {area: 0, percent: {scene: 0}, polygon: []};
     const bundles: BundleOption[] = [];
-    const license: License[] = [];
+    const licenses: License[] = [];
     const annotations: string[] = [];
 
     if (typeof json !== "object") {
@@ -246,7 +246,17 @@ export function decodeResult(json: unknown): SearchResult|null {
         argMap.license.forEach((b) => {
             const li = decodeLicense(b);
             if (li) {
-                license.push(li);
+                licenses.push(li);
+            } else {
+                return null;
+            }
+        });
+    }
+    if (argMap?.licenses && Array.isArray(argMap.licenses)) {
+        argMap.licenses.forEach((b) => {
+            const li = decodeLicense(b);
+            if (li) {
+                licenses.push(li);
             } else {
                 return null;
             }
@@ -281,7 +291,7 @@ export function decodeResult(json: unknown): SearchResult|null {
         fulfillmentTime,
         orderingID,
         bundles,
-        license,
+        licenses,
         annotations,
     );
 }

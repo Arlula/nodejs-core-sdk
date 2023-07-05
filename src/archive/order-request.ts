@@ -123,7 +123,7 @@ export default class OrderRequest {
         }
 
         let found = false;
-        this._req?.license.some((v) => {
+        this._req?.licenses.some((v) => {
             if (v.href === this._eula) {
                 found = true;
                 return found;
