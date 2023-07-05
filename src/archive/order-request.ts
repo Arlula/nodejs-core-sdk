@@ -14,6 +14,9 @@ export default class OrderRequest {
     private _bundleKey: string;
     private _webhooks?: string[];
     private _emails?: string[];
+    private _team?:    string;
+    private _coupon?:  string;
+    private _payment?: string;
 
     /**
      * creates a new order request
@@ -81,6 +84,31 @@ export default class OrderRequest {
     }
 
     /**
+     * Set the team the order will be made available to, if unset, will use the accounts default team
+     * @param {string} teamID the uuid of the team to share data with
+     */
+    setTeamSharing(teamID?: string): void {
+        this._team = teamID;
+    }
+
+    /**
+     * Set the coupon code which may discount the order
+     * @param {string} coupon the coupon key to apply to the order
+     */
+    setCouponCode(coupon?: string): void {
+        this._coupon = coupon;
+    }
+
+    /**
+     * Set the payment account this order will be billed to (if applicable).
+     * If unset, will use the accounts default billing account.
+     * @param {string} accountID the uuid of the billing account to charge
+     */
+    setPaymentAccount(accountID?: string): void {
+        this._payment = accountID;
+    }
+
+    /**
      * Checks if the order request is valid or requires additional details/details don't match
      * @returns {boolean} whether the order request is valid
      */
@@ -95,7 +123,7 @@ export default class OrderRequest {
         }
 
         let found = false;
-        this._req?.license.some((v) => {
+        this._req?.licenses.some((v) => {
             if (v.href === this._eula) {
                 found = true;
                 return found;
@@ -138,7 +166,7 @@ export default class OrderRequest {
     }
 }
 
-interface orderRequest {
+export interface orderRequest {
     id: string;
     eula: string;
     bundleKey: string;

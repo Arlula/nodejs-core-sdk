@@ -13,6 +13,8 @@ on:
         required: true
       test_order_key:
         required: true
+      test_order_key2:
+        required: true
       test_order_bundle:
         required: true
       test_order_eula:
@@ -44,6 +46,7 @@ jobs:
           api_key: ${{ secrets.test_api_key }}
           api_secret: ${{ secrets.test_api_secret }}
           order_key: ${{ secrets.test_order_key }}
+          order_key2: ${{ secrets.test_order_key2 }}
           order_bundle: ${{ secrets.test_order_bundle }}
           order_eula: ${{ secrets.test_order_eula }}
           order_id: ${{ secrets.test_order_id }}

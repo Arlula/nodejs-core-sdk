@@ -13,6 +13,8 @@ export default class paths {
     }
     static get ArchiveOrder(): string {
         return host + "/api/archive/order";
+    }static get ArchiveOrderBatch(): string {
+        return host + "/api/archive/order/batch";
     }
     static get OrderList(): string {
         return host + "/api/order/list";
