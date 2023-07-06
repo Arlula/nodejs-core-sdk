@@ -12,7 +12,7 @@ export default class Collection {
     private _extent: Extent;
     private _summaries: {[key: string]: Summary};
     private _links: Link[];
-    private _assets: {[key: string]: Asset}[];
+    private _assets: {[key: string]: Asset};
     constructor(
         id: string,
         type: string,
@@ -26,7 +26,7 @@ export default class Collection {
         extent: Extent,
         summaries: {[key: string]: Summary},
         links: Link[],
-        assets: {[key: string]: Asset}[],
+        assets: {[key: string]: Asset},
         ) {
             this._id = id;
             this._type = type;
@@ -79,9 +79,108 @@ export default class Collection {
     public get links(): Link[] {
         return this._links;
     }
-    public get assets(): {[key: string]: Asset}[] {
+    public get assets(): {[key: string]: Asset} {
         return this._assets;
     }
+}
+
+export function decodeCollection(json: unknown): Collection|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let id = "", type = "", version = "", title = "", description = "", license = "";
+    let extensions: string[] = [], keywords: string[] = [];
+    let providers: Provider[] = [];
+    let extent: Extent = {spatial:{bbox: []}, temporal: {interval: []}};
+    const summaries: {[key: string]: Summary} = {};
+    const links: Link[] = [];
+    const assets: {[key: string]: Asset} = {};
+
+    // id
+    if (argMap?.id && typeof argMap.id == "string") {
+        id = argMap.id;
+    }
+    // type
+    if (argMap?.type && typeof argMap.type == "string") {
+        type = argMap.type;
+    }
+    // stacVersion
+    if (argMap?.stac_version && typeof argMap.stac_version == "string") {
+        version = argMap.stac_version;
+    }
+    // stacExtensions
+    if (argMap?.stac_extensions && Array.isArray(argMap.stac_extensions)) {
+        for (const r in argMap.stac_extensions) {
+            if (typeof r !== "string") {
+                throw("invalid collection extension, not string");
+            }
+        }
+        extensions = argMap.stac_extensions;
+    }
+    // title
+    if (argMap?.title && typeof argMap.title == "string") {
+        title = argMap.title;
+    }
+    // description
+    if (argMap?.description && typeof argMap.description == "string") {
+        description = argMap.description;
+    }
+    // keywords
+    if (argMap?.keywords && Array.isArray(argMap.keywords)) {
+        for (const r in argMap.keywords) {
+            if (typeof r !== "string") {
+                throw("invalid collection keyword, not string");
+            }
+        }
+        keywords = argMap.keywords;
+    }
+    // license
+    if (argMap?.license && typeof argMap.license == "string") {
+        license = argMap.license;
+    }
+    // providers
+    if (argMap?.providers && Array.isArray(argMap.providers)) {
+        providers = argMap.providers
+    }
+    // extent
+    if (argMap?.extent) {
+        const ext = decodeExtent(argMap.extent);
+        if (!ext) {
+            throw("Error parsing collection extent");
+        }
+        extent = ext;
+    }
+    // summaries
+    if (argMap?.summaries && typeof argMap.summaries == "object") {
+        for (const [key, value] of Object.entries(argMap.summaries)) {
+            summaries[key] = new Summary(value);
+        }
+    }
+    // links
+    if (argMap?.links && Array.isArray(argMap.links)) {
+        for (let i=0; i<argMap.links.length; i++) {
+            const ln = decodeLink(argMap.links[i])
+            if (!ln) {
+                throw("Error parsing collection link");
+            }
+            links.push(ln);
+        }
+    }
+    // assets
+    if (argMap?.assets && typeof argMap.assets == "object") {
+        for (const [key, value] of Object.entries(argMap.assets)) {
+            const as = decodeAsset(value);
+            if (!as) {
+                throw("Error parsing collection asset: "+key);
+            }
+            assets[key] = as;
+        }
+    }
+
+    return new Collection(id, type, version, extensions, title, description, keywords, license, providers, extent, summaries, links, assets);
 }
 
 export class Provider {
@@ -110,6 +209,40 @@ export class Provider {
     }
 }
 
+export function decodeProvider(json: unknown): Provider|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let name = "", description = "", url = "";
+    let roles: string[] = [];
+
+    // name
+    if (argMap?.name && typeof argMap.name == "string") {
+        name = argMap.name;
+    }
+    // description
+    if (argMap?.description && typeof argMap.description == "string") {
+        description = argMap.description;
+    }
+    // roles
+    if (argMap?.roles && Array.isArray(argMap.roles)) {
+        for (const r in argMap.roles) {
+            if (typeof r !== "string") {
+                throw("invalid provider role, not string");
+            }
+        }
+        roles = argMap.roles;
+    }
+    // url
+    if (argMap?.url && typeof argMap.url == "string") {
+        url = argMap.url;
+    }
+    return new Provider(name, description, roles, url);
+}
+
 export class Extent {
     public spatial: {
         bbox: BBOX[];
@@ -121,6 +254,43 @@ export class Extent {
         this.spatial = {bbox: spatial};
         this.temporal = {interval: temporal};
     }
+}
+
+export function decodeExtent(json: unknown): Extent|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+    const spatial: BBOX[] = [];
+    const temporal: Date[][] = [];
+
+    // spatial
+    if (argMap?.spatial && typeof argMap.spatial == "object") {
+        if ('bbox' in argMap.spatial && Array.isArray(argMap.spatial.bbox)) {
+            for (let i=0; i<argMap.spatial.bbox.length; i++) {
+                const box = decodeBBOX(argMap.spatial.bbox[i])
+                if (!box) {
+                    throw("Invalid spatial extent, invalid bbox");
+                }
+                spatial.push(box);
+            }
+        }
+    }
+    // temporal
+    if (argMap?.temporal && typeof argMap.temporal == "object") {
+        if ('interval' in argMap.temporal && Array.isArray(argMap.temporal.interval)) {
+            for (let i=0; i<argMap.temporal.interval.length; i++) {
+                const interval: Date[] = [];
+                for (let j=0; j<argMap.temporal.interval[i].length; j++) {
+                    interval.push(new Date(argMap.temporal.interval[i][j]));
+                }
+                temporal.push(interval);
+            }
+        }
+    }
+
+    return new Extent(spatial, temporal);
 }
 
 export class Summary {
@@ -200,6 +370,35 @@ export class Link {
     }
 }
 
+export function decodeLink(json: unknown): Link|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let href = "", rel = "", type = "", title = "";
+
+    // href
+    if (argMap?.href && typeof argMap.href == "string") {
+        href = argMap.href;
+    }
+    // rel
+    if (argMap?.rel && typeof argMap.rel == "string") {
+        rel = argMap.rel;
+    }
+    // type
+    if (argMap?.type && typeof argMap.type == "string") {
+        type = argMap.type;
+    }
+    // title
+    if (argMap?.title && typeof argMap.title == "string") {
+        title = argMap.title;
+    }
+    
+    return new Link(href, rel, type, title);
+}
+
 export class Asset {
     private _href: string;
     private _title: string;
@@ -236,6 +435,50 @@ export class Asset {
     }
 }
 
+export function decodeAsset(json: unknown): Asset|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let href = "", title = "", description = "", type = "";
+    let roles: string[] = [];
+    let created = new Date();
+
+    // href
+    if (argMap?.href && typeof argMap.href == "string") {
+        href = argMap.href;
+    }
+    // title
+    if (argMap?.title && typeof argMap.title == "string") {
+        title = argMap.title;
+    }
+    // description
+    if (argMap?.description && typeof argMap.description == "string") {
+        description = argMap.description;
+    }
+    // type
+    if (argMap?.type && typeof argMap.type == "string") {
+        type = argMap.type;
+    }
+    // roles
+    if (argMap?.roles && Array.isArray(argMap.roles)) {
+        for (const r in argMap.roles) {
+            if (typeof r !== "string") {
+                throw("invalid asset role, not string");
+            }
+        }
+        roles = argMap.roles;
+    }
+    // created
+    if (argMap?.created && typeof argMap.created == "string") {
+        created = new Date(argMap.created);
+    }
+
+    return new Asset(href, title, description, type, roles, created);
+}
+
 export class BBOX {
     private _box: number[];
     constructor(bounds: number[]) {
@@ -247,4 +490,32 @@ export class BBOX {
     }
 
     // TODO: helpers for working if polygon is within/intersects the bbox
+}
+
+export function decodeBBOX(json: unknown): BBOX|null {
+    if (!(Array.isArray(json))) {
+        return null;
+    }
+
+    if (json.length != 4) {
+        return null
+    }
+
+    if (typeof json[0] !== "number") {
+        return null;
+    }
+
+    if (typeof json[1] !== "number") {
+        return null;
+    }
+
+    if (typeof json[2] !== "number") {
+        return null;
+    }
+
+    if (typeof json[3] !== "number") {
+        return null;
+    }
+
+    return new BBOX([json[0], json[1], json[2], json[3]]);
 }
