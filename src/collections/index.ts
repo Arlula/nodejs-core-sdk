@@ -1,4 +1,4 @@
-import { requestBuilder } from "../util/request";
+import { jsonOrError, requestBuilder } from "../util/request";
 
 /**
  * @class Collections wraps the API requests to the imagery collection management API
@@ -14,5 +14,51 @@ export default class Collections {
      */
     constructor(client: requestBuilder) {
         this._client = client;
+    }
+
+    // conformance
+    conformance(): void {
+        // 
+    }
+    // list
+    list(): void {
+        // 
+    }
+    // get
+    get(): void {
+        // 
+    }
+    // create
+    create(): void {
+        // 
+    }
+    // update
+    update(): void {
+        // 
+    }
+    // delete
+    delete(): void {
+        // 
+    }
+    
+    // itemsList
+    itemsList(): void {
+        // 
+    }
+    // itemsSearch
+    itemsSearch(): void {
+        // 
+    }
+    // itemGet
+    itemGet(): void {
+        // 
+    }
+    // itemAdd
+    itemAdd(): void {
+        // 
+    }
+    // itemRemove
+    itemRemove(): void {
+        // 
     }
 }
