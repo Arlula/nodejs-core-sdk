@@ -1,4 +1,5 @@
-import { Asset, BBOX, Link } from "./collection";
+import { Asset, BBOX, Link, decodeAsset, decodeBBOX, decodeLink } from "./collection";
+import decodePolygon from "../archive/search/polygon";
 
 export default class Item {
     private _type: string;
@@ -61,6 +62,99 @@ export default class Item {
     }
 }
 
+export function decodeItem(json: unknown): Item|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let type = "", version = "", id = "", crs = "", collection = "";
+    let extensions: string[] = [];
+    let geom: Geometry;
+    let bbox: BBOX;
+    let props: {[key: string]: unknown} = {};
+    const links: Link[] = [];
+    const assets: {[key: string]: Asset} = {};
+    
+
+    // type
+    if (argMap?.type && typeof argMap.type == "string") {
+        type = argMap.type;
+    }
+    // stacVersion
+    if (argMap?.stac_version && typeof argMap.stac_version == "string") {
+        version = argMap.stac_version;
+    }
+    // stacExtensions
+    if (argMap?.stac_extensions && Array.isArray(argMap.stac_extensions)) {
+        for (const r in argMap.stac_extensions) {
+            if (typeof r !== "string") {
+                throw("invalid collection extension, not string");
+            }
+        }
+        extensions = argMap.stac_extensions;
+    }
+    // id
+    if (argMap?.id && typeof argMap.id == "string") {
+        id = argMap.id;
+    }
+    // crs
+    if (argMap?.crs && typeof argMap.crs == "string") {
+        crs = argMap.crs;
+    }
+    // geometry
+    if (argMap?.geometry) {
+        const g = decodeGeometry(argMap.geometry)
+        if (!g) {
+            throw("invalid collection item geometry");
+        }
+        geom = g;
+    } else {
+        throw("");
+    }
+    // bbox
+    if (argMap?.bbox && Array.isArray(argMap.bbox)) {
+        const box = decodeBBOX(argMap.bbox);
+        if (!box) {
+            throw("invalid collection item bounding box");
+        }
+        bbox = box;
+    } else {
+        throw("");
+    }
+    // properties
+    if (argMap?.properties && typeof argMap.properties == "object") {
+        props = (argMap.properties as {[key: string]: unknown});
+    }
+    // links
+    if (argMap?.links && Array.isArray(argMap.links)) {
+        for (let i=0; i<argMap.links.length; i++) {
+            const l = decodeLink(argMap.links[i]);
+            if (!l) {
+                throw("invalid collection item link");
+            }
+            links.push(l);
+        }
+    }
+    // assets
+    if (argMap?.assets && typeof argMap.assets == "object") {
+        for (const [key, value] of Object.entries(argMap.assets)) {
+            const as = decodeAsset(value);
+            if (!as) {
+                throw("Error parsing collection item asset: "+key);
+            }
+            assets[key] = as;
+        }
+    }
+    // collection
+    if (argMap?.collection && typeof argMap.collection == "string") {
+        collection = argMap.collection;
+    }
+
+    return new Item(type, version, extensions, id, crs, geom, bbox, props, links, assets, collection);
+}
+
 export class Geometry {
     private _type: string;
     private _coordinates: number[][][];
@@ -75,4 +169,32 @@ export class Geometry {
     public get coordinates(): number[][][] {
         return this._coordinates;
     }
+}
+
+export function decodeGeometry(json: unknown): Geometry|null {
+    if (typeof json !== "object") {
+        return null;
+    }
+
+    const argMap = json as {[key: string]: unknown};
+
+    let type = "";
+    let coords: number[][][] = [];
+
+    // type
+    if (argMap?.type && typeof argMap.type == "string") {
+        type = argMap.type;
+    } else {
+        return null;
+    }
+    // coordinates
+    if (argMap?.coordinates && Array.isArray(argMap.coordinates)) {
+        const p = decodePolygon(argMap.coordinates);
+        if (!p) {
+            return null;
+        }
+        coords = p;
+    }
+
+    return new Geometry(type, coords);
 }
