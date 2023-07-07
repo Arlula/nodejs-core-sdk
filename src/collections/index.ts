@@ -85,7 +85,7 @@ export default class Collections {
         return this._client("GET", paths.CollectionItemsList(collectionID))
         .then(jsonOrError)
         .then((resp) => {
-            // TODO
+            return decodeItemList(resp);
         });
     }
     // itemsSearch
@@ -172,6 +172,55 @@ export interface ItemList {
     timeStamp:      Date;
     numberMatched:  number;
     numberReturned: number;
+}
+
+function decodeItemList(json: unknown): ItemList {
+    const res: ItemList = {
+        type: "FeatureCollection",
+        features: [],
+        links: [],
+        timeStamp: new Date(),
+        numberMatched: 0,
+        numberReturned: 0,
+    };
+
+    if (typeof json !== "object") {
+        return res;
+    }
+    const argMap = json as {[key: string]: unknown};
+
+    if (argMap.type && typeof argMap.type === "string") {
+        res.type = argMap.type;
+    }
+    if (argMap.features && Array.isArray(argMap.features)) {
+        for (let i=0; i<argMap.features.length; i++) {
+            const f = decodeItem(argMap.features[i]);
+            if (!f) {
+                throw("");
+            }
+            res.features.push(f);
+        }
+    }
+    if (argMap.links && Array.isArray(argMap.links)) {
+        for (let i=0; i<argMap.links.length; i++) {
+            const l = decodeLink(argMap.links[i]);
+            if (!l) {
+                throw("");
+            }
+            res.links.push(l);
+        }
+    }
+    if (argMap.timeStamp && typeof argMap.timeStamp === "string") {
+        res.timeStamp = new Date(argMap.timeStamp);
+    }
+    if (argMap.numberMatched && typeof argMap.numberMatched === "number") {
+        res.numberMatched = argMap.numberMatched;
+    }
+    if (argMap.numberReturned && typeof argMap.numberReturned === "number") {
+        res.numberReturned = argMap.numberReturned;
+    }
+
+    return res;
 }
 
 export interface SearchResults {
