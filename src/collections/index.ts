@@ -142,8 +142,25 @@ export default class Collections {
      * 
      * TODO: reference web API documentation
      */
-    itemsList(collectionID: string): Promise<ItemList> {
-        return this._client("GET", paths.CollectionItemsList(collectionID))
+    itemsList(collectionID: string, page?: number, limit?: number, request?: ListRequest): Promise<ItemList> {
+        const query: string[] = [];
+        if (page) {
+            query.push(`page=${page}`);
+        }
+        if (limit) {
+            query.push(`size=${limit}`);
+        }
+        if (request?.bbox) {
+            query.push(`bbox=${request.bbox[0]}&bbox=${request.bbox[1]}&bbox=${request.bbox[2]}&bbox=${request.bbox[3]}`);
+        }
+        if (request?.datetime) {
+            let str = `${JSON.stringify(request.datetime.start)}/`;
+            if (request.datetime?.end) {
+                str += JSON.stringify(request.datetime.end);
+            }
+            query.push(str);
+        }
+        return this._client("GET", paths.CollectionItemsList(collectionID)+`?${query.join("&")}`)
         .then(jsonOrError)
         .then((resp) => {
             return decodeItemList(resp);
@@ -265,6 +282,14 @@ function decodeCollectionList(json: unknown): CollectionList {
     }
 
     return res;
+}
+
+export interface ListRequest {
+    bbox?: [number, number, number, number];
+    datetime?: {
+        start: Date;
+        end?: Date;
+    };
 }
 
 export interface ItemList {
