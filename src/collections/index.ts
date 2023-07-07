@@ -142,7 +142,7 @@ function decodeCollectionList(json: unknown): CollectionList {
         for (let i=0; i<argMap.collections.length; i++) {
             const c = decodeCollection(argMap.collections[i]);
             if (!c) {
-                throw("");
+                throw("invalid collection list response, error decoding collection");
             }
             res.collections.push(c);
         }
@@ -152,7 +152,7 @@ function decodeCollectionList(json: unknown): CollectionList {
         for (let i=0; i<argMap.links.length; i++) {
             const l = decodeLink(argMap.links[i]);
             if (!l) {
-                throw("");
+                throw("invalid collection list response, error decoding link");
             }
             res.links.push(l);
         }
@@ -196,7 +196,7 @@ function decodeItemList(json: unknown): ItemList {
         for (let i=0; i<argMap.features.length; i++) {
             const f = decodeItem(argMap.features[i]);
             if (!f) {
-                throw("");
+                throw("invalid item list response, error decoding item");
             }
             res.features.push(f);
         }
@@ -205,7 +205,7 @@ function decodeItemList(json: unknown): ItemList {
         for (let i=0; i<argMap.links.length; i++) {
             const l = decodeLink(argMap.links[i]);
             if (!l) {
-                throw("");
+                throw("invalid item list response, error decoding link");
             }
             res.links.push(l);
         }
@@ -273,7 +273,7 @@ function decodeSearchResults(json: unknown): SearchResults {
         for (let i=0; i<argMap.links.length; i++) {
             const l = decodeLink(argMap.links[i]);
             if (!l) {
-                throw("");
+                throw("invalid item search response, error decoding link");
             }
             res.links.push(l);
         }
@@ -282,7 +282,7 @@ function decodeSearchResults(json: unknown): SearchResults {
         for (let i=0; i<argMap.features.length; i++) {
             const f = decodeItem(argMap.features[i]);
             if (!f) {
-                throw("");
+                throw("invalid item search response, error decoding item");
             }
             res.features.push(f);
         }
