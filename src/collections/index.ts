@@ -27,7 +27,7 @@ export default class Collections {
      * TODO: reference web API documentation
      */
     conformance(): Promise<ConformanceResponse> {
-        return this._client("POST", paths.CollectionConformance)
+        return this._client("GET", paths.CollectionConformance)
         .then(jsonOrError)
         .then((resp) => {
             const res: ConformanceResponse = {conformsTo: []};
@@ -70,7 +70,7 @@ export default class Collections {
      * TODO: reference web API documentation
      */
     get(collectionID: string): Promise<Collection> {
-        return this._client("POST", paths.CollectionGet(collectionID))
+        return this._client("GET", paths.CollectionGet(collectionID))
         .then(jsonOrError)
         .then((resp) => {
             const c = decodeCollection(resp);
@@ -159,7 +159,7 @@ export default class Collections {
      * TODO: reference web API documentation
      */
     itemsSearch(collectionID: string): Promise<SearchResults> {
-        return this._client("GET", paths.CollectionItemsSearch(collectionID))
+        return this._client("POST", paths.CollectionItemsSearch(collectionID))
         .then(jsonOrError)
         .then((resp) => {
             return decodeSearchResults(resp);
