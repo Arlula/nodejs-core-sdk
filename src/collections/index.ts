@@ -195,5 +195,26 @@ export interface queryContext {
 function decodeContext(json: unknown): queryContext {
     const res: queryContext = {};
 
+    if (typeof json !== "object") {
+        return res;
+    }
+    const argMap = json as {[key: string]: unknown};
+
+    if (argMap.page && typeof argMap.page === "number") {
+        res.page = argMap.page;
+    }
+
+    if (argMap.limit && typeof argMap.limit === "number") {
+        res.limit = argMap.limit;
+    }
+
+    if (argMap.matched && typeof argMap.matched === "number") {
+        res.matched = argMap.matched;
+    }
+
+    if (argMap.returned && typeof argMap.returned === "number") {
+        res.returned = argMap.returned;
+    }
+
     return res;
 }
