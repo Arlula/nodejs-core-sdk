@@ -93,7 +93,7 @@ export default class Collections {
         return this._client("GET", paths.CollectionItemsSearch(collectionID))
         .then(jsonOrError)
         .then((resp) => {
-            // TODO
+            return decodeSearchResults(resp);
         });
     }
     // itemGet
@@ -232,6 +232,63 @@ export interface SearchResults {
     numberReturned:  number;
     links:           Link[];
     features:        Item[];
+}
+
+function decodeSearchResults(json: unknown): SearchResults {
+    const res: SearchResults = {
+        type: "FeatureCollection",
+        stac_version: "",
+        stac_extensions: [],
+        context: {},
+        numberMatched: 0,
+        numberReturned: 0,
+        links: [],
+        features: [],
+    };
+
+    if (typeof json !== "object") {
+        return res;
+    }
+    const argMap = json as {[key: string]: unknown};
+
+    if (argMap.type && typeof argMap.type === "string") {
+        res.type = argMap.type;
+    }
+    if (argMap.stac_version && typeof argMap.stac_version === "string") {
+        res.stac_version = argMap.stac_version;
+    }
+    if (argMap.stac_extensions && Array.isArray(argMap.stac_extensions)) {
+        res.stac_extensions = argMap.stac_extensions;
+    }
+    if (argMap.context) {
+        res.context = decodeContext(argMap.context);
+    }
+    if (argMap.numberMatched && typeof argMap.numberMatched === "number") {
+        res.numberMatched = argMap.numberMatched;
+    }
+    if (argMap.numberReturned && typeof argMap.numberReturned === "number") {
+        res.numberReturned = argMap.numberReturned;
+    }
+    if (argMap.links && Array.isArray(argMap.links)) {
+        for (let i=0; i<argMap.links.length; i++) {
+            const l = decodeLink(argMap.links[i]);
+            if (!l) {
+                throw("");
+            }
+            res.links.push(l);
+        }
+    }
+    if (argMap.features && Array.isArray(argMap.features)) {
+        for (let i=0; i<argMap.features.length; i++) {
+            const f = decodeItem(argMap.features[i]);
+            if (!f) {
+                throw("");
+            }
+            res.features.push(f);
+        }
+    }
+
+    return res;
 }
 
 export interface queryContext {
