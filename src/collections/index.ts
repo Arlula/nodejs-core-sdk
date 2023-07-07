@@ -1,6 +1,6 @@
 import { voidOrError, jsonOrError, requestBuilder } from "../util/request";
 import paths from "../util/paths";
-import Collection, { Link, decodeCollection } from "./collection";
+import Collection, { Link, decodeCollection, decodeLink } from "./collection";
 import Item, { decodeItem } from "./item";
 
 /**
@@ -42,7 +42,7 @@ export default class Collections {
         return this._client("POST", paths.CollectionList)
         .then(jsonOrError)
         .then((resp) => {
-            // TODO
+            return decodeCollectionList(resp)
         });
     }
     // get
@@ -130,6 +130,41 @@ export interface CollectionList {
     context:     queryContext;
 }
 
+function decodeCollectionList(json: unknown): CollectionList {
+    const res: CollectionList = {collections: [], links: [], context: {}}
+
+    if (typeof json !== "object") {
+        return res;
+    }
+    const argMap = json as {[key: string]: unknown};
+
+    if (argMap.collections && Array.isArray(argMap.collections)) {
+        for (let i=0; i<argMap.collections.length; i++) {
+            const c = decodeCollection(argMap.collections[i]);
+            if (!c) {
+                throw("");
+            }
+            res.collections.push(c);
+        }
+    }
+
+    if (argMap.links && Array.isArray(argMap.links)) {
+        for (let i=0; i<argMap.links.length; i++) {
+            const l = decodeLink(argMap.links[i]);
+            if (!l) {
+                throw("");
+            }
+            res.links.push(l);
+        }
+    }
+
+    if (argMap.context) {
+        res.context = decodeContext(argMap.context);
+    }
+
+    return res;
+}
+
 export interface ItemList {
     type:           string;
     features:       Item[];
@@ -155,4 +190,10 @@ export interface queryContext {
     limit?:    number;
     matched?:  number;
     returned?: number;
+}
+
+function decodeContext(json: unknown): queryContext {
+    const res: queryContext = {};
+
+    return res;
 }
