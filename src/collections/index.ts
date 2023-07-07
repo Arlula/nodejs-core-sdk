@@ -1,6 +1,6 @@
 import { voidOrError, jsonOrError, requestBuilder } from "../util/request";
 import paths from "../util/paths";
-import Collection, { decodeCollection } from "./collection";
+import Collection, { Link, decodeCollection } from "./collection";
 import Item, { decodeItem } from "./item";
 
 /**
@@ -125,13 +125,34 @@ export interface ConformanceResponse {
 }
 
 export interface CollectionList {
-
+    collections: Collection[];
+    links:       Link[];
+    context:     queryContext;
 }
 
 export interface ItemList {
-
+    type:           string;
+    features:       Item[];
+    links:          Link[];
+    timeStamp:      Date;
+    numberMatched:  number;
+    numberReturned: number;
 }
 
 export interface SearchResults {
+    type:            string;
+    stac_version:    string;
+    stac_extensions: string[];
+    context:         queryContext;
+    numberMatched:   number;
+    numberReturned:  number;
+    links:           Link[];
+    features:        Item[];
+}
 
+export interface queryContext {
+    page?:     number;
+    limit?:    number;
+    matched?:  number;
+    returned?: number;
 }
