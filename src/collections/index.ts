@@ -62,6 +62,7 @@ export default class Collections {
     /**
      * retrieve a collection object, with its description, extent and summary information
      * 
+     * @param {string} collectionID the UUID of the collection to retrieve
      * @returns {Promise<Collection>} the collection itself
      * 
      * TODO: reference web API documentation
@@ -81,6 +82,10 @@ export default class Collections {
     /**
      * create a new collection
      * 
+     * @param {string} title the title of the collection as it will appear in the dashboard
+     * @param {string} description a description of the collection to clarify its purpose
+     * @param {string[]} keywords a set of keywords to describe the collection, describing it and providing filtering
+     * @param {string} [team] the team to own the collection (if not specified, the calling API will directly own the collection)
      * @returns {Promise<Collection>} the collection created
      * WARNING: the extent and summary will be unset until the first item is added
      * 
@@ -101,6 +106,10 @@ export default class Collections {
     /**
      * update the collections details such as its title, description or keywords
      * 
+     * @param {string} collectionID the UUID of the collection to update
+     * @param {string} title the title of the collection as it will appear in the dashboard
+     * @param {string} description a description of the collection to clarify its purpose
+     * @param {string[]} keywords a set of keywords to describe the collection, describing it and providing filtering
      * @returns {Promise<void>} none if successful
      * 
      * TODO: reference web API documentation
@@ -113,6 +122,7 @@ export default class Collections {
     /**
      * delete a collection
      * 
+     * @param {string} collectionID the UUID of the collection to delete
      * @returns {Promise<void>} none if successful
      * 
      * TODO: reference web API documentation
@@ -125,6 +135,7 @@ export default class Collections {
     /**
      * list items in the collection subject to some simple constraints
      * 
+     * @param {string} collectionID the UUID of the collection to retrieve items from
      * @returns {Promise<ItemList>} the list of items found in the collection
      * 
      * TODO: reference web API documentation
@@ -140,6 +151,7 @@ export default class Collections {
     /**
      * perform a search of items within the collection that satisfy a set of conditions
      * 
+     * @param {string} collectionID the UUID of the collection to search
      * @returns {Promise<SearchResults>} the list of items found matching the conditions
      * 
      * TODO: reference web API documentation
@@ -155,6 +167,8 @@ export default class Collections {
     /**
      * retrieve an individual item from the collection
      * 
+     * @param {string} collectionID the UUID of the collection the item exists in
+     * @param {string} itemID the UUID of the item within the collection
      * @returns {Promise<Item>} The item from the collection
      * 
      * TODO: reference web API documentation
@@ -177,6 +191,8 @@ export default class Collections {
      * that the request has been submitted, but it may take several seconds for the
      * corresponding item to become available.
      * 
+     * @param {string} collectionID the UUID of the collection to add the order to as an item
+     * @param {string} orderID the UUID of the order to be added as a collection item
      * @returns {Promise<void>} none if successfully scheduled
      * 
      * TODO: reference web API documentation
@@ -192,12 +208,14 @@ export default class Collections {
      * that the request has been submitted, but it may take several seconds for the
      * corresponding item be removed and the collections summary to be updated.
      * 
+     * @param {string} collectionID the UUID of the collection to remove the item from
+     * @param {string} itemID the UUID of the item to remove
      * @returns {Promise<void>} none if successfully scheduled
      * 
      * TODO: reference web API documentation
      */
-    itemRemove(collectionID: string, orderID: string): Promise<void> {
-        return this._client("DELETE", paths.CollectionItemRemove(collectionID, orderID))
+    itemRemove(collectionID: string, itemID: string): Promise<void> {
+        return this._client("DELETE", paths.CollectionItemRemove(collectionID, itemID))
         .then(voidOrError);
     }
 }
