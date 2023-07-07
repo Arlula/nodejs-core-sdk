@@ -43,6 +43,19 @@ export function authProvider(user: string, pass:string): requestBuilder {
 
 export type requestBuilder = (method: string, path: string, body?: unknown, timeout?: number, external?: boolean) => Promise<Response>
 
+export function voidOrError(r: Response): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (r.ok) {
+            resolve();
+            return;
+        }
+        r.text()
+        .then((resp: string) => {
+            reject(resp);
+        });
+    })
+}
+
 export function jsonOrError(r: Response): Promise<unknown> {
     return new Promise((resolve, reject) => {
         if (r.ok) {
