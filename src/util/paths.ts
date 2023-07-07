@@ -23,4 +23,38 @@ export default class paths {
     static get ResourceDownload(): string {
         return host + "/api/order/resource/get";
     }
+
+    static get CollectionConformance(): string {
+        return host + "/api/collections/conformance";
+    }
+    static get CollectionList(): string {
+        return host + "/api/collections";
+    }
+    static CollectionGet(coll: string): string {
+        return host + `/api/collections/${coll}`;
+    }
+    static get CollectionCreate(): string {
+        return host + "/api/collections";
+    }
+    static CollectionUpdate(coll: string): string {
+        return host + `/api/collections/${coll}`;
+    }
+    static CollectionDelete(coll: string): string {
+        return host + `/api/collections/${coll}`;
+    }
+    static CollectionItemsList(coll: string): string {
+        return host + `/api/collections/${coll}/items`;
+    }
+    static CollectionItemsSearch(coll: string): string {
+        return host + `/api/collections/${coll}/search`;
+    }
+    static CollectionItemGet(coll: string, item: string): string {
+        return host + `/api/collections/${coll}/items/${item}`;
+    }
+    static CollectionItemAdd(coll: string): string {
+        return host + `/api/collections/${coll}/items`;
+    }
+    static CollectionItemRemove(coll: string, item: string): string {
+        return host + `/api/collections/${coll}/items/${item}`;
+    }
 }
