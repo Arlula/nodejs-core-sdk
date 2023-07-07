@@ -47,12 +47,14 @@ export default class Collections {
     /**
      * list collections the API has access too
      * 
+     * @param {number} [page=0] the page of results to retrieve, each page will container {limit} results, the default page is 0
+     * @param {number} [limit=100] the number of collections in a page to include, the default is 100 collections
      * @returns {Promise<CollectionList>} the list of collections the api may access 
      * 
      * TODO: reference web API documentation
      */
-    list(): Promise<CollectionList> {
-        return this._client("POST", paths.CollectionList)
+    list(page?: number, limit?: number): Promise<CollectionList> {
+        return this._client("GET", paths.CollectionList+`?page=${page?page:""}&size=${limit?limit:""}`)
         .then(jsonOrError)
         .then((resp) => {
             return decodeCollectionList(resp)
