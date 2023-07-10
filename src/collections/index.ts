@@ -175,8 +175,8 @@ export default class Collections {
      * 
      * TODO: reference web API documentation
      */
-    itemsSearch(collectionID: string): Promise<SearchResults> {
-        return this._client("POST", paths.CollectionItemsSearch(collectionID))
+    itemsSearch(collectionID: string, request?: SearchRequest): Promise<SearchResults> {
+        return this._client("POST", paths.CollectionItemsSearch(collectionID), JSON.stringify(request))
         .then(jsonOrError)
         .then((resp) => {
             return decodeSearchResults(resp);
@@ -290,6 +290,44 @@ export interface ListRequest {
         start: Date;
         end?: Date;
     };
+}
+
+export interface SearchRequest {
+    ids?: string[];
+    bbox?: [number, number, number, number];
+    intersects?: {
+        type: "Polygon";
+        coordinates: number[][][];
+    };
+    datetime?: [Date, Date|undefined];
+    limit?: number;
+    page?: number;
+    query?: {
+        'providers.key'?: SearchQueryOpString;
+        'supplier'?: SearchQueryOpString;
+        'platform'?: SearchQueryOpString;
+        'instruments'?: SearchQueryOpString;
+        'gsd'?: SearchQueryOpNumber;
+        'eo:bands.common_name'?: SearchQueryOpString;
+        'band'?: SearchQueryOpString;
+        'eo:cloud_cover'?: SearchQueryOpNumber;
+        'eo:snow_cover'?: SearchQueryOpNumber;
+        'arl:types'?: SearchQueryOpString;
+    };
+}
+
+export interface SearchQueryOpString {
+    eq?: string;
+    like?: string;
+}
+
+export interface SearchQueryOpNumber {
+    eq?: number;
+    lt?: number;
+    lte?: number;
+    gt?: number;
+    gte?: number;
+    range?: [number, number];
 }
 
 export interface ItemList {
