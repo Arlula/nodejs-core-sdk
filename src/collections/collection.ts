@@ -267,9 +267,10 @@ export function decodeExtent(json: unknown): Extent|null {
 
     // spatial
     if (argMap?.spatial && typeof argMap.spatial == "object") {
-        if ('bbox' in argMap.spatial && Array.isArray(argMap.spatial.bbox)) {
-            for (let i=0; i<argMap.spatial.bbox.length; i++) {
-                const box = decodeBBOX(argMap.spatial.bbox[i])
+        const spat = argMap.spatial as {[key: string]: unknown};
+        if ('bbox' in spat && Array.isArray(spat.bbox)) {
+            for (let i=0; i<spat.bbox.length; i++) {
+                const box = decodeBBOX(spat.bbox[i])
                 if (!box) {
                     throw("Invalid spatial extent, invalid bbox");
                 }
@@ -279,11 +280,12 @@ export function decodeExtent(json: unknown): Extent|null {
     }
     // temporal
     if (argMap?.temporal && typeof argMap.temporal == "object") {
-        if ('interval' in argMap.temporal && Array.isArray(argMap.temporal.interval)) {
-            for (let i=0; i<argMap.temporal.interval.length; i++) {
+        const temp = argMap.temporal as {[key: string]: unknown};
+        if ('interval' in temp && Array.isArray(temp.interval)) {
+            for (let i=0; i<temp.interval.length; i++) {
                 const interval: Date[] = [];
-                for (let j=0; j<argMap.temporal.interval[i].length; j++) {
-                    interval.push(new Date(argMap.temporal.interval[i][j]));
+                for (let j=0; j<temp.interval[i].length; j++) {
+                    interval.push(new Date(temp.interval[i][j]));
                 }
                 temporal.push(interval);
             }
@@ -307,13 +309,14 @@ export class Summary {
             if (!json || typeof json !== "object") {
                 throw("");
             }
-            if ('type' in json) {
+            const argMap = json as {[key: string]: unknown};
+            if ('type' in argMap) {
                 this._type = "schema";
-                this._schema = json;
-            } else if ('minimum' in json && 'maximum' in json) {
+                this._schema = argMap;
+            } else if ('minimum' in argMap && 'maximum' in argMap) {
                 this._type = "range";
-                this._min = json.minimum;
-                this._max = json.maximum;
+                this._min = argMap.minimum;
+                this._max = argMap.maximum;
             } else {
                 this._type = "unknown";
             }
