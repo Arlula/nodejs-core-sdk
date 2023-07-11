@@ -4,6 +4,7 @@ import { setCustomHost } from "../dist/util/paths";
 import { setDefaultTimeout } from "../dist/util/request";
 import runSearchTests from "./archive/search-tests";
 import runOrderTests from "./archive/order-test";
+import runBatchTests from "./archive/batch-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
@@ -34,6 +35,8 @@ const tests = [
     runSearchTests,
     // archive order tests
     runOrderTests,
+    // archive batch order tests
+    runBatchTests,
     // ============
     // orders tests
     // ============

@@ -55,8 +55,8 @@ function test2(client: Arlula) {
         let scene: SearchResult|null = null;
         sceneLoop:
         for (let i=0; i<resp.results.length; i++) {
-            for (let j=0; j<resp.results[i].license.length; j++) {
-                if (resp.results[i].bundles[j].price == 0 && resp.results[i].license[j].href == (process.env.order_eula || "")) {
+            for (let j=0; j<resp.results[i].licenses.length; j++) {
+                if (resp.results[i].bundles[j].price == 0 && resp.results[i].licenses[j].href == (process.env.order_eula || "")) {
                     scene = resp.results[i];
                     break sceneLoop;
                 }
