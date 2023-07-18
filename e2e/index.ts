@@ -8,6 +8,7 @@ import runBatchTests from "./archive/batch-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
+import runCollectionGetTests from "./collections/coll-get";
 
 dotenv.config();
 
@@ -28,24 +29,29 @@ const errors: unknown[] = [];
 const tests = [
     // run tests
     testEndpoint,
-    // =============
-    // archive tests
-    // =============
-    // archive search tests
-    runSearchTests,
-    // archive order tests
-    runOrderTests,
-    // archive batch order tests
-    runBatchTests,
-    // ============
-    // orders tests
-    // ============
-    // orders list
-    runOrderListTests,
-    // order get
-    runOrderGetTests,
-    // resource download
-    runOrderResourceTests,
+    // // =================
+    // // archive tests
+    // // =================
+    // // archive search tests
+    // runSearchTests,
+    // // archive order tests
+    // runOrderTests,
+    // // archive batch order tests
+    // runBatchTests,
+    // // =================
+    // // orders tests
+    // // =================
+    // // orders list
+    // runOrderListTests,
+    // // order get
+    // runOrderGetTests,
+    // // resource download
+    // runOrderResourceTests,
+    // =================
+    // collections tests
+    // =================
+    // collections get
+    runCollectionGetTests,
 ]
 
 async function runTests() {
