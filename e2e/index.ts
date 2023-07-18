@@ -29,24 +29,24 @@ const errors: unknown[] = [];
 const tests = [
     // run tests
     testEndpoint,
-    // // =================
-    // // archive tests
-    // // =================
-    // // archive search tests
-    // runSearchTests,
-    // // archive order tests
-    // runOrderTests,
-    // // archive batch order tests
-    // runBatchTests,
-    // // =================
-    // // orders tests
-    // // =================
-    // // orders list
-    // runOrderListTests,
-    // // order get
-    // runOrderGetTests,
-    // // resource download
-    // runOrderResourceTests,
+    // =================
+    // archive tests
+    // =================
+    // archive search tests
+    runSearchTests,
+    // archive order tests
+    runOrderTests,
+    // archive batch order tests
+    runBatchTests,
+    // =================
+    // orders tests
+    // =================
+    // orders list
+    runOrderListTests,
+    // order get
+    runOrderGetTests,
+    // resource download
+    runOrderResourceTests,
     // =================
     // collections tests
     // =================
