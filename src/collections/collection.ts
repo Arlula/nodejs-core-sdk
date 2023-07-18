@@ -297,10 +297,10 @@ export function decodeExtent(json: unknown): Extent|null {
 
 export class Summary {
     private _type: string;
-    private _min?: any;
-    private _max?: any;
-    private _values?: any[];
-    private _schema?: any;
+    private _min?: unknown;
+    private _max?: unknown;
+    private _values?: unknown[];
+    private _schema?: unknown;
     constructor(json: unknown) {
         if (Array.isArray(json)) {
             this._type = "enumeration";
@@ -326,22 +326,22 @@ export class Summary {
     public get type(): string {
         return this._type;
     }
-    public get min(): any|undefined {
+    public get min(): unknown|undefined {
         return this._min;
     } 
-    public get max(): any|undefined {
+    public get max(): unknown|undefined {
         return this._max;
     } 
-    public get range(): any[]|undefined {
+    public get range(): unknown[]|undefined {
         if (this._min && this._max) {
             return [this._min, this._max];
         }
         return undefined;
     }
-    public get values(): any|undefined {
+    public get values(): unknown|undefined {
         return this._values;
     } 
-    public get schema(): any|undefined {
+    public get schema(): unknown|undefined {
         return this._schema;
     }
 
