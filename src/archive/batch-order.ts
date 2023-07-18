@@ -93,7 +93,7 @@ export default class BatchOrderRequest {
             return false;
         }
 
-        const valid = this._orders.map((o) => {return o.valid()}).reduce((p, c, a, i) => {return p&&c}, true);
+        const valid = this._orders.map((o) => {return o.valid()}).reduce((p, c) => {return p&&c}, true);
         if (!valid) {
             return valid;
         }
