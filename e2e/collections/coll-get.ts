@@ -35,7 +35,6 @@ function test2List(client: Arlula) {
     console.log("coll-get 2 - list");
     return client.collections().list()
     .then((resp) => {
-        console.log("result: ", JSON.stringify(resp));
         if (!resp.collections.length) {
             console.log("coll-get 2  - list empty, expecting existing list");
             return Promise.reject("coll-get 2  - list empty, expecting existing list");
@@ -52,7 +51,7 @@ function test2List(client: Arlula) {
 
 function test3Get(client: Arlula) {
     console.log("coll-get 3 - get");
-    return client.collections().get("")
+    return client.collections().get(process.env.collection_id || "")
     .then((resp) => {
         if (!resp.id) {
             console.log("coll-get 3  - get: collection response with no ID")
@@ -70,7 +69,7 @@ function error4GetNotFound(client: Arlula) {
         return Promise.reject("collection get error 1 - not found error: got results from invalid ID");
     })
     .catch((e) => {
-        if (!e || !e.startsWith("aaaaa")) {
+        if (!e || !e.startsWith("404 page not found")) {
             console.error("collection get error 1 - not found error: Unexpected error response (search error 1): ", e)
             return Promise.reject("collection get error 1 - not found error: "+e);
         }
