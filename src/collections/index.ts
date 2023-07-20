@@ -116,9 +116,16 @@ export default class Collections {
      * 
      * TODO: reference web API documentation
      */
-    update(collectionID: string, title: string, description: string, keywords: string[]): Promise<void> {
+    update(collectionID: string, title: string, description: string, keywords: string[]): Promise<Collection> {
         return this._client("POST", paths.CollectionUpdate(collectionID), {title,description,keywords})
-        .then(voidOrError);
+        .then(jsonOrError)
+        .then((resp) => {
+            const c = decodeCollection(resp);
+            if (!c) {
+                return Promise.reject("invalid promise response, decode error")
+            }
+            return c;
+        });
     }
     
     /**
