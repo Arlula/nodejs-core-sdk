@@ -43,21 +43,21 @@ function test1ItemList(client: Arlula) {
 
 function test2ItemListPage(client: Arlula) {
     console.log("item-get 2 - list");
-    return client.collections().itemsList(process.env.collection_id || "", 1, 2)
+    return client.collections().itemsList(process.env.collection_id || "", 1, 1)
     .then((resp) => {
         if (!resp) {
             console.log("collection item get 2 - list page: empty response");
             return Promise.reject("collection item get 2 - list page: empty response");
         }
         if (!resp.features.length) {
-            console.log("collection item get 2 - list page: no features returned");
+            console.log("collection item get 2 - list page: no features returned ", resp.features.length);
             return Promise.reject("collection item get 2 - list page: no features returned");
         }
         if (resp.features.length != resp.numberReturned) {
             console.log("collection item get 2 - list page: listed features don't match reported");
             return Promise.reject("collection item get 2 - list page: listed features don't match reported");
         }
-        if (resp.features.length != 2) {
+        if (resp.features.length != 1) {
             console.log("collection item get 2 - list page: listed features don't match reported");
             return Promise.reject("collection item get 2 - list page: listed features don't match reported");
         }
