@@ -10,6 +10,8 @@ import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
 import runCollectionGetTests from "./collections/coll-get";
 import runCollectionCUDTests from "./collections/coll-cud";
+import runItemGetTests from "./collections/item-get";
+import runItemCUDTests from "./collections/item-cud";
 
 dotenv.config();
 
@@ -55,6 +57,10 @@ const tests = [
     runCollectionGetTests,
     // collections CUD
     runCollectionCUDTests,
+    // collection items get
+    runItemGetTests,
+    // collection items CUD
+    runItemCUDTests,
 ]
 
 async function runTests() {
