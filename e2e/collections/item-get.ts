@@ -72,7 +72,7 @@ function test2ItemListPage(client: Arlula) {
 }
 
 function test3ItemSearch(client: Arlula) {
-    console.log("item-get 1 - list");
+    console.log("item-get 3 - search");
     return client.collections().itemsSearch(process.env.collection_id || "", {ids: [process.env.item_id1 || "", process.env.item_id2 || ""]})
     .then((resp) => {
         if (!resp) {
@@ -106,7 +106,7 @@ function test3ItemSearch(client: Arlula) {
 }
 
 function test4ItemGet(client: Arlula) {
-    console.log("item-get 1 - list");
+    console.log("item-get 4 - get");
     return client.collections().itemGet(process.env.collection_id || "", process.env.item_id1 || "")
     .then((resp) => {
         if (!resp) {
