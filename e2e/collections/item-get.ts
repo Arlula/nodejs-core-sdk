@@ -7,7 +7,7 @@ const tests = [
     test4ItemGet,
 ];
 
-export default function runCollectionGetTests(client: Arlula): Promise<unknown> {
+export default function runItemGetTests(client: Arlula): Promise<unknown> {
 
     return tests.reduce((p, test) => {
         return p.then(() => test(client));
