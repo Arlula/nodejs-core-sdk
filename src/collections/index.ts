@@ -155,7 +155,7 @@ export default class Collections {
             query.push(`page=${page}`);
         }
         if (limit) {
-            query.push(`size=${limit}`);
+            query.push(`limit=${limit}`);
         }
         if (request?.bbox) {
             query.push(`bbox=${request.bbox[0]}&bbox=${request.bbox[1]}&bbox=${request.bbox[2]}&bbox=${request.bbox[3]}`);
