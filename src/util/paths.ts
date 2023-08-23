@@ -62,4 +62,14 @@ export default class paths {
     static CollectionItemRemove(coll: string, item: string): string {
         return host + `/api/collections/${coll}/items/${item}`;
     }
+
+    static get TaskingSearch(): string {
+        return host+"/api/tasking/search"
+    }
+    static get TaskingOrder(): string {
+        return host + "/api/tasking/order";
+    }
+    static get TaskingOrderBatch(): string {
+        return host + "/api/tasking/order/batch";
+    }
 }
