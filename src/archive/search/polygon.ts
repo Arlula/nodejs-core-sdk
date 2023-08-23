@@ -1,3 +1,22 @@
+
+export function decodeMultiPolygon(json: unknown): number[][][][]|null {
+    const result: number[][][][] = [];
+
+    if (!Array.isArray(json)) {
+        return null;
+    }
+
+    for (let i=0; i<json.length; i++) {
+        const p = decodePolygon(json[i])
+        if (p) {
+            result.push(p);
+            continue;
+        }
+        return null;
+    }
+
+    return result;
+}
 /**
  * decodePolygon reads a depth 2 or 3 JSON polygon coordinates.
  * It returns the polygon or null if any issues were found while decoding.
