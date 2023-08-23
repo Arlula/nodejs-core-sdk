@@ -3,6 +3,7 @@ import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
 import TaskingSearchRequest from "./search-request";
 import { TaskingSearchResponse } from "./search-response";
+import { decodeResponse } from "./search-response";
 
 /**
  * @class Tasking wraps the API requests to the imagery tasking API
@@ -37,13 +38,7 @@ export default class Tasking {
         return this._client("POST", paths.TaskingSearch, req._toJSON())
         .then(jsonOrError)
         .then((resp) => {
-            if (Array.isArray(resp)) {
-                const results = decodeResultSet(resp);
-                if (!results) {
-                    return Promise.reject({errors: ["error decoding search results"]});
-                }
-                return {results};
-            } else if (typeof resp === "object") {
+            if (typeof resp === "object") {
                 const response = decodeResponse(resp);
                 if (!response) {
                     return Promise.reject({errors: ["error decoding search response"]});
