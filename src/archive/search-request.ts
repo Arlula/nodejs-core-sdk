@@ -1,4 +1,6 @@
-
+import formatYMDDate from "../util/date";
+import { GroundSampleDistance } from "../util/gsd";
+import parsePoly, { validWKTPolygon } from "../util/polygon";
 /**
  * @class SearchRequest constructs a request to search for archival imagery
  * 
@@ -189,12 +191,12 @@ export default class SearchRequest {
      */
     _toQuery(): {[key: string]: string} {
         const query: {[key: string]: string} = {
-            start: `${this._start.getFullYear()}-${pad(this._start.getMonth()+1, 2)}-${pad(this._start.getDate(), 2)}`,
+            start: formatYMDDate(this._start),
             gsd: this._gsd.toString(),
         };
 
         if (this._end) {
-            query.end = `${this._end.getFullYear()}-${pad(this._end.getMonth()+1, 2)}-${pad(this._end.getDate(), 2)}`;
+            query.end = formatYMDDate(this._end);
         }
 
         if (this._point) {
@@ -296,89 +298,6 @@ export default class SearchRequest {
         return JSON.stringify(body)
     }
 }
-
-/**
- * GroundSampleDistance labels for commonly desired imagery precisions
- * 
- * veryHigh -> 0.5m/pixel or less
- * high -----> 1m/pixel or less
- * medium ---> 5m/pixel or less
- * low ------> 20m/pixel or less
- * veryLow --> 10km/pixel or less (arbitrary large value to return all sources)
- */
-export enum GroundSampleDistance {
-    veryHigh = 0.5,
-    high = 1,
-    medium = 5,
-    low = 20,
-    veryLow = 100000,
-}
-
-function pad(num: number, size: number): string {
-    let numStr = num.toString();
-    while (numStr.length < size) numStr = "0" + num;
-    return numStr;
-}
-
-function parsePoly(poly: number[][][]|string): number[][][] {
-    if (Array.isArray(poly)) {
-        return poly;
-    }
-
-    if (!/^polygon\s*\(/i.test(poly)) {
-        throw("polygon WKT is not a valid format");
-    }
-
-    // remove header
-    poly = poly.substring(7);
-    while (poly[0] == ' ') {
-        poly = poly.substring(1);
-    }
-
-    // remove ring wrapper
-    poly = poly.substring(1,poly.length-1);
-    poly = poly.replace("(", "");
-
-    const polygon: number[][][] = [];
-
-    const ringTokens = poly.split(")");
-    while (ringTokens.length) {
-        const ringStr = ringTokens.shift();
-        const ring: number[][] = [];
-        if (!ringStr) {
-            break;
-        }
-
-        const points = ringStr.split(",");
-
-        while (points.length) {
-            const pointStr = points.shift();
-            const point: number[] = [];
-            if (!pointStr) {
-                break;
-            }
-
-            const vals = pointStr.split(" ");
-
-            while (vals.length) {
-                const val = vals.shift();
-                if (!val) {
-                    continue;
-                }
-
-                point.push(parseFloat(val));
-            }
-
-            ring.push(point);
-        }
-
-        polygon.push(ring);
-    }
-
-    return polygon
-}
-
-const validWKTPolygon = /^\w+\s*\(+[+|-]?\d$/;
 
 interface searchRequest {
     latLong?: {
