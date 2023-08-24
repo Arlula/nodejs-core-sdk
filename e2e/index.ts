@@ -6,6 +6,8 @@ import runArchiveSearchTests from "./archive/search-tests";
 import runArchiveOrderTests from "./archive/order-test";
 import runArchiveBatchTests from "./archive/batch-test";
 import runTaskingSearchTests from "./tasking/search-test";
+import runTaskingOrderTests from "./tasking/order-test";
+import runTaskingBatchTests from "./tasking/batch-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
@@ -47,6 +49,10 @@ const tests = [
     // =================
     // tasking search tests
     runTaskingSearchTests,
+    // tasking order tests
+    runTaskingOrderTests,
+    // tasking batch order tests
+    runTaskingBatchTests,
     // =================
     // orders tests
     // =================
