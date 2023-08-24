@@ -1,7 +1,7 @@
 import Arlula from "../../dist";
-import SearchRequest from "../../dist/archive/search-request";
-import SearchResponse, { isResponse } from "../../dist/archive/search/response";
-import SearchResult from "../../dist/archive/search/result";
+import ArchiveSearchRequest from "../../dist/archive/search-request";
+import ArchiveSearchResponse, { isResponse } from "../../dist/archive/search/response";
+import ArchiveSearchResult from "../../dist/archive/search/result";
 import { GroundSampleDistance } from "../../dist/util/gsd";
 
 const tests = [
@@ -28,7 +28,7 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
 // search single date and point
 function test1(client: Arlula) {
     console.log("search 1")
-    const search = new SearchRequest(new Date(2018, 4, 3))
+    const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
     return client.archive().search(search)
@@ -57,7 +57,7 @@ function test1(client: Arlula) {
 // search date range and point
 function test2(client: Arlula) {
     console.log("search 2")
-    const search = new SearchRequest(new Date(2018, 4, 3))
+    const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -87,7 +87,7 @@ function test2(client: Arlula) {
 // check lower res
 function test3(client: Arlula) {
     console.log("search 3")
-    const search = new SearchRequest(new Date(2018, 4, 3))
+    const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.veryLow);
@@ -117,7 +117,7 @@ function test3(client: Arlula) {
 // search date range and bounding box
 function test4(client: Arlula) {
     console.log("search 4")
-    const search = new SearchRequest(new Date(2018, 5, 15))
+    const search = new ArchiveSearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -147,7 +147,7 @@ function test4(client: Arlula) {
 // search single date and bounding box
 function test5(client: Arlula) {
     console.log("search 5")
-    const search = new SearchRequest(new Date(2020, 5, 15))
+    const search = new ArchiveSearchRequest(new Date(2020, 5, 15))
         .to(new Date(2020, 8, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -177,7 +177,7 @@ function test5(client: Arlula) {
 // polygon search (array)
 function test6(client: Arlula) {
     console.log("search 6")
-    const search = new SearchRequest(new Date(2022, 12, 1))
+    const search = new ArchiveSearchRequest(new Date(2022, 12, 1))
         .to(new Date(2022, 12, 31))
         .polygon([[[151.2001279312134,-33.843417236709115],[151.21343168792725,-33.84334594891234],[151.21969732818604,-33.84726668941343],[151.2195256668091,-33.85282670379151],[151.2001279312134,-33.843417236709115]]])
         .setMaximumGSD(GroundSampleDistance.veryLow);
@@ -208,7 +208,7 @@ function test6(client: Arlula) {
 // polygon search (WKT)
 function test7(client: Arlula) {
     console.log("search 7")
-    const search = new SearchRequest(new Date(2022, 12, 1))
+    const search = new ArchiveSearchRequest(new Date(2022, 12, 1))
         .to(new Date(2022, 12, 31))
         .polygon(`POLYGON ((151.2001279312134 -33.843417236709115,151.21343168792725 -33.84334594891234,151.21969732818604 -33.84726668941343,151.2195256668091 -33.85282670379151,151.2001279312134 -33.843417236709115))`)
         .setMaximumGSD(GroundSampleDistance.veryLow);
@@ -241,7 +241,7 @@ function test7(client: Arlula) {
 // end before start
 function testError1(client: Arlula) {
     console.log("search error 1")
-    const search = new SearchRequest(new Date(2020, 6, 13))
+    const search = new ArchiveSearchRequest(new Date(2020, 6, 13))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -267,7 +267,7 @@ function testError1(client: Arlula) {
 // future date
 function testError2(client: Arlula) {
     console.log("search error 2")
-    const search = new SearchRequest(new Date(3000, 1, 1))
+    const search = new ArchiveSearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
 
@@ -288,7 +288,7 @@ function testError2(client: Arlula) {
 // invalid long/lat
 function testError3(client: Arlula) {
     console.log("search error 3")
-    const search = new SearchRequest(new Date(2018, 5, 15))
+    const search = new ArchiveSearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -315,13 +315,13 @@ function exceptionHandler(label: string) {
 }
 
 function expectedError(label: string) {
-    return function (result: SearchResponse) {
+    return function (result: ArchiveSearchResponse) {
         console.error("Error executing"+label+": ", result);
         return Promise.reject(label+": "+result);
     }
 }
 
-function testResult(prefix: string, r: SearchResult): string {
+function testResult(prefix: string, r: ArchiveSearchResult): string {
     // bounding
     if (r.bounding.length == 0) {
         console.error(prefix, " is not populated");
