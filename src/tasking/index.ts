@@ -4,6 +4,8 @@ import { jsonOrError, requestBuilder } from "../util/request";
 import TaskingSearchRequest from "./search-request";
 import { TaskingSearchResponse } from "./search-response";
 import { decodeResponse } from "./search-response";
+import OrderRequest from "../archive/order-request";
+import BatchOrderRequest from "../archive/batch-order";
 
 /**
  * @class Tasking wraps the API requests to the imagery tasking API
@@ -67,7 +69,7 @@ export default class Tasking {
      * or
      * @see {https://arlula.com/documentation/#ref-order-request|Tasking order request structure reference}
      */
-    order(req: TaskingOrderRequest): Promise<Order> {
+    order(req: OrderRequest): Promise<Order> {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
@@ -84,7 +86,7 @@ export default class Tasking {
         });
     }
 
-    batchOrder(req: TaskingBatchOrderRequest): Promise<Order[]> {
+    batchOrder(req: BatchOrderRequest): Promise<Order[]> {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
