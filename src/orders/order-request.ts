@@ -157,6 +157,9 @@ export default class OrderRequest {
             bundleKey: this._bundleKey,
             webhooks: this._webhooks,
             emails: this._emails,
+            team: this._team,
+            coupon: this._coupon,
+            payment: this._payment,
         };
 
         if (stringify) {
@@ -172,4 +175,7 @@ export interface orderRequest {
     bundleKey: string;
     webhooks?: string[];
     emails?: string[];
+    team?:    string;
+    coupon?:  string;
+    payment?: string;
 }
