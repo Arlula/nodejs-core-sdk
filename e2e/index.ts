@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 import Arlula from "../dist";
 import { setCustomHost } from "../dist/util/paths";
 import { setDefaultTimeout } from "../dist/util/request";
-import runSearchTests from "./archive/search-tests";
-import runOrderTests from "./archive/order-test";
-import runBatchTests from "./archive/batch-test";
+import runArchiveSearchTests from "./archive/search-tests";
+import runArchiveOrderTests from "./archive/order-test";
+import runArchiveBatchTests from "./archive/batch-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
@@ -36,11 +36,11 @@ const tests = [
     // archive tests
     // =================
     // archive search tests
-    runSearchTests,
+    runArchiveSearchTests,
     // archive order tests
-    runOrderTests,
+    runArchiveOrderTests,
     // archive batch order tests
-    runBatchTests,
+    runArchiveBatchTests,
     // =================
     // orders tests
     // =================
