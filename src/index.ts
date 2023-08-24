@@ -3,6 +3,7 @@ import Orders from "./orders/index";
 import Collections from "./collections/index";
 import {authProvider, requestBuilder} from "./util/request";
 import paths from "./util/paths";
+import Tasking from "./tasking";
 
 /** 
  * @class Arlula is the root client for connecting to the Arlula API
@@ -19,6 +20,7 @@ import paths from "./util/paths";
 export default class Arlula {
     private readonly builder: requestBuilder;
     private _archive: Archive;
+    private _tasking: Tasking;
     private _orders: Orders;
     private _collections: Collections;
 
@@ -34,6 +36,7 @@ export default class Arlula {
     constructor(key: string, secret: string) {
         this.builder = authProvider(key, secret);
         this._archive = new Archive(this.builder);
+        this._tasking = new Tasking(this.builder);
         this._orders = new Orders(this.builder);
         this._collections = new Collections(this.builder);
     }
@@ -72,6 +75,17 @@ export default class Arlula {
      */
     archive(): Archive {
         return this._archive;
+    }
+
+    /**
+     * accesses the tasking API client
+     * 
+     * @returns {Tasking} the tasking API client
+     * 
+     * @see {@link ./tasking|Tasking}
+     */
+    tasking(): Tasking {
+        return this._tasking;
     }
 
     /**
