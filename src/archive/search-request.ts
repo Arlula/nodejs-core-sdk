@@ -2,7 +2,7 @@ import formatYMDDate from "../util/date";
 import { GroundSampleDistance } from "../util/gsd";
 import parsePoly, { validWKTPolygon } from "../util/polygon";
 /**
- * @class SearchRequest constructs a request to search for archival imagery
+ * @class ArchiveSearchRequest constructs a request to search for archival imagery
  * 
  * Searches must specify a target in both space and time;
  *  - Either a target date, or a target date range must be set.
@@ -12,7 +12,7 @@ import parsePoly, { validWKTPolygon } from "../util/polygon";
  * 
  * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
  */
-export default class SearchRequest {
+export default class ArchiveSearchRequest {
     private _start: Date;
     private _end?: Date;
     private _gsd: number = GroundSampleDistance.veryLow;
@@ -35,7 +35,7 @@ export default class SearchRequest {
      * @param {Date} date The date to search at
      * @returns {SearchRequest} The current request for chaining
      */
-    atDate(date: Date): SearchRequest {
+    atDate(date: Date): ArchiveSearchRequest {
         this._end = undefined;
         this._start = date;
         return this;
@@ -46,7 +46,7 @@ export default class SearchRequest {
      * @param {Date} date Target date, or start date for a date range
      * @returns {SearchRequest} The current request for chaining
      */
-    from(date: Date): SearchRequest {
+    from(date: Date): ArchiveSearchRequest {
         this._start = date;
         return this;
     }
@@ -56,7 +56,7 @@ export default class SearchRequest {
      * @param {Date} date end date of date range
      * @returns {SearchRequest} The current request for chaining
      */
-    to(date: Date): SearchRequest {
+    to(date: Date): ArchiveSearchRequest {
         this._end = date;
         return this;
     }
@@ -67,7 +67,7 @@ export default class SearchRequest {
      * @param {Date} end end date to stop imagery search
      * @returns {SearchRequest} The current request for chaining
      */
-    betweenDates(start: Date, end: Date): SearchRequest {
+    betweenDates(start: Date, end: Date): ArchiveSearchRequest {
         this._start = start;
         this._end = end;
         return this;
@@ -79,7 +79,7 @@ export default class SearchRequest {
      * @param {number} lat the latitude of the point
      * @returns {SearchRequest} The current request for chaining
      */
-    point(long: number, lat: number): SearchRequest {
+    point(long: number, lat: number): ArchiveSearchRequest {
         this._box = undefined;
         this._polygon = undefined;
         this._point = {long, lat};
@@ -94,7 +94,7 @@ export default class SearchRequest {
      * @param {number} south  the southern boundary of the box
      * @returns {SearchRequest} The current request for chaining 
      */
-    boundingBox(west: number, north: number, east: number, south: number): SearchRequest {
+    boundingBox(west: number, north: number, east: number, south: number): ArchiveSearchRequest {
         this._point = undefined;
         this._polygon = undefined;
         this._box = {west, north, east, south};
@@ -106,7 +106,7 @@ export default class SearchRequest {
      * @param {number[][][]} poly the series of loops (list of points) defining your search polygon in longitude, latitude ordering
      * @returns {SearchRequest} The current request for chaining 
      */
-    polygon(poly: number[][][]|string): SearchRequest {
+    polygon(poly: number[][][]|string): ArchiveSearchRequest {
         this._point = undefined;
         this._box = undefined;
         this._polygon = poly
@@ -123,7 +123,7 @@ export default class SearchRequest {
      * @param {number|GroundSampleDistance} gsd the sample distance to limit the result set to
      * @returns {SearchRequest} The current request for chaining
      */
-    setMaximumGSD(gsd: number|GroundSampleDistance): SearchRequest {
+    setMaximumGSD(gsd: number|GroundSampleDistance): ArchiveSearchRequest {
         this._gsd = gsd;
         return this;
     }
@@ -134,7 +134,7 @@ export default class SearchRequest {
      * @param {string} supplier supplier key to filter results for
      * @returns {SearchRequest} The current request for chaining
      */
-    withSupplier(supplier: string): SearchRequest {
+    withSupplier(supplier: string): ArchiveSearchRequest {
         this._supplier = supplier;
         return this;
     }
@@ -147,7 +147,7 @@ export default class SearchRequest {
      * @param {number} cloud cloud cover percentage to filter results to be less than
      * @returns {SearchRequest} The current request for chaining
      */
-    withCloudCover(cloud: number): SearchRequest {
+    withCloudCover(cloud: number): ArchiveSearchRequest {
         this._cloud = cloud;
         return this;
     }
@@ -161,7 +161,7 @@ export default class SearchRequest {
      * @param {number} offNadir offNadir angle to filter results to be less than
      * @returns {SearchRequest} The current request for chaining
      */
-    withOffNadir(offNadir: number): SearchRequest {
+    withOffNadir(offNadir: number): ArchiveSearchRequest {
         this._offNadir = Math.abs(offNadir);
         return this;
     }
