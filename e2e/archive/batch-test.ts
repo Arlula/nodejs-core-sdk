@@ -1,6 +1,6 @@
 import Arlula from "../../dist";
-import OrderRequest from "../../dist/archive/order-request";
-import BatchOrderRequest from "../../dist/archive/batch-order";
+import OrderRequest from "../../dist/orders/order-request";
+import BatchOrderRequest from "../../dist/orders/batch-order";
 import Order, { OrderStatus } from "../../dist/orders/order";
 
 const tests = [

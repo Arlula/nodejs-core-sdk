@@ -1,7 +1,8 @@
 import Arlula from "../../dist";
-import SearchRequest, { GroundSampleDistance } from "../../dist/archive/search-request";
+import SearchRequest from "../../dist/archive/search-request";
 import SearchResponse, { isResponse } from "../../dist/archive/search/response";
 import SearchResult from "../../dist/archive/search/result";
+import { GroundSampleDistance } from "../../dist/util/gsd";
 
 const tests = [
     test1,

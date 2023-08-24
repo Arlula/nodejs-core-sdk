@@ -1,5 +1,5 @@
 import Arlula from "../../dist";
-import OrderRequest from "../../dist/archive/order-request";
+import OrderRequest from "../../dist/orders/order-request";
 import SearchRequest from "../../dist/archive/search-request";
 import SearchResult from "../../dist/archive/search/result";
 import Order, { OrderStatus } from "../../dist/orders/order";
