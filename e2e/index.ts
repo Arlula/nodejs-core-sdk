@@ -5,6 +5,7 @@ import { setDefaultTimeout } from "../dist/util/request";
 import runArchiveSearchTests from "./archive/search-tests";
 import runArchiveOrderTests from "./archive/order-test";
 import runArchiveBatchTests from "./archive/batch-test";
+import runTaskingSearchTests from "./tasking/search-test";
 import runOrderListTests from "./orders/list-tests";
 import runOrderGetTests from "./orders/get-tests";
 import runOrderResourceTests from "./orders/resource-test";
@@ -41,6 +42,11 @@ const tests = [
     runArchiveOrderTests,
     // archive batch order tests
     runArchiveBatchTests,
+    // =================
+    // tasking tests
+    // =================
+    // tasking search tests
+    runTaskingSearchTests,
     // =================
     // orders tests
     // =================
