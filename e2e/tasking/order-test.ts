@@ -34,7 +34,7 @@ function test1(client: Arlula) {
             return Promise.reject("tasking order 1 - Landsat order with no resources");
         }
     })
-    .catch(exceptionHandler("tasking order 1 - basic free"));
+    .catch(exceptionHandler("tasking order 1"));
 
 }
 

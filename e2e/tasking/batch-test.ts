@@ -43,7 +43,7 @@ function test1(client: Arlula) {
             }
         }
     })
-    .catch(exceptionHandler("tasking batch 1 - basic free"));
+    .catch(exceptionHandler("tasking batch 1"));
 
 }
 
