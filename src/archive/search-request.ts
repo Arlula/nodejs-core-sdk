@@ -168,6 +168,32 @@ export default class ArchiveSearchRequest {
     }
 
     /**
+     * sort results by a given field
+     * 
+     * Available fields are:
+     *  - sceneID => sort by the supplier specific scene IDs alphabetically
+     *  - supplier => sort by the supplier identifiers alphabetically
+     *  - date => sort by the imagery capture date chronologically
+     *  - cloud => sort by the imagery cloud coverage percentage
+     *  - offNadir => sort by the imagery's off nadir angle
+     *  - gsd => sort by the imagery's ground sampling distance
+     *  - area => sort by total scene area
+     *  - overlap.area => sort by area overlap with your search aoi
+     *  - overlap.percent => sort by percentage overlap with your search aoi
+     *  - fulfillment => sort by time for an image order to be fulfilled
+     * 
+     * A sort by an unrecognized field will be ignored
+     * 
+     * @param {string} field name of the field to sort by
+     * @param {boolean} ascending indicate that the sort should be ascending order
+     * @returns {ArchiveSearchRequest} The current request for chaining
+     */
+    sort(field: string, ascending?: boolean): ArchiveSearchRequest {
+        this._sort = {field, ascending};
+        return this;
+    }
+
+    /**
      * Check whether the request meets the minimum requirements to be valid
      * @returns {boolean} whether the request is currently valid
      */
@@ -262,6 +288,7 @@ export default class ArchiveSearchRequest {
         const body: searchRequest = {
             startDate: this._start,
             gsd: this._gsd,
+            sort: this._sort,
         };
 
         // geometric constraint
