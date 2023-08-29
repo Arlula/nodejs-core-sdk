@@ -12,6 +12,7 @@ const tests = [
     test5,
     test6,
     test7,
+    test1Sort,
     testError1,
     testError2,
     testError3,
@@ -234,6 +235,44 @@ function test7(client: Arlula) {
             }
         })
         .catch(exceptionHandler("search 7 - polygon WKT search"));
+}
+
+// search sorting
+function test1Sort(client: Arlula) {
+    console.log("search sort")
+    const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
+        .point(151.2108, -33.8523)
+        .sort("gsd", true);
+    return client.archive().search(search)
+    .then((res) => {
+        // search min number, number of results may increase with new suppliers, or be less if suppliers under load
+        if (res?.errors) {
+            console.error("search sort - returned errors, ", res.errors);
+            return Promise.reject("search sort - returned error");
+        }
+        if (!res.results || res.results.length < 1) {
+            console.error("search sort - Insufficient results for search, ", res.results?.length);
+            console.log(res);
+            return Promise.reject("search sort - insufficient results");
+        }
+        let msg: string;
+        let ordered = true;
+        for (let i=0; i<res.results.length; i++) {
+            msg = testResult("search sort", res.results[i]);
+            if (msg) {
+                return Promise.reject("search sort - " + msg);
+            }
+            if (i > 0 && res.results[i].gsd < res.results[i-1].gsd) {
+                ordered = false;
+            }
+        }
+        if (!ordered) {
+            console.error("search sort - results are not correctly ordered");
+            console.log(res);
+            return Promise.reject("search sort - results are not correctly ordered");
+        }
+    })
+    .catch(exceptionHandler("search sort"));
 }
 
 // search errors
