@@ -24,14 +24,14 @@ function test1(client: Arlula) {
             console.error("tasking order 1 - Receives order without ID");
             return Promise.reject("tasking order 1 - Receives order without ID");
         }
-        // pre defined landsat order, will be complete and have resource results
-        if (resp.status !== OrderStatus.Complete) {
-            console.error("tasking order 1 - order not complete");
-            return Promise.reject("tasking order 1 - order not complete");
+        // pre defined order, will be pending approval and not have resource results
+        if (resp.status !== OrderStatus.PendingApproval) {
+            console.error("tasking order 1 - order not pending approval: ", resp.status);
+            return Promise.reject("tasking order 1 - order not pending approval");
         }
-        if (!resp.resources) {
-            console.error("tasking order 1 - Landsat order with no resources");
-            return Promise.reject("tasking order 1 - Landsat order with no resources");
+        if (resp.resources.length) {
+            console.error("tasking order 1 - test tasking order with resources");
+            return Promise.reject("tasking order 1 - test tasking order with resources");
         }
     })
     .catch(exceptionHandler("tasking order 1"));
