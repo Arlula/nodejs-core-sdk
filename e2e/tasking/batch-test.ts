@@ -32,14 +32,14 @@ function test1(client: Arlula) {
                 console.error("tasking batch 1 - Receives batch order without ID");
                 return Promise.reject("tasking batch 1 - Receives batch order without ID");
             }
-            // pre defined landsat order, will be complete and have resource results
-            if (resp[i].status !== OrderStatus.Complete) {
-                console.error("tasking batch 1 - batch order not complete");
-                return Promise.reject("tasking batch 1 - batch order not complete");
+            // pre defined order, will be pending approval and not have resource results
+            if (resp[i].status !== OrderStatus.PendingApproval) {
+                console.error("tasking batch 1 - batch order not pending approval: ", resp[i].status);
+                return Promise.reject("tasking batch 1 - batch order not pending approval");
             }
-            if (!resp[i].resources) {
-                console.error("tasking batch 1 - Landsat batch order with no resources");
-                return Promise.reject("tasking batch 1 - Landsat batch order with no resources");
+            if (resp[i].resources.length) {
+                console.error("tasking batch 1 - test tasking batch order with resources");
+                return Promise.reject("tasking batch 1 - test tasking batch order with resources");
             }
         }
     })
