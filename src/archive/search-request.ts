@@ -346,7 +346,7 @@ interface searchRequest {
     supplier?: string;
     cloud?: number;
     offNadir?: number;
-    sort?: sortConfig
+    sort?: sortConfig;
 }
 
 interface sortConfig {
