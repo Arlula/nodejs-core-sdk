@@ -21,9 +21,10 @@ export default class TaskingSearchRequest {
     private _start?: Date;
     private _end?: Date;
     // specifiers
-    _offNadir?: number;
-    _gsd?: number;
-    _suppliers?: string[];
+    private _offNadir?: number;
+    private _gsd?: number;
+    private _suppliers?: string[];
+    private _sort?: sortConfig;
     constructor(start?: Date, end?: Date) {
         if (start) {
             this._start = start;
@@ -157,6 +158,30 @@ export default class TaskingSearchRequest {
         return this;
     }
 
+    /**
+     * sort results by a given field
+     * 
+     * Available fields are:
+     *  - supplier => sort by the supplier identifiers alphabetically
+     *  - duration => sort by the total time length of the capture opportunity
+     *  - start => sort by the start date of the capture window
+     *  - end => sort by the end date of the capture window
+     *  - maxOffNadir => sort by the maximum predicted off nadir angle
+     *  - gsd => sort by the platforms's nominal ground sampling distance
+     *  - areas.scene => sort by the total area of the scene to be captured
+     *  - areas.target => sort by the target area the capture will target to ensure inclusion
+     * 
+     * A sort by an unrecognized field will be ignored
+     * 
+     * @param {string} field name of the field to sort by
+     * @param {boolean} ascending indicate that the sort should be ascending order
+     * @returns {TaskingSearchRequest} The current request for chaining
+     */
+    sort(field: string, ascending?: boolean): TaskingSearchRequest {
+        this._sort = {field, ascending};
+        return this;
+    }
+
     valid(): boolean {
         if (!this._start) {
             return false;
@@ -195,6 +220,7 @@ export default class TaskingSearchRequest {
             gsd:       this._gsd,
             suppliers: this._suppliers,
             offNadir:  this._offNadir,
+            sort: this._sort,
         };
 
         if (this._point) {
@@ -231,4 +257,10 @@ interface searchRequest {
     gsd?: number
     suppliers?: string[];
     offNadir?: number;
+    sort?: sortConfig;
+}
+
+interface sortConfig {
+    field: string;
+    ascending?: boolean;
 }
