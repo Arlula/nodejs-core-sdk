@@ -21,7 +21,7 @@ function test1(client: Arlula) {
     const req = new BatchOrderRequest();
     req.addOrder(new OrderRequest(process.env.tasking_order_key || "", process.env.tasking_order_eula || "", process.env.tasking_order_bundle || "default"));
     req.addOrder(new OrderRequest(process.env.tasking_order_key2 || "", process.env.tasking_order_eula || "", process.env.tasking_order_bundle || "default"));
-    return client.archive().batchOrder(req)
+    return client.tasking().batchOrder(req)
     .then((resp) => {
         if (resp.length != 2) {
             console.error("tasking batch 1 - Response to batch order does not match request length");
