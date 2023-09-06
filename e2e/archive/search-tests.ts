@@ -28,7 +28,7 @@ export default function runSearchTests(client: Arlula): Promise<unknown> {
 
 // search single date and point
 function test1(client: Arlula) {
-    console.log("search 1")
+    console.log("archive search 1")
     const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
@@ -36,28 +36,28 @@ function test1(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res?.errors) {
-            console.error("search 1 - returned errors, ", res.errors);
-            return Promise.reject("search 1 - returned error");
+            console.error("archive search 1 - returned errors, ", res.errors);
+            return Promise.reject("archive search 1 - returned error");
         }
         if (!res.results || res.results.length < 1) {
-            console.error("search 1 - Insufficient results for search, ", res.results?.length);
+            console.error("archive search 1 - Insufficient results for search, ", res.results?.length);
             console.log(res);
-            return Promise.reject("search 1 - insufficient results");
+            return Promise.reject("archive search 1 - insufficient results");
         }
         let msg: string;
         for (let i=0; i<res.results.length; i++) {
-            msg = testResult("search 1", res.results[i]);
+            msg = testResult("archive search 1", res.results[i]);
             if (msg) {
-                return Promise.reject("search 1 - " + msg);
+                return Promise.reject("archive search 1 - " + msg);
             }
         }
     })
-    .catch(exceptionHandler("search 1 - point, date"));
+    .catch(exceptionHandler("archive search 1 - point, date"));
 }
 
 // search date range and point
 function test2(client: Arlula) {
-    console.log("search 2")
+    console.log("archive search 2")
     const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -66,28 +66,28 @@ function test2(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res?.errors) {
-                console.error("search 2 - returned errors, ", res.errors);
-                return Promise.reject("search 2 - returned error");
+                console.error("archive search 2 - returned errors, ", res.errors);
+                return Promise.reject("archive search 2 - returned error");
             }
             if (!res.results || res.results.length < 1) {
-                console.error("search 2 - Insufficient results for search, ", res.results?.length);
+                console.error("archive search 2 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
-                return Promise.reject("search 2 - insufficient results");
+                return Promise.reject("archive search 2 - insufficient results");
             }
             let msg: string;
             for (let i=0; i<res.results.length; i++) {
-                msg = testResult("search 2", res.results[i]);
+                msg = testResult("archive search 2", res.results[i]);
                 if (msg) {
-                    return Promise.reject("search 2 - " + msg);
+                    return Promise.reject("archive search 2 - " + msg);
                 }
             }
         })
-        .catch(exceptionHandler("search 2 - point, date range"));
+        .catch(exceptionHandler("archive search 2 - point, date range"));
 }
 
 // check lower res
 function test3(client: Arlula) {
-    console.log("search 3")
+    console.log("archive search 3")
     const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -96,28 +96,28 @@ function test3(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res?.errors) {
-            console.error("search 3 - returned errors, ", res.errors);
-            return Promise.reject("search 3 - returned error");
+            console.error("archive search 3 - returned errors, ", res.errors);
+            return Promise.reject("archive search 3 - returned error");
         }
         if (!res.results || res.results.length < 1) {
-            console.error("search 3 - Insufficient results for search, ", res.results?.length);
+            console.error("archive search 3 - Insufficient results for search, ", res.results?.length);
             console.log(res);
-            return Promise.reject("search 3 - insufficient results");
+            return Promise.reject("archive search 3 - insufficient results");
         }
         let msg: string;
         for (let i=0; i<res.results.length; i++) {
-            msg = testResult("search 3", res.results[i]);
+            msg = testResult("archive search 3", res.results[i]);
             if (msg) {
-                return Promise.reject("search 3 - " + msg);
+                return Promise.reject("archive search 3 - " + msg);
             }
         }
     })
-    .catch(exceptionHandler("search 3 - point, date range (low res)"));
+    .catch(exceptionHandler("archive search 3 - point, date range (low res)"));
 }
 
 // search date range and bounding box
 function test4(client: Arlula) {
-    console.log("search 4")
+    console.log("archive search 4")
     const search = new ArchiveSearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
@@ -126,28 +126,28 @@ function test4(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res?.errors) {
-            console.error("search 4 - returned errors, ", res.errors);
-            return Promise.reject("search 4 - returned error");
+            console.error("archive search 4 - returned errors, ", res.errors);
+            return Promise.reject("archive search 4 - returned error");
         }
         if (!res.results || res.results.length < 1) {
-            console.error("search 4 - Insufficient results for search, ", res.results?.length);
+            console.error("archive search 4 - Insufficient results for search, ", res.results?.length);
             console.log(res);
-            return Promise.reject("search 4 - insufficient results");
+            return Promise.reject("archive search 4 - insufficient results");
         }
         let msg: string;
         for (let i=0; i<res.results.length; i++) {
-            msg = testResult("search 4", res.results[i]);
+            msg = testResult("archive search 4", res.results[i]);
             if (msg) {
-                return Promise.reject("search 4 - " + msg);
+                return Promise.reject("archive search 4 - " + msg);
             }
         }
     })
-    .catch(exceptionHandler("search 4 - box, date"));
+    .catch(exceptionHandler("archive search 4 - box, date"));
 }
 
 // search single date and bounding box
 function test5(client: Arlula) {
-    console.log("search 5")
+    console.log("archive search 5")
     const search = new ArchiveSearchRequest(new Date(2020, 5, 15))
         .to(new Date(2020, 8, 13))
         .boundingBox(14.032288, 50.392761, 14.658508, 50.021858)
@@ -156,28 +156,28 @@ function test5(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res?.errors) {
-                console.error("search 5 - returned errors, ", res.errors);
-                return Promise.reject("search 5 - returned error");
+                console.error("archive search 5 - returned errors, ", res.errors);
+                return Promise.reject("archive search 5 - returned error");
             }
             if (!res.results || res.results.length < 1) {
-                console.error("search 5 - Insufficient results for search, ", res.results?.length);
+                console.error("archive search 5 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
-                return Promise.reject("search 5 - insufficient results");
+                return Promise.reject("archive search 5 - insufficient results");
             }
             let msg: string;
             for (let i=0; i<res.results.length; i++) {
-                msg = testResult("search 5", res.results[i]);
+                msg = testResult("archive search 5", res.results[i]);
                 if (msg) {
-                    return Promise.reject("search 5 - " + msg);
+                    return Promise.reject("archive search 5 - " + msg);
                 }
             }
         })
-        .catch(exceptionHandler("search 5 - box, date range"));
+        .catch(exceptionHandler("archive search 5 - box, date range"));
 }
 
 // polygon search (array)
 function test6(client: Arlula) {
-    console.log("search 6")
+    console.log("archive search 6")
     const search = new ArchiveSearchRequest(new Date(2022, 12, 1))
         .to(new Date(2022, 12, 31))
         .polygon([[[151.2001279312134,-33.843417236709115],[151.21343168792725,-33.84334594891234],[151.21969732818604,-33.84726668941343],[151.2195256668091,-33.85282670379151],[151.2001279312134,-33.843417236709115]]])
@@ -187,28 +187,28 @@ function test6(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res?.errors) {
-                console.error("search 6 - returned errors, ", res.errors);
-                return Promise.reject("search 6 - returned error");
+                console.error("archive search 6 - returned errors, ", res.errors);
+                return Promise.reject("archive search 6 - returned error");
             }
             if (!res.results || res.results.length < 1) {
-                console.error("search 6 - Insufficient results for search, ", res.results?.length);
+                console.error("archive search 6 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
-                return Promise.reject("search 6 - insufficient results");
+                return Promise.reject("archive search 6 - insufficient results");
             }
             let msg: string;
             for (let i=0; i<res.results.length; i++) {
-                msg = testResult("search 6", res.results[i]);
+                msg = testResult("archive search 6", res.results[i]);
                 if (msg) {
-                    return Promise.reject("search 6 - " + msg);
+                    return Promise.reject("archive search 6 - " + msg);
                 }
             }
         })
-        .catch(exceptionHandler("search 6 - polygon array search"));
+        .catch(exceptionHandler("archive search 6 - polygon array search"));
 }
 
 // polygon search (WKT)
 function test7(client: Arlula) {
-    console.log("search 7")
+    console.log("archive search 7")
     const search = new ArchiveSearchRequest(new Date(2022, 12, 1))
         .to(new Date(2022, 12, 31))
         .polygon(`POLYGON ((151.2001279312134 -33.843417236709115,151.21343168792725 -33.84334594891234,151.21969732818604 -33.84726668941343,151.2195256668091 -33.85282670379151,151.2001279312134 -33.843417236709115))`)
@@ -218,28 +218,28 @@ function test7(client: Arlula) {
         .then((res) => {
             // search min number, number of results may increase with new suppliers, or be less if suppliers under load
             if (res?.errors) {
-                console.error("search 7 - returned errors, ", res.errors);
-                return Promise.reject("search 6 - returned error");
+                console.error("archive search 7 - returned errors, ", res.errors);
+                return Promise.reject("archive search 6 - returned error");
             }
             if (!res.results || res.results.length < 1) {
-                console.error("search 7 - Insufficient results for search, ", res.results?.length);
+                console.error("archive search 7 - Insufficient results for search, ", res.results?.length);
                 console.log(res);
-                return Promise.reject("search 7 - insufficient results");
+                return Promise.reject("archive search 7 - insufficient results");
             }
             let msg: string;
             for (let i=0; i<res.results.length; i++) {
-                msg = testResult("search 7", res.results[i]);
+                msg = testResult("archive search 7", res.results[i]);
                 if (msg) {
-                    return Promise.reject("search 7 - " + msg);
+                    return Promise.reject("archive search 7 - " + msg);
                 }
             }
         })
-        .catch(exceptionHandler("search 7 - polygon WKT search"));
+        .catch(exceptionHandler("archive search 7 - polygon WKT search"));
 }
 
 // search sorting
 function test1Sort(client: Arlula) {
-    console.log("search sort")
+    console.log("archive search sort")
     const search = new ArchiveSearchRequest(new Date(2018, 4, 3))
         .point(151.2108, -33.8523)
         .sort("gsd", true);
@@ -247,39 +247,39 @@ function test1Sort(client: Arlula) {
     .then((res) => {
         // search min number, number of results may increase with new suppliers, or be less if suppliers under load
         if (res?.errors) {
-            console.error("search sort - returned errors, ", res.errors);
-            return Promise.reject("search sort - returned error");
+            console.error("archive search sort - returned errors, ", res.errors);
+            return Promise.reject("archive search sort - returned error");
         }
         if (!res.results || res.results.length < 1) {
-            console.error("search sort - Insufficient results for search, ", res.results?.length);
+            console.error("archive search sort - Insufficient results for search, ", res.results?.length);
             console.log(res);
-            return Promise.reject("search sort - insufficient results");
+            return Promise.reject("archive search sort - insufficient results");
         }
         let msg: string;
         let ordered = true;
         for (let i=0; i<res.results.length; i++) {
-            msg = testResult("search sort", res.results[i]);
+            msg = testResult("archive search sort", res.results[i]);
             if (msg) {
-                return Promise.reject("search sort - " + msg);
+                return Promise.reject("archive search sort - " + msg);
             }
             if (i > 0 && res.results[i].gsd < res.results[i-1].gsd) {
                 ordered = false;
             }
         }
         if (!ordered) {
-            console.error("search sort - results are not correctly ordered");
+            console.error("archive search sort - results are not correctly ordered");
             console.log(res);
-            return Promise.reject("search sort - results are not correctly ordered");
+            return Promise.reject("archive search sort - results are not correctly ordered");
         }
     })
-    .catch(exceptionHandler("search sort"));
+    .catch(exceptionHandler("archive search sort"));
 }
 
 // search errors
     
 // end before start
 function testError1(client: Arlula) {
-    console.log("search error 1")
+    console.log("archive search error 1")
     const search = new ArchiveSearchRequest(new Date(2020, 6, 13))
         .to(new Date(2018, 6, 13))
         .point(151.2108, -33.8523)
@@ -288,60 +288,60 @@ function testError1(client: Arlula) {
     return client.archive().search(search)
     .then((r) => {
         console.dir(r);
-        return Promise.reject("search error 1 - got results from invalid search");
+        return Promise.reject("archive search error 1 - got results from invalid search");
     })
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
+            console.error("archive search error 1 - Unexpected error response object (search error 1): ", e?.response?.data)
             console.dir(e)
-            return Promise.reject("search error 1 - "+e);
+            return Promise.reject("archive search error 1 - "+e);
         }
         if (!e.errors || !e.errors[0].startsWith("End date must be after start date")) {
-            console.error("search error 1 - Unexpected error response (search error 1): ", e)
-            return Promise.reject("search error 1 - "+e);
+            console.error("archive search error 1 - Unexpected error response (search error 1): ", e)
+            return Promise.reject("archive search error 1 - "+e);
         }
     });
 }
 
 // future date
 function testError2(client: Arlula) {
-    console.log("search error 2")
+    console.log("archive search error 2")
     const search = new ArchiveSearchRequest(new Date(3000, 1, 1))
         .point(151.2108, -33.8523)
         .setMaximumGSD(GroundSampleDistance.medium);
 
     return client.archive().search(search)
-    .then(expectedError("search error 2 - date future"))
+    .then(expectedError("archive search error 2 - date future"))
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search error 2 - Unexpected error response object (search error 2): ", e);
-            return Promise.reject("search error 2 - "+e);
+            console.error("archive search error 2 - Unexpected error response object (search error 2): ", e);
+            return Promise.reject("archive search error 2 - "+e);
         }
         if (!e.errors || !e.errors[0].startsWith("Start date must be in the past")) {
             console.error("Unexpected error response (search error 2): ", e);
-            return Promise.reject("search error 2 - "+e);
+            return Promise.reject("archive search error 2 - "+e);
         }
     });
 }
 
 // invalid long/lat
 function testError3(client: Arlula) {
-    console.log("search error 3")
+    console.log("archive search error 3")
     const search = new ArchiveSearchRequest(new Date(2018, 5, 15))
         .to(new Date(2020, 6, 13))
         .point(-33.8523, 151.2108)
         .setMaximumGSD(GroundSampleDistance.medium);
     
     return client.archive().search(search)
-    .then(expectedError("search error 3 - invalid lat/long"))
+    .then(expectedError("archive search error 3 - invalid lat/long"))
     .catch((e) => {
         if (!isResponse(e)) {
-            console.error("search error 3 - Unexpected error response object (search error 3): ", e);
-            return Promise.reject("search error 3 - "+e);
+            console.error("archive search error 3 - Unexpected error response object (search error 3): ", e);
+            return Promise.reject("archive search error 3 - "+e);
         }
         if (!e.errors || !e.errors[0].startsWith("Invalid latitude")) {
-            console.error("search error 3 - Unexpected error response (search error 3): ", e)
-            return Promise.reject("search error 3 - "+e);
+            console.error("archive search error 3 - Unexpected error response (search error 3): ", e)
+            return Promise.reject("archive search error 3 - "+e);
         }
     });
 }
