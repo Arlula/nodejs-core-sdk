@@ -58,8 +58,8 @@ function test2ItemListPage(client: Arlula) {
             return Promise.reject("collection item get 2 - list page: listed features don't match reported");
         }
         if (resp.features.length != 1) {
-            console.log("collection item get 2 - list page: listed features don't match reported");
-            return Promise.reject("collection item get 2 - list page: listed features don't match reported");
+            console.log("collection item get 2 - list page: listed features don't match reported "+resp.features.length);
+            return Promise.reject("collection item get 2 - list page: listed features don't match reported "+resp.features.length);
         }
         for (let i=0; i<resp.numberReturned; i++) {
             if (!resp.features[i].id) {
@@ -88,8 +88,8 @@ function test3ItemSearch(client: Arlula) {
             return Promise.reject("collection item get 3 - search: listed features don't match reported");
         }
         if (resp.features.length != 2) {
-            console.log("collection item get 3 - search: listed features don't match reported");
-            return Promise.reject("collection item get 3 - search: listed features don't match reported");
+            console.log("collection item get 3 - search: listed features don't match reported "+resp.features.length);
+            return Promise.reject("collection item get 3 - search: listed features don't match reported "+resp.features.length);
         }
         for (let i=0; i<resp.numberReturned; i++) {
             if (!resp.features[i].id) {

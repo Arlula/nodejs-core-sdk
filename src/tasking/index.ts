@@ -1,18 +1,19 @@
-import SearchRequest from "./search-request";
-import SearchResponse, { decodeResponse, decodeResultSet } from "./search/response";
 import Order, { fromJSON as OrderFromJSON } from "../orders/order";
-import OrderRequest from "../orders/order-request";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
+import TaskingSearchRequest from "./search-request";
+import { TaskingSearchResponse } from "./search-response";
+import { decodeResponse } from "./search-response";
+import OrderRequest from "../orders/order-request";
 import BatchOrderRequest from "../orders/batch-order";
 
 /**
- * @class Archive wraps the API requests to the archive imagery API
+ * @class Tasking wraps the API requests to the imagery tasking API
  */
-export default class Archive {
+export default class Tasking {
     private _client: requestBuilder;
     /**
-     * creates a new archive API client
+     * creates a new tasking API client
      * @constructor
      * @param {requestBuilder} client the initiated http transport for the API, created and initialized with credentials by the root Arlula client
      * 
@@ -23,29 +24,23 @@ export default class Archive {
     }
 
     /**
-     * conduct an archive imagery search
+     * conduct an tasking option search
      * 
      * @param {SearchRequest} req the details of the search request
      * @returns {Promise<SearchResult[]>} The list of search results
      * 
-     * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
+     * @see {https://arlula.com/documentation/#tasking-search|Tasking Search endpoint documentation}
      * or
-     * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
+     * @see {https://arlula.com/documentation/#ref-search-result|Tasking Search result structure reference}
      */
-    search(req: SearchRequest): Promise<SearchResponse> {
+    search(req: TaskingSearchRequest): Promise<TaskingSearchResponse> {
         if (!req.valid()) {
             return Promise.reject("request not valid");
         }
-        return this._client("POST", paths.ArchiveSearch, req._toJSON())
+        return this._client("POST", paths.TaskingSearch, req._toJSON())
         .then(jsonOrError)
         .then((resp) => {
-            if (Array.isArray(resp)) {
-                const results = decodeResultSet(resp);
-                if (!results) {
-                    return Promise.reject({errors: ["error decoding search results"]});
-                }
-                return {results};
-            } else if (typeof resp === "object") {
+            if (typeof resp === "object") {
                 const response = decodeResponse(resp);
                 if (!response) {
                     return Promise.reject({errors: ["error decoding search response"]});
@@ -62,7 +57,7 @@ export default class Archive {
     }
 
     /**
-     * Order archive imagery
+     * Order tasking capacity
      * 
      * @warning this may charge your API account's credit card.  
      * Check the relevant SearchResult's `calculatePrice` function for the intended bundle and license
@@ -70,17 +65,15 @@ export default class Archive {
      * @param {OrderRequest} req the details of the order to be placed
      * @returns {Promise<Order>} The order that was placed
      * 
-     * @see {https://arlula.com/documentation/#archive-order|Archive Order endpoint documentation}
+     * @see {https://arlula.com/documentation/#tasking-order|Tasking Order endpoint documentation}
      * or
-     * @see {https://arlula.com/documentation/#ref-order-request|Archive order request structure reference}
+     * @see {https://arlula.com/documentation/#ref-order-request|Tasking order request structure reference}
      */
     order(req: OrderRequest): Promise<Order> {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
-        // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
-        // give a longer timeout to respect this and not timeout a successful order
-        return this._client("POST", paths.ArchiveOrder, req._toJSON(true), 120*1000)
+        return this._client("POST", paths.TaskingOrder, req._toJSON(true))
         .then(jsonOrError)
         .then((resp) => {
 
@@ -97,9 +90,7 @@ export default class Archive {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
-        // NOTE: suppliers with immediate fulfillment may take longer to process while delivering resources
-        // give a longer timeout to respect this and not timeout a successful order
-        return this._client("POST", paths.ArchiveOrderBatch, req._toJSON(true), 120*1000)
+        return this._client("POST", paths.TaskingOrderBatch, req._toJSON(true))
         .then(jsonOrError)
         .then((resp) => {
 

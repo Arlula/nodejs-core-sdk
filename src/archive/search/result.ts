@@ -6,14 +6,14 @@ import License, { decodeLicense } from "./license";
 import decodePolygon from "./polygon";
 
 /**
- * SearchResult contains information on a scene that may be ordered through the archive API
+ * ArchiveSearchResult contains information on a scene that may be ordered through the archive API
  * full details can be found in the Arlula Documentation
  * 
  * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
  * or
  * @see {https://arlula.com/documentation/#ref-search-result|Archive Search result structure reference}
  */
-export default class SearchResult {
+export default class ArchiveSearchResult {
     sceneID: string;
     supplier: string;
     platform: string;
@@ -100,7 +100,7 @@ export default class SearchResult {
 }
 
 // decodeResult is a helper for reading results from JSON, it is not intended for public use.
-export function decodeResult(json: unknown): SearchResult|null {
+export function decodeResult(json: unknown): ArchiveSearchResult|null {
     let sceneID = "", supplier = "", platform = "", thumbnail = "", orderingID = "";
     let date: Date = new Date();
     let cloud = 0, offNadir = 0, gsd = 0, area = 0, fulfillmentTime = 0;
@@ -274,7 +274,7 @@ export function decodeResult(json: unknown): SearchResult|null {
     }
 
 
-    return new SearchResult(
+    return new ArchiveSearchResult(
         sceneID,
         supplier,
         platform,

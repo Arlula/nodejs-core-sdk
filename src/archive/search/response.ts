@@ -1,4 +1,4 @@
-import SearchResult, { decodeResult } from "./result";
+import ArchiveSearchResult, { decodeResult } from "./result";
 
 /**
  * SearchResponse is a response envelope that includes the search result set
@@ -8,20 +8,20 @@ import SearchResult, { decodeResult } from "./result";
  * or
  * @see {https://arlula.com/documentation/#search-response|Archive Search Response}
  */
-export default interface SearchResponse {
+export default interface ArchiveSearchResponse {
     // status: string;
     errors?: string[];
     // warnings: string[];
-    results?: SearchResult[];
+    results?: ArchiveSearchResult[];
 }
 
-export function isResponse(object: unknown): object is SearchResponse {
+export function isResponse(object: unknown): object is ArchiveSearchResponse {
     return !!object && (typeof object === "object") && ('errors' in object || 'results' in object);
 }
 
 // decodeResponse is a helper for reading results from JSON, it is not intended for public use.
-export function decodeResponse(json: unknown): SearchResponse|null {
-    let results: SearchResult[];
+export function decodeResponse(json: unknown): ArchiveSearchResponse|null {
+    let results: ArchiveSearchResult[];
 
     if (typeof json !== "object") {
         return null;
@@ -43,8 +43,8 @@ export function decodeResponse(json: unknown): SearchResponse|null {
 }
 
 // decodeResultSet is a helper for reading results from JSON, it is not intended for public use.
-export function decodeResultSet(json: unknown[]): SearchResult[]|null {
-    const results: SearchResult[] = [];
+export function decodeResultSet(json: unknown[]): ArchiveSearchResult[]|null {
+    const results: ArchiveSearchResult[] = [];
 
     let error = false
     json.forEach((b) => {

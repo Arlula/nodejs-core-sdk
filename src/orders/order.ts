@@ -253,6 +253,7 @@ export enum OrderStatus {
     Rejected        = "rejected",
     Failed          = "failed",
     Rescheduled     = "rescheduled",
+    Cancelled       = "cancelled"
 }
 
 function isOrderStatus(token: string): token is OrderStatus {

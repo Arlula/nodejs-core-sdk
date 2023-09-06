@@ -1,6 +1,7 @@
 import Arlula from "../../dist/index";
 
 export default function runOrderListTests(client: Arlula): Promise<unknown> {
+    console.log("order list")
     return client.orders().list()
     .then((ordList) => {
         if (!ordList.length) {

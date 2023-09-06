@@ -18,6 +18,13 @@ jobs:
       test_resource_id: ${{ secrets.test_resource_id }}
       test_resource_file1: ${{ secrets.test_resource_file1 }}
       test_resource_file2: ${{ secrets.test_resource_file2 }}
+      test_collection_id: ${{ secrets.test_collection_id }}
+      test_item_id1: ${{ secrets.test_item_id1 }}
+      test_item_id2: ${{ secrets.test_item_id2 }}
+      test_tasking_order_key: ${{ secrets.test_tasking_order_key }}
+      test_tasking_order_key2: ${{ secrets.test_tasking_order_key2 }}
+      test_tasking_order_eula: ${{ secrets.test_tasking_order_eula }}
+      test_tasking_order_bundle: ${{ secrets.test_tasking_order_bundle }}
   build:
     needs: test
     runs-on: ubuntu-latest

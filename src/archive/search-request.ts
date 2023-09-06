@@ -1,6 +1,8 @@
-
+import formatYMDDate from "../util/date";
+import { GroundSampleDistance } from "../util/gsd";
+import parsePoly, { validWKTPolygon } from "../util/polygon";
 /**
- * @class SearchRequest constructs a request to search for archival imagery
+ * @class ArchiveSearchRequest constructs a request to search for archival imagery
  * 
  * Searches must specify a target in both space and time;
  *  - Either a target date, or a target date range must be set.
@@ -10,7 +12,7 @@
  * 
  * @see {https://arlula.com/documentation/#archive-search|Archive Search endpoint documentation}
  */
-export default class SearchRequest {
+export default class ArchiveSearchRequest {
     private _start: Date;
     private _end?: Date;
     private _gsd: number = GroundSampleDistance.veryLow;
@@ -20,6 +22,7 @@ export default class SearchRequest {
     private _supplier?: string;
     private _cloud?: number;
     private _offNadir?: number;
+    private _sort?: sortConfig;
     /**
      * Construct a new search request
      * @param {Date} [date] the target date to search
@@ -31,9 +34,9 @@ export default class SearchRequest {
     /**
      * Search at a target date (removes any previously set end date)
      * @param {Date} date The date to search at
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    atDate(date: Date): SearchRequest {
+    atDate(date: Date): ArchiveSearchRequest {
         this._end = undefined;
         this._start = date;
         return this;
@@ -42,9 +45,9 @@ export default class SearchRequest {
     /**
      * set the starting search date if its changed since the constructor
      * @param {Date} date Target date, or start date for a date range
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    from(date: Date): SearchRequest {
+    from(date: Date): ArchiveSearchRequest {
         this._start = date;
         return this;
     }
@@ -52,9 +55,9 @@ export default class SearchRequest {
     /**
      * Set the end date for a date range search
      * @param {Date} date end date of date range
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    to(date: Date): SearchRequest {
+    to(date: Date): ArchiveSearchRequest {
         this._end = date;
         return this;
     }
@@ -63,9 +66,9 @@ export default class SearchRequest {
      * Explicitly sets the date range to search
      * @param {Date} start start date to begin imagery search
      * @param {Date} end end date to stop imagery search
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    betweenDates(start: Date, end: Date): SearchRequest {
+    betweenDates(start: Date, end: Date): ArchiveSearchRequest {
         this._start = start;
         this._end = end;
         return this;
@@ -75,9 +78,9 @@ export default class SearchRequest {
      * search around a target point
      * @param {number} long the longitude of the point
      * @param {number} lat the latitude of the point
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    point(long: number, lat: number): SearchRequest {
+    point(long: number, lat: number): ArchiveSearchRequest {
         this._box = undefined;
         this._polygon = undefined;
         this._point = {long, lat};
@@ -90,9 +93,9 @@ export default class SearchRequest {
      * @param {number} north  the northern boundary of the box
      * @param {number} east   the eastern boundary of the box
      * @param {number} south  the southern boundary of the box
-     * @returns {SearchRequest} The current request for chaining 
+     * @returns {ArchiveSearchRequest} The current request for chaining 
      */
-    boundingBox(west: number, north: number, east: number, south: number): SearchRequest {
+    boundingBox(west: number, north: number, east: number, south: number): ArchiveSearchRequest {
         this._point = undefined;
         this._polygon = undefined;
         this._box = {west, north, east, south};
@@ -102,9 +105,9 @@ export default class SearchRequest {
     /**
      * search with a defined polygon
      * @param {number[][][]} poly the series of loops (list of points) defining your search polygon in longitude, latitude ordering
-     * @returns {SearchRequest} The current request for chaining 
+     * @returns {ArchiveSearchRequest} The current request for chaining 
      */
-    polygon(poly: number[][][]|string): SearchRequest {
+    polygon(poly: number[][][]|string): ArchiveSearchRequest {
         this._point = undefined;
         this._box = undefined;
         this._polygon = poly
@@ -119,9 +122,9 @@ export default class SearchRequest {
      * NOTE: a minimum search of 0.1m/pixel is accepted, lower sample distances are less likely to return as many, or any results
      * 
      * @param {number|GroundSampleDistance} gsd the sample distance to limit the result set to
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    setMaximumGSD(gsd: number|GroundSampleDistance): SearchRequest {
+    setMaximumGSD(gsd: number|GroundSampleDistance): ArchiveSearchRequest {
         this._gsd = gsd;
         return this;
     }
@@ -130,9 +133,9 @@ export default class SearchRequest {
      * Supplier to restrict results to, must be a match for a valid value of a search results "supplier" field (in any case)
      * 
      * @param {string} supplier supplier key to filter results for
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    withSupplier(supplier: string): SearchRequest {
+    withSupplier(supplier: string): ArchiveSearchRequest {
         this._supplier = supplier;
         return this;
     }
@@ -143,9 +146,9 @@ export default class SearchRequest {
      * NOTE: must be between 0 and 100%
      * 
      * @param {number} cloud cloud cover percentage to filter results to be less than
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    withCloudCover(cloud: number): SearchRequest {
+    withCloudCover(cloud: number): ArchiveSearchRequest {
         this._cloud = cloud;
         return this;
     }
@@ -157,10 +160,36 @@ export default class SearchRequest {
      * NOTE: must be within -45 to 45
      * 
      * @param {number} offNadir offNadir angle to filter results to be less than
-     * @returns {SearchRequest} The current request for chaining
+     * @returns {ArchiveSearchRequest} The current request for chaining
      */
-    withOffNadir(offNadir: number): SearchRequest {
+    withOffNadir(offNadir: number): ArchiveSearchRequest {
         this._offNadir = Math.abs(offNadir);
+        return this;
+    }
+
+    /**
+     * sort results by a given field
+     * 
+     * Available fields are:
+     *  - sceneID => sort by the supplier specific scene IDs alphabetically
+     *  - supplier => sort by the supplier identifiers alphabetically
+     *  - date => sort by the imagery capture date chronologically
+     *  - cloud => sort by the imagery cloud coverage percentage
+     *  - offNadir => sort by the imagery's off nadir angle
+     *  - gsd => sort by the imagery's ground sampling distance
+     *  - area => sort by total scene area
+     *  - overlap.area => sort by area overlap with your search aoi
+     *  - overlap.percent => sort by percentage overlap with your search aoi
+     *  - fulfillment => sort by time for an image order to be fulfilled
+     * 
+     * A sort by an unrecognized field will be ignored
+     * 
+     * @param {string} field name of the field to sort by
+     * @param {boolean} ascending indicate that the sort should be ascending order
+     * @returns {ArchiveSearchRequest} The current request for chaining
+     */
+    sort(field: string, ascending?: boolean): ArchiveSearchRequest {
+        this._sort = {field, ascending};
         return this;
     }
 
@@ -189,12 +218,12 @@ export default class SearchRequest {
      */
     _toQuery(): {[key: string]: string} {
         const query: {[key: string]: string} = {
-            start: `${this._start.getFullYear()}-${pad(this._start.getMonth()+1, 2)}-${pad(this._start.getDate(), 2)}`,
+            start: formatYMDDate(this._start),
             gsd: this._gsd.toString(),
         };
 
         if (this._end) {
-            query.end = `${this._end.getFullYear()}-${pad(this._end.getMonth()+1, 2)}-${pad(this._end.getDate(), 2)}`;
+            query.end = formatYMDDate(this._end);
         }
 
         if (this._point) {
@@ -259,6 +288,7 @@ export default class SearchRequest {
         const body: searchRequest = {
             startDate: this._start,
             gsd: this._gsd,
+            sort: this._sort,
         };
 
         // geometric constraint
@@ -297,89 +327,6 @@ export default class SearchRequest {
     }
 }
 
-/**
- * GroundSampleDistance labels for commonly desired imagery precisions
- * 
- * veryHigh -> 0.5m/pixel or less
- * high -----> 1m/pixel or less
- * medium ---> 5m/pixel or less
- * low ------> 20m/pixel or less
- * veryLow --> 10km/pixel or less (arbitrary large value to return all sources)
- */
-export enum GroundSampleDistance {
-    veryHigh = 0.5,
-    high = 1,
-    medium = 5,
-    low = 20,
-    veryLow = 100000,
-}
-
-function pad(num: number, size: number): string {
-    let numStr = num.toString();
-    while (numStr.length < size) numStr = "0" + num;
-    return numStr;
-}
-
-function parsePoly(poly: number[][][]|string): number[][][] {
-    if (Array.isArray(poly)) {
-        return poly;
-    }
-
-    if (!/^polygon\s*\(/i.test(poly)) {
-        throw("polygon WKT is not a valid format");
-    }
-
-    // remove header
-    poly = poly.substring(7);
-    while (poly[0] == ' ') {
-        poly = poly.substring(1);
-    }
-
-    // remove ring wrapper
-    poly = poly.substring(1,poly.length-1);
-    poly = poly.replace("(", "");
-
-    const polygon: number[][][] = [];
-
-    const ringTokens = poly.split(")");
-    while (ringTokens.length) {
-        const ringStr = ringTokens.shift();
-        const ring: number[][] = [];
-        if (!ringStr) {
-            break;
-        }
-
-        const points = ringStr.split(",");
-
-        while (points.length) {
-            const pointStr = points.shift();
-            const point: number[] = [];
-            if (!pointStr) {
-                break;
-            }
-
-            const vals = pointStr.split(" ");
-
-            while (vals.length) {
-                const val = vals.shift();
-                if (!val) {
-                    continue;
-                }
-
-                point.push(parseFloat(val));
-            }
-
-            ring.push(point);
-        }
-
-        polygon.push(ring);
-    }
-
-    return polygon
-}
-
-const validWKTPolygon = /^\w+\s*\(+[+|-]?\d$/;
-
 interface searchRequest {
     latLong?: {
         latitude: number;
@@ -399,4 +346,10 @@ interface searchRequest {
     supplier?: string;
     cloud?: number;
     offNadir?: number;
+    sort?: sortConfig;
+}
+
+interface sortConfig {
+    field: string;
+    ascending?: boolean;
 }
