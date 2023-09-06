@@ -87,6 +87,7 @@ async function runTests() {
     if (errors.length) {
             console.log("tests failed [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
             console.log(errors);
+            process.exit(1);
     } else {
         console.log("tests successful [", (((new Date()).getTime() - start.getTime()) / 1000), "s ]");
     }
