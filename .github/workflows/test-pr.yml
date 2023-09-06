@@ -27,6 +27,20 @@ on:
         required: true
       test_resource_file2:
         required: true
+      test_collection_id:
+        required: true
+      test_item_id1:
+        required: true
+      test_item_id2:
+        required: true
+      test_tasking_order_key:
+        required: true
+      test_tasking_order_key2:
+        required: true
+      test_tasking_order_eula:
+        required: true
+      test_tasking_order_bundle:
+        required: true
   pull_request:
     types: [opened,edited,synchronize,reopened,ready_for_review,review_requested,]
 jobs:
@@ -53,3 +67,10 @@ jobs:
           resource_id: ${{ secrets.test_resource_id }}
           resource_file1: ${{ secrets.test_resource_file1 }}
           resource_file2: ${{ secrets.test_resource_file2 }}
+          collection_id: ${{ secrets.test_collection_id }}
+          item_id1: ${{ secrets.test_item_id1 }}
+          item_id2: ${{ secrets.test_item_id2 }}
+          tasking_order_key: ${{ secrets.test_tasking_order_key }}
+          tasking_order_key2: ${{ secrets.test_tasking_order_key2 }}
+          tasking_order_eula: ${{ secrets.test_tasking_order_eula }}
+          tasking_order_bundle: ${{ secrets.test_tasking_order_bundle }}
