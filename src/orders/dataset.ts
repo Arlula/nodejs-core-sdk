@@ -1,6 +1,7 @@
 import Resource, {fromJSON as resourceFromJSON} from "./resource";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
+import { isStatusCode, StatusCode } from "./status";
 
 /**
  * Utility class to construct Orders from JSON data
@@ -9,7 +10,7 @@ import { jsonOrError, requestBuilder } from "../util/request";
  * @param {requestBuilder} client the dialer
  * @param json the JSON content to attempt to parse into an Order
  */
-export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Order|string {
+export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Dataset|string {
     if (typeof json === "string") {
         json = JSON.parse(json);
     }
@@ -45,7 +46,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
     if (typeof json.status !== "string") {
         return "Order status missing";
     }
-    if (!isOrderStatus(json.status)) {
+    if (!isStatusCode(json.status)) {
         return `Order status '${json.status}' not recognized`;
     }
     if (typeof json.total !== "number") {
@@ -70,7 +71,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         }
     }
 
-    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, orderKey, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
+    return new Dataset(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.supplier, orderKey, json.sceneID, json.status, json.total, json.type, resources, json.expiration?new Date(json.expiration as string|Date):undefined);
 }
 
 /**
@@ -80,7 +81,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
  * 
  * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
  */
-export default class Order {
+export default class Dataset {
     private _client: requestBuilder;
     private _id: string;
     private _createdAt: Date;
@@ -88,7 +89,7 @@ export default class Order {
     private _supplier: string;
     private _orderingID: string;
     private _sceneID: string;
-    private _status: OrderStatus;
+    private _status: StatusCode;
     private _total: number;
     private _type: string;
     private _expiration?: Date;
@@ -111,7 +112,7 @@ export default class Order {
      * @param {Resource[]}    resources List of resource for this supplier (if available)
      * @param {Date}          [exp]     Expiration date for this orders resources
      */
-    constructor(client: requestBuilder, id: string, created: Date, updated: Date, supplier: string, orderKey: string, scene: string, status: OrderStatus, total: number, type: string, resources: Resource[], exp?: Date) {
+    constructor(client: requestBuilder, id: string, created: Date, updated: Date, supplier: string, orderKey: string, scene: string, status: StatusCode, total: number, type: string, resources: Resource[], exp?: Date) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
@@ -151,7 +152,7 @@ export default class Order {
     public get sceneID(): string {
         return this._sceneID;
     }
-    public get status(): OrderStatus {
+    public get status(): StatusCode {
         return this._status;
     }
     public get total(): number {
@@ -179,7 +180,7 @@ export default class Order {
      */
     loadResources(): Promise<Resource[]> {
         // incomplete orders don't have resources yet
-        if (this.status !== OrderStatus.Complete) {
+        if (this.status !== StatusCode.Complete) {
             return Promise.resolve(this._resources);
         }
 
@@ -227,35 +228,4 @@ export default class Order {
         });
     }
 
-}
-
-/**
- * OrderStatus enumerates the statuses that orders may be in
- * 
- * New ------------> "created",
- * Pending --------> "pending",
- * Processing -----> "processing",
- * Manual ---------> "manual",
- * PostProcessing -> "post-processing",
- * Complete -------> "complete",
- */
-export enum OrderStatus {
-    // common + archive orders
-    New             = "created",
-    Pending         = "pending",
-    Processing      = "processing",
-    PostProcessing  = "post-processing",
-    Complete        = "complete",
-    // custom orders
-    Manual          = "manual",
-    // tasking orders
-    PendingApproval = "pending-approval",
-    Rejected        = "rejected",
-    Failed          = "failed",
-    Rescheduled     = "rescheduled",
-    Cancelled       = "cancelled"
-}
-
-function isOrderStatus(token: string): token is OrderStatus {
-    return Object.values(OrderStatus).includes(token as OrderStatus);
 }

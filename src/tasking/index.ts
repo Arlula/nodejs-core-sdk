@@ -1,4 +1,4 @@
-import Order, { fromJSON as OrderFromJSON } from "../orders/order";
+import Order, { fromJSON as OrderFromJSON } from "../orders/dataset";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
 import TaskingSearchRequest from "./search-request";

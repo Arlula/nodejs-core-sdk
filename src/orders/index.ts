@@ -1,5 +1,5 @@
 import { WriteStream } from "fs";
-import Order, { fromJSON } from "./order";
+import Dataset, { fromJSON } from "./dataset";
 import { downloadHelper as resourceDownloader, downloadFileHelper } from "./resource";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
@@ -28,7 +28,7 @@ export default class Orders {
      * or
      * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
      */
-    list(): Promise<Order[]> {
+    list(): Promise<Dataset[]> {
         return this._client("GET", paths.OrderList)
         .then(jsonOrError)
         .then((resp) => {
@@ -36,10 +36,10 @@ export default class Orders {
                 return Promise.reject("Orders list response is not array");
             }
 
-            const orders: Order[] = [];
+            const orders: Dataset[] = [];
             for (let i=0; i<resp.length; i++) {
                 const ord = fromJSON(this._client, resp[i])
-                if (!(ord instanceof Order)) {
+                if (!(ord instanceof Dataset)) {
                     return Promise.reject(ord);
                 }
                 orders.push(ord);
@@ -58,7 +58,7 @@ export default class Orders {
      * or
      * @see {https://arlula.com/documentation/#ref-order|Order structure reference}
      */
-    get(id: string): Promise<Order> {
+    get(id: string): Promise<Dataset> {
         return this._client("GET", paths.OrderGet+"?id="+id)
         .then(jsonOrError)
         .then((resp) => {
@@ -67,7 +67,7 @@ export default class Orders {
             }
 
             const ord = fromJSON(this._client, resp as {[key: string]: unknown});
-            if (!(ord instanceof Order)) {
+            if (!(ord instanceof Dataset)) {
                 return Promise.reject(ord);
             }
             return ord;

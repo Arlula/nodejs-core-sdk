@@ -1,6 +1,6 @@
 import SearchRequest from "./search-request";
 import SearchResponse, { decodeResponse, decodeResultSet } from "./search/response";
-import Order, { fromJSON as OrderFromJSON } from "../orders/order";
+import Order, { fromJSON as OrderFromJSON } from "../orders/dataset";
 import OrderRequest from "../orders/order-request";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
