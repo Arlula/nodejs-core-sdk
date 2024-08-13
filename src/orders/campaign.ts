@@ -1,8 +1,9 @@
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
-import Dataset from "./dataset";
+import Dataset, { fromJSON as datasetFromJSON } from "./dataset";
 import { isStatusCode, StatusCode } from "./status";
 import decodePolygon from "../archive/search/polygon";
+import { parseListResponse } from "./lists"
 
 export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Campaign|string {
     if (typeof json === "string") {
@@ -236,4 +237,25 @@ export default class Campaign {
     public get supplier(): string {return this._supplier}
     public get platforms(): string[] {return this._platforms}
     public get gsd(): number {return this._gsd}
+
+    public get datasets(): Promise<Dataset[]> {
+        if (this._datasets.length) {
+            return Promise.resolve(this._datasets);
+        }
+
+        return this._client("GET", paths.CampaignDatasets(this._id))
+        .then(jsonOrError)
+        .then((resp) => {
+            if (!(resp instanceof Object)) {
+                return Promise.reject("Campaign dataset list endpoint returned a malformed response");
+            }
+
+            const list = parseListResponse<Dataset>(this._client, resp as {[key: string]: unknown}, datasetFromJSON)
+            if (typeof list === "string") {
+                return Promise.reject(list);
+            }
+
+            return list.content;
+        });
+    }
 }
