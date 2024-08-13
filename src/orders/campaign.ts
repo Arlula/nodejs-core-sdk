@@ -99,6 +99,18 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         return "Campaign missing GSD";
     }
 
+    const datasets: Dataset[] = [];
+    if (json.resources && Array.isArray(json.datasets)) {
+        for (let i=0; i<json.datasets.length; i++) {
+            const res = datasetFromJSON(client, json.datasets[i]);
+            if (res instanceof Dataset) {
+                datasets.push(res);
+                continue;
+            }
+            return res;
+        }
+    }
+
     return new Campaign(
         client,
         json.id,
@@ -123,6 +135,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         json.supplier,
         platforms,
         json.gsd,
+        datasets,
     )
 }
 
