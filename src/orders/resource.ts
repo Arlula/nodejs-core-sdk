@@ -183,7 +183,7 @@ export default class Resource {
  * @param {string}        id     ID of the resource to download
  */
 export function downloadHelper(client: requestBuilder, id: string): Promise<ArrayBuffer> {
-    return client("GET", paths.ResourceDownload+"?id="+id)
+    return client("GET", paths.ResourceDownload(id))
     .then((r) => {
         const redirect = r.headers.get("location");
         if (!redirect) {
@@ -216,7 +216,7 @@ export function downloadFileHelper(client: requestBuilder, id: string, fileRef: 
             file = fileRef;
         }
 
-        client("GET", paths.ResourceDownload+"?id="+id)
+        client("GET", paths.ResourceDownload(id))
         .then((r) => {
             const redirect = r.headers.get("location");
             if (!redirect) {

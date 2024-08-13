@@ -37,6 +37,12 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
     if (typeof json.tax !== "number") {
         return "Missing order tax amount";
     }
+    if (!json.refunded) {
+        json.refunded = 0;
+    }
+    if (typeof json.refunded !== "number") {
+        return "Missing order refunded amount"
+    }
     let monitor = ""
     if (typeof json.monitor === "string") {
         monitor = json.monitor;
@@ -66,7 +72,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         }
     }
 
-    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.status, json.total, json.discount, json.tax, monitor, [], []);
+    return new Order(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.status, json.total, json.discount, json.tax, json.refunded, monitor, [], []);
 }
 
 export default class Order {
@@ -78,6 +84,7 @@ export default class Order {
     private _total: number;
     private _discount: number;
     private _tax: number;
+    private _refunded: number;
     private _monitor: string;
     private _campaigns: Campaign[];
     private _datasets: Dataset[];
@@ -90,6 +97,7 @@ export default class Order {
         total: number,
         discount: number,
         tax: number,
+        refunded: number,
         monitor: string,
         campaigns: Campaign[],
         datasets: Dataset[],
@@ -102,6 +110,7 @@ export default class Order {
         this._total = total;
         this._discount = discount;
         this._tax = tax;
+        this._refunded = refunded;
         this._monitor = monitor;
         this._campaigns = campaigns;
         this._datasets = datasets;
@@ -114,6 +123,7 @@ export default class Order {
     public get total(): number {return this._total}
     public get discount(): number {return this._discount}
     public get tax(): number {return this._tax}
+    public get refunded(): number {return this._refunded}
     public get monitor(): string {return this._monitor}
     public get campaigns(): Campaign[] {return this._campaigns}
     public get datasets(): Dataset[] {return this._datasets}
