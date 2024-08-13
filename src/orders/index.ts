@@ -30,8 +30,8 @@ export default class Orders {
      * or
      * @see {https://arlula.com/documentation/orders/#ref-order|Order structure reference}
      */
-    orderList(): Promise<ListResponse<Order>> {
-        return this._client("GET", paths.OrderList())
+    orderList(page?: number): Promise<ListResponse<Order>> {
+        return this._client("GET", paths.OrderList()+(page ? `?page=${page}` : ""))
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
@@ -55,8 +55,8 @@ export default class Orders {
      * or
      * @see {https://arlula.com/documentation/orders/#ref-campaign|Campaign structure reference}
      */
-    campaignList(): Promise<ListResponse<Campaign>> {
-        return this._client("GET", paths.CampaignList())
+    campaignList(page?: number): Promise<ListResponse<Campaign>> {
+        return this._client("GET", paths.CampaignList()+(page ? `?page=${page}` : ""))
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
@@ -82,8 +82,8 @@ export default class Orders {
      * or
      * @see {https://arlula.com/documentation/orders/#ref-dataset|Dataset structure reference}
      */
-    datasetList(): Promise<ListResponse<Dataset>> {
-        return this._client("GET", paths.DatasetList())
+    datasetList(page?: number): Promise<ListResponse<Dataset>> {
+        return this._client("GET", paths.DatasetList()+(page ? `?page=${page}` : ""))
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
