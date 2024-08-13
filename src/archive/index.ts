@@ -1,10 +1,10 @@
 import SearchRequest from "./search-request";
 import SearchResponse, { decodeResponse, decodeResultSet } from "./search/response";
 import Order, { fromJSON as orderFromJSON } from "../orders/order";
-import OrderRequest from "../orders/order-request";
+import OrderRequest from "./order-request";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
-import BatchOrderRequest from "../orders/batch-order";
+import BatchOrderRequest from "./batch-order";
 
 /**
  * @class Archive wraps the API requests to the archive imagery API
