@@ -29,8 +29,8 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
     if (!(typeof json.updatedAt === "string" || json.updatedAt instanceof Date)) {
         return "No update date for resource";
     }
-    if (typeof json.order !== "string") {
-        return "No order key for resource";
+    if (typeof json.dataset !== "string") {
+        return "No dataset key for resource";
     }
     if (typeof json.name !== "string") {
         return "Resource name missing";
@@ -54,22 +54,22 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         return "Resource checksum missing";
     }
 
-    return new Resource(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.order, json.name, json.type, json.size, json.format, json.roles, json.checksum)
+    return new Resource(client, json.id, new Date(json.createdAt), new Date(json.updatedAt), json.dataset, json.name, json.type, json.size, json.format, json.roles, json.checksum)
 }
 
 /**
- * @class Resource wraps the data that represents an order resource
+ * @class Resource wraps the data that represents a dataset resource
  * 
  * Note: construction of this class is to only be done internally to the library
  * 
- * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference}
+ * @see {https://arlula.com/documentation/#ref-resource|Dataset Resource structure reference}
  */
 export default class Resource {
     private _client: requestBuilder;
     private _id: string;
     private _createdAt: Date;
     private _updatedAt: Date;
-    private _order: string;
+    private _dataset: string;
     private _name: string;
     private _type: ResourceType;
     private _size: number;
@@ -84,16 +84,16 @@ export default class Resource {
      * @param {string}        id      The Resource ID
      * @param {Date}          created The timestamp when the resource was created (UTC timezone)
      * @param {Date}          updated The timestamp when the resource was last updated (UTC timezone)
-     * @param {string}        order   ID of the order this resource belongs to
+     * @param {string}        dataset   ID of the dataset this resource belongs to
      * @param {string}        name    An identifiable name/filename for this resource
      * @param {ResourceType}  type    Identifier for the type of resource (imagery, metadata, etc @see ResourceType )
      */
-    constructor(client: requestBuilder, id: string, created: Date, updated: Date, order: string, name: string, type: ResourceType, size: number, format: string, roles: string[], checksum: string) {
+    constructor(client: requestBuilder, id: string, created: Date, updated: Date, dataset: string, name: string, type: ResourceType, size: number, format: string, roles: string[], checksum: string) {
         this._client = client;
         this._id = id;
         this._createdAt = created;
         this._updatedAt = updated;
-        this._order = order;
+        this._dataset = dataset;
         this._name = name;
         this._type = type;
         this._size = size;
@@ -115,18 +115,18 @@ export default class Resource {
     public get updatedAt(): Date {
         return this._updatedAt;
     }
-    public get order(): string {
-        return this._order;
+    public get dataset(): string {
+        return this._dataset;
     }
     public get name(): string {
         return this._name;
     }
     /**
      * @deprecated legacy `resource.type` is deprecated
-     * field will be provided for orders during transition.
+     * field will be provided for datasets during transition.
      * 
      * roles field is the recommended replacement, see
-     * @see {https://arlula.com/documentation/#ref-resource|Order Resource structure reference} 
+     * @see {https://arlula.com/documentation/#ref-resource|Dataset Resource structure reference} 
      * and the "resource roles" section for details on the new role field and its use.
      */
     public get type(): ResourceType {
@@ -151,7 +151,7 @@ export default class Resource {
      * Download the content of a resource (imagery, metadata, etc)
      * Data is made available as an ArrayBuffer.
      * 
-     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * Note: If the dataset this resource is for has its `expiration` field set and that date has
      * passed, this request will fail as the resource has expired and is no longer hosted in the platform
      * 
      * @returns {Promise<ArrayBuffer>} the content of the resource as a Buffer
@@ -164,7 +164,7 @@ export default class Resource {
      * Download the content of a resource (imagery, metadata, etc)
      * Data is piped into the provided fs.WriteStream or one is created at the provided filepath.
      * 
-     * Note: If the order this resource is for has its `expiration` field set and that date has
+     * Note: If the dataset this resource is for has its `expiration` field set and that date has
      * passed, this request will fail as the resource has expired and is no longer hosted in the platform
      * 
      * @returns {Promise<WriteStream>} file the resource was written to
