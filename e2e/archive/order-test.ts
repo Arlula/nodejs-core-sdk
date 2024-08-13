@@ -1,8 +1,9 @@
 import Arlula from "../../dist";
-import OrderRequest from "../../dist/orders/order-request";
+import OrderRequest from "../../dist/archive/order-request";
 import SearchRequest from "../../dist/archive/search-request";
 import SearchResult from "../../dist/archive/search/result";
-import Order, { OrderStatus } from "../../dist/orders/order";
+import Order from "../../dist/orders/order";
+import { StatusCode } from "../../dist/orders/status";
 
 const tests = [
     test1,
@@ -25,17 +26,22 @@ function test1(client: Arlula) {
     console.log("archive order 1");
     const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", process.env.order_bundle || "default");
     return client.archive().order(req)
-    .then((resp) => {
+    .then(async (resp) => {
         if (!resp.id) {
             console.error("archive order 1 - Receives order without ID");
             return Promise.reject("archive order 1 - Receives order without ID");
         }
         // pre defined landsat order, will be complete and have resource results
-        if (resp.status !== OrderStatus.Complete) {
+        if (resp.status !== StatusCode.Complete) {
             console.error("archive order 1 - order not complete");
             return Promise.reject("archive order 1 - order not complete");
         }
-        if (!resp.resources) {
+        const ds = await resp.datasets;
+        if (!ds) {
+            console.error("archive order 1 - Landsat order with no datasets");
+            return Promise.reject("archive order 1 - Landsat order with no datasets");
+        }
+        if (!ds[0].resources) {
             console.error("archive order 1 - Landsat order with no resources");
             return Promise.reject("archive order 1 - Landsat order with no resources");
         }
@@ -69,17 +75,23 @@ function test2(client: Arlula) {
         const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", process.env.order_bundle || "default");
         return client.archive().order(req)
     })
-    .then((resp) => {
+    .then(async (resp) => {
         if (!resp.id) {
             console.error("archive order 2 - Receives order without ID");
             return Promise.reject("archive order 2 - Receives order without ID");
         }
         // pre defined landsat order, will be complete and have resource results
-        if (resp.status !== OrderStatus.Complete) {
+        if (resp.status !== StatusCode.Complete) {
             console.error("archive order 2 - order not complete");
             return Promise.reject("archive order 2 - order not complete");
         }
-        if (!resp.resources) {
+        const ds = await resp.datasets;
+        if (!ds) {
+            console.error("archive order 2 - Landsat order with no datasets");
+            return Promise.reject("archive order 2 - Landsat order with no datasets");
+        }
+
+        if (!ds[0].resources) {
             console.error("archive order 2 - Landsat order with no resources");
             return Promise.reject("archive order 2 - Landsat order with no resources");
         }
