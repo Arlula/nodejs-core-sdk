@@ -4,8 +4,8 @@ import { jsonOrError, requestBuilder } from "../util/request";
 import TaskingSearchRequest from "./search-request";
 import { TaskingSearchResponse } from "./search-response";
 import { decodeResponse } from "./search-response";
-import OrderRequest from "../orders/order-request";
-import BatchOrderRequest from "../orders/batch-order";
+import OrderRequest from "./order-request";
+import BatchOrderRequest from "./batch-order";
 
 /**
  * @class Tasking wraps the API requests to the imagery tasking API
