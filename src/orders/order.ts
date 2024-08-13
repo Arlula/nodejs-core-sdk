@@ -136,7 +136,7 @@ export default class Order {
             return Promise.resolve(this._campaigns);
         }
 
-        return this._client("GET", paths.CampaignDatasets(this._id))
+        return this._client("GET", paths.OrderCampaigns(this._id))
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
@@ -159,7 +159,7 @@ export default class Order {
             return Promise.resolve(this._datasets);
         }
 
-        return this._client("GET", paths.CampaignDatasets(this._id))
+        return this._client("GET", paths.OrderDatasets(this._id))
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
