@@ -1,5 +1,7 @@
 import Arlula from "../../dist/index";
-import Order, { OrderStatus } from "../../dist/orders/order";
+import Dataset from "../../dist/orders/dataset";
+import Order from "../../dist/orders/order";
+import { StatusCode } from "../../dist/orders/status";
 
 const tests = [
     test1,
@@ -18,21 +20,21 @@ export default function runOrderGetTests(client: Arlula): Promise<unknown> {
 // get from list
 function test1(client: Arlula) {
     console.log("order get 1")
-    return client.orders().list()
+    return client.orders().datasetList()
     .then((list) => {
-        if (!list.length) {
+        if (!list.length && list.content.length) {
             console.error("order get 1, failed to get list to check against");
             return Promise.reject("order get 1, failed to get list to check against");
         }
-        let sub: Order = list[0];
+        let sub: Dataset = list.content[0];
         for (let i=0; i<list.length; i++) {
-            if (list[i].status === OrderStatus.Complete && !list[i].expiration) {
-                sub = list[i];
+            if (list.content[i].status === StatusCode.Complete && !list.content[i].expiration) {
+                sub = list.content[i];
                 break;
             }
         }
     
-        if (sub.status !== OrderStatus.Complete || sub.expiration) {
+        if (sub.status !== StatusCode.Complete || sub.expiration) {
             console.error("order get 1, no suitable orders found to get");
             return Promise.reject("order get 1, no suitable orders found to get");
         }
@@ -59,7 +61,7 @@ function test1(client: Arlula) {
 // get direct
 function test2(client: Arlula) {
     console.log("order get 2")
-    return client.orders().get(process.env.order_id || "")
+    return client.orders().getDataset(process.env.order_id || "")
     .then((order) => {
         if (!order.id) {
             console.error("order get 2, got empty order");
@@ -83,7 +85,7 @@ function test3(client: Arlula) {
     console.log("order get 3")
     const tmpID = process.env.order_id || "";
     const id = `${tmpID.substr(0,14)}6${tmpID.substr(15)}`;
-    return client.orders().get(id)
+    return client.orders().getDataset(id)
     .then((order) => {
         console.error("order get 3, got order from invalid ID: ", order);
         return Promise.reject("order get 3, got order from invalid ID: "+order);

@@ -19,7 +19,7 @@ export default function runOrderResourceTests(client: Arlula): Promise<unknown> 
 // order get => child resource => download
 function test1(client: Arlula) {
     console.log("resource get 1");
-    return client.orders().get(process.env.order_id || "")
+    return client.orders().getDataset(process.env.order_id || "")
     .then((order) => {
         if (!order.resources.length) {
             console.error("resource 1, Get order returned no resources");
