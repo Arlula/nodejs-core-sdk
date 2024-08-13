@@ -64,12 +64,12 @@ function expectedError(label: string) {
 
 function testResult(prefix: string, r: TaskingSearchResult): string {
     // bounding
-    if (r.polygons.length == 0) {
+    if (r.polygon.length == 0) {
         console.error(prefix, " is not populated");
         console.log(r);
         return "scene polygon is not populated";
     }
-    if (!JSON.stringify(r.polygons).startsWith("[[[[")) {
+    if (!JSON.stringify(r.polygon).startsWith("[[[")) {
         console.error(prefix, " - scene polygon is not valid");
         console.log(r);
         return "scene polygon is not valid";
