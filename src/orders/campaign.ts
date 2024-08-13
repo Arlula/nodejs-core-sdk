@@ -164,6 +164,7 @@ export default class Campaign {
 
     // delivered data
     private _datasets: Dataset[] = [];
+    private _attemptedDatasets = false;
 
     constructor(
         client: requestBuilder,
@@ -189,6 +190,7 @@ export default class Campaign {
         supplier: string,
         platforms: string[],
         gsd: number,
+        datasets: Dataset[],
     ) {
         this._client = client;
         this._id = id;
@@ -213,6 +215,8 @@ export default class Campaign {
         this._supplier = supplier;
         this._platforms = platforms;
         this._gsd = gsd;
+        this._datasets = datasets;
+        this._attemptedDatasets = this._datasets.length > 0;
     }
 
     public get id(): string {return this._id}
@@ -239,7 +243,7 @@ export default class Campaign {
     public get gsd(): number {return this._gsd}
 
     public get datasets(): Promise<Dataset[]> {
-        if (this._datasets.length) {
+        if (this._attemptedDatasets) {
             return Promise.resolve(this._datasets);
         }
 
@@ -254,6 +258,9 @@ export default class Campaign {
             if (typeof list === "string") {
                 return Promise.reject(list);
             }
+
+            this._datasets = list.content;
+            this._attemptedDatasets = true;
 
             return list.content;
         });
