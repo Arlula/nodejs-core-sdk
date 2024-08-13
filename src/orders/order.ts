@@ -3,6 +3,7 @@ import { jsonOrError, requestBuilder } from "../util/request";
 import Campaign, { fromJSON as campaignFromJSON } from "./campaign";
 import Dataset, { fromJSON as datasetFromJSON } from "./dataset";
 import { isStatusCode, StatusCode } from "./status";
+import { parseListResponse } from "./lists"
 
 export function fromJSON(client: requestBuilder, json: string|{[key: string]: unknown}): Order|string {
     if (typeof json === "string") {
@@ -88,6 +89,8 @@ export default class Order {
     private _monitor: string;
     private _campaigns: Campaign[];
     private _datasets: Dataset[];
+    private _attemptedCampaigns = false;
+    private _attemptedDatasets = false;
     constructor(
         client: requestBuilder,
         id: string,
@@ -114,6 +117,8 @@ export default class Order {
         this._monitor = monitor;
         this._campaigns = campaigns;
         this._datasets = datasets;
+        this._attemptedCampaigns = this._campaigns.length > 0;
+        this._attemptedDatasets = this._datasets.length > 0;
     }
 
     public get id(): string {return this._id}
@@ -125,6 +130,51 @@ export default class Order {
     public get tax(): number {return this._tax}
     public get refunded(): number {return this._refunded}
     public get monitor(): string {return this._monitor}
-    public get campaigns(): Campaign[] {return this._campaigns}
-    public get datasets(): Dataset[] {return this._datasets}
+    
+    public get campaigns(): Promise<Campaign[]> {
+        if (this._attemptedCampaigns) {
+            return Promise.resolve(this._campaigns);
+        }
+
+        return this._client("GET", paths.CampaignDatasets(this._id))
+        .then(jsonOrError)
+        .then((resp) => {
+            if (!(resp instanceof Object)) {
+                return Promise.reject("Campaign dataset list endpoint returned a malformed response");
+            }
+
+            const list = parseListResponse<Campaign>(this._client, resp as {[key: string]: unknown}, campaignFromJSON)
+            if (typeof list === "string") {
+                return Promise.reject(list);
+            }
+
+            this._campaigns = list.content;
+            this._attemptedCampaigns = true;
+
+            return list.content;
+        });
+    }
+    public get datasets(): Promise<Dataset[]> {
+        if (this._attemptedDatasets) {
+            return Promise.resolve(this._datasets);
+        }
+
+        return this._client("GET", paths.CampaignDatasets(this._id))
+        .then(jsonOrError)
+        .then((resp) => {
+            if (!(resp instanceof Object)) {
+                return Promise.reject("Campaign dataset list endpoint returned a malformed response");
+            }
+
+            const list = parseListResponse<Dataset>(this._client, resp as {[key: string]: unknown}, datasetFromJSON)
+            if (typeof list === "string") {
+                return Promise.reject(list);
+            }
+
+            this._datasets = list.content;
+            this._attemptedDatasets = true;
+
+            return list.content;
+        });
+    }
 }
