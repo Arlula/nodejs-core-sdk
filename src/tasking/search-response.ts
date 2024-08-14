@@ -245,9 +245,9 @@ export function decodeResult(json: unknown): TaskingSearchResult|null {
     } else {
         return null;
     }
-    // polygons
-    if (argMap?.polygons && Array.isArray(argMap.polygons)) {
-        const p = decodePolygon(argMap.polygons);
+    // polygon
+    if (argMap?.polygon && Array.isArray(argMap.polygon)) {
+        const p = decodePolygon(argMap.polygon);
         if (!p) {
             return null;
         }
