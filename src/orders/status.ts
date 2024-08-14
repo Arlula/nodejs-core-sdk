@@ -17,7 +17,8 @@ export enum StatusCode {
     PostProcessing  = "post-processing",
     Complete        = "complete",
     // custom orders
-    Manual          = "manual",
+    Manual           = "manual",
+    PendingScreening = "pending-screen",
     // tasking orders
     PendingApproval = "pending-approval",
     Rejected        = "rejected",
