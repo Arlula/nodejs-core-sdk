@@ -76,14 +76,18 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         campaign = json.campaign;
     }
     if (!(json?.aoi)) {
-        return "";
+        return "Dataset aoi missing";
     }
     const polygon = decodePolygon(json.aoi)
     if (!polygon) {
-        return "";
+        return "invalid dataset polygon";
     }
-    if (typeof json.datetime !== "string") {
-        return "Dataset datetime missing";
+    let date: Date|undefined
+    if (json.datetime) {
+        if (typeof json.datetime !== "string") {
+            return "Dataset datetime missing";
+        }
+        date = new Date(json.datetime);
     }
     if (json.expiration && !(typeof json.expiration === "string" || json.expiration instanceof Date)) {
         return "Dataset Expiration invalid formatting";
@@ -119,7 +123,7 @@ export function fromJSON(client: requestBuilder, json: string|{[key: string]: un
         json.order, 
         campaign,
         polygon,
-        new Date(json.datetime),
+        date,
         resources, 
         json.expiration?new Date(json.expiration as string|Date):undefined,
     );
@@ -151,7 +155,7 @@ export default class Dataset {
     private _campaign: string;
     private _expiration?: Date;
     private _aoi: number[][][];
-    private _datetime: Date;
+    private _datetime?: Date;
     private _resources: Resource[] = [];
     private detailed = false;
     /**
@@ -197,7 +201,7 @@ export default class Dataset {
         order: string,
         campaign: string,
         aoi: number[][][],
-        datetime: Date,
+        datetime: Date|undefined,
         resources: Resource[],
         exp?: Date,
     ) {
@@ -288,7 +292,7 @@ export default class Dataset {
     public get aoi(): number[][][] {
         return this._aoi;
     }
-    public get datetime(): Date {
+    public get datetime(): Date|undefined {
         return this._datetime;
     }
 
