@@ -314,7 +314,7 @@ export default class Dataset {
             return Promise.resolve(this._resources);
         }
 
-        return this._client("GET", paths.OrderGet+"?id="+this._id)
+        return this._client("GET", paths.DatasetGet(this._id))
         .then(jsonOrError)
         .then((resp) => {
             if (typeof resp !== "object") {
