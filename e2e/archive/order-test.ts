@@ -62,7 +62,7 @@ function test2(client: Arlula) {
         sceneLoop:
         for (let i=0; i<resp.results.length; i++) {
             for (let j=0; j<resp.results[i].licenses.length; j++) {
-                if (resp.results[i].bundles[j].price == 0 && resp.results[i].licenses[j].href == (process.env.order_eula || "")) {
+                if (resp.results[i].bundles[0].price == 0 && resp.results[i].licenses[j].href == (process.env.order_eula || "")) {
                     scene = resp.results[i];
                     break sceneLoop;
                 }
@@ -72,7 +72,7 @@ function test2(client: Arlula) {
             console.error("archive order 2 - no valid orders found");
             return Promise.reject("archive order 2 - no valid orders found");
         }
-        const req = new OrderRequest(process.env.order_key || "", process.env.order_eula || "", process.env.order_bundle || "default");
+        const req = new OrderRequest(scene, process.env.order_eula || "", process.env.order_bundle || "default");
         return client.archive().order(req)
     })
     .then(async (resp) => {
@@ -112,7 +112,7 @@ function testError1(client: Arlula) {
             console.error("archive order error 1 - unexpected error: ", e);
             return Promise.reject("archive order error 1 - "+e);
         }
-        if (!e.startsWith("Invalid ordering ID")) {
+        if (!e.startsWith("Invalid `id`")) {
             console.error("archive order error 1 - Unexpected error response: ", e)
             return Promise.reject("archive order error 1 - "+e);
         }
@@ -129,7 +129,7 @@ function testError2(client: Arlula) {
             console.error("archive order error 2 - unexpected error: ", e);
             return Promise.reject("archive order error 2 - "+e);
         }
-        if (!e.startsWith("You must confirm acceptance of the EULA")) {
+        if (!e.startsWith("Invalid `eula`")) {
             console.error("archive order error 2 - Unexpected error response: ", e)
             return Promise.reject("archive order error 2 - "+e);
         }
@@ -146,7 +146,7 @@ function testError3(client: Arlula) {
             console.error("archive order error 3 - unexpected error: ", e);
             return Promise.reject("archive order error 3 - "+e);
         }
-        if (!e.startsWith("Selected bundle is not an available option of this order")) {
+        if (!e.startsWith("Invalid `bundleKey`")) {
             console.error("archive order error 3 - Unexpected error response: ", e)
             return Promise.reject("archive order error 3 - "+e);
         }
@@ -156,8 +156,8 @@ function testError3(client: Arlula) {
 
 function exceptionHandler(label: string) {
     return function (e: string) {
-        console.error("Error executing " + label + ": ", JSON.stringify(e));
-        return Promise.reject(label+": "+JSON.stringify(e));
+        console.error("Error executing " + label + ": ", e);
+        return Promise.reject(label+": "+e);
     }
 }
 

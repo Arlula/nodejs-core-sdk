@@ -15,11 +15,11 @@ export default function runItemCUDTests(client: Arlula): Promise<unknown> {
 
 function test1ItemAdd(client: Arlula) {
     console.log("item-cud 1 - add");
-    return client.collections().itemAdd(process.env.collection_id || "", process.env.order_id || "")
+    return client.collections().itemAdd(process.env.collection_id || "", process.env.dataset_id || "")
     .then(async () => {
         await new Promise((resolve, reject) => {
             setTimeout(() => {
-                client.collections().itemGet(process.env.collection_id || "", process.env.order_id || "")
+                client.collections().itemGet(process.env.collection_id || "", process.env.dataset_id || "")
                 .then((resp) => {
                     if (!resp) {
                         console.log("collection item cud 1 - add: empty response");
@@ -29,7 +29,7 @@ function test1ItemAdd(client: Arlula) {
                         console.log("collection item cud 1 - add: no id");
                         reject("collection item cud 1 - add: no id");
                     }
-                    if (resp.id != process.env.order_id) {
+                    if (resp.id != process.env.dataset_id) {
                         console.log("collection item cud 1 - add: unexpected id");
                         reject("collection item cud 1 - add: unexpected id");
                     }
@@ -44,12 +44,12 @@ function test1ItemAdd(client: Arlula) {
 
 function test2ItemRm(client: Arlula) {
     console.log("item-cud 2 - rm");
-    return client.collections().itemAdd(process.env.collection_id || "", process.env.order_id || "")
+    return client.collections().itemAdd(process.env.collection_id || "", process.env.dataset_id || "")
     .then(async () => {
         // TODO: establish the cache duration before uncommenting this
         // await new Promise((resolve, reject) => {
         //     setTimeout(() => {
-        //         client.collections().itemGet(process.env.collection_id || "", process.env.order_id || "")
+        //         client.collections().itemGet(process.env.collection_id || "", process.env.dataset_id || "")
         //         .then((resp) => {
         //             if (resp) {
         //                 console.log("collection item cud 2 - rm: response to removed item");
