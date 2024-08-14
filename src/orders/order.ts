@@ -140,7 +140,7 @@ export default class Order {
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
-                return Promise.reject("Campaign dataset list endpoint returned a malformed response");
+                return Promise.reject("Order campaign list endpoint returned a malformed response");
             }
 
             const list = parseListResponse<Campaign>(this._client, resp as {[key: string]: unknown}, campaignFromJSON)
@@ -163,7 +163,7 @@ export default class Order {
         .then(jsonOrError)
         .then((resp) => {
             if (!(resp instanceof Object)) {
-                return Promise.reject("Campaign dataset list endpoint returned a malformed response");
+                return Promise.reject("Order dataset list endpoint returned a malformed response");
             }
 
             const list = parseListResponse<Dataset>(this._client, resp as {[key: string]: unknown}, datasetFromJSON)
