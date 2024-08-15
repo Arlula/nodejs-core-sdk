@@ -26,7 +26,7 @@ export default class OrderRequest extends baseRequest {
     }
     _toJSON(stringify: boolean): string|orderRequest {
         const req = super._toJSON(false) as orderRequest;
-        req.priority = this._priority;
+        req.priorityKey = this._priority;
         req.cloud = this._cloud;
 
         if (stringify) {
@@ -37,6 +37,6 @@ export default class OrderRequest extends baseRequest {
 }
 
 export interface orderRequest extends baseOutput {
-    priority: string;
+    priorityKey: string;
     cloud: number;
 }
