@@ -58,3 +58,15 @@ api version `2022-09` cleanup
 api version `2023-01` support
 
  - added `polygon` method to search request, allowing search by WKT and array polygon
+
+# 3.0.0 - 15/08/2024
+
+API version `2024-07` support
+
+ - rename `Order` class to `Dataset`
+ - introduce new `Order` and tasking `Campaign` class entities
+ - rework of orders api to support the above resources (list, get, sublist child entities)
+ - ordering endpoints now return the new `Order` entity (single, even for batch order)
+ - tasking search response removed the `area` property and added `metrics`
+ - tasking search response added `priorities` and `cloudLevels` fields describing order options
+ - tasking order request added `priorityKey` and `cloud` to specify additional order options
