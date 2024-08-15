@@ -21,7 +21,7 @@ export function authProvider(user: string, pass:string): requestBuilder {
             method: method,
             headers: {
                 "Authorization": "Basic " + Buffer.from(user + ":" + pass).toString("base64"),
-                "X-User-Agent": `arlula-js 2.3.0, API-ver 2022-08, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
+                "X-User-Agent": `arlula-js 3.0.0, API-ver 2022-08, server nodejs ${process.version}; ${process.arch} ${process.platform}`,
                 "Content-Type": typeof body != "string" ? "application/json" : "text/plain",
             },
             body: body ? (typeof body != "string" ? JSON.stringify(body) : body) : undefined,
