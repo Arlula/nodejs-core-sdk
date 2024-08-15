@@ -21,6 +21,10 @@ on:
         required: true
       test_order_id:
         required: true
+      test_campaign_id:
+        required: true
+      test_dataset_id:
+        required: true
       test_resource_id:
         required: true
       test_resource_file1:
@@ -41,9 +45,9 @@ on:
         required: true
       test_tasking_order_bundle:
         required: true
-      tasking_order_priority:
+      test_tasking_order_priority:
         required: true
-      tasking_order_cloud:
+      test_tasking_order_cloud:
         required: true
   pull_request:
     types: [opened,edited,synchronize,reopened,ready_for_review,review_requested,]
@@ -68,6 +72,8 @@ jobs:
           order_bundle: ${{ secrets.test_order_bundle }}
           order_eula: ${{ secrets.test_order_eula }}
           order_id: ${{ secrets.test_order_id }}
+          campaign_id: ${{ secrets.test_campaign_id }}
+          dataset_id: ${{ secrets.test_dataset_id }}
           resource_id: ${{ secrets.test_resource_id }}
           resource_file1: ${{ secrets.test_resource_file1 }}
           resource_file2: ${{ secrets.test_resource_file2 }}
