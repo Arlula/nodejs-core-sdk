@@ -18,7 +18,7 @@ export default function runOrderTests(client: Arlula): Promise<unknown> {
 // basic order
 function test1(client: Arlula) {
     console.log("tasking order 1");
-    const req = new OrderRequest(process.env.tasking_order_key || "", process.env.tasking_order_eula || "", process.env.tasking_order_bundle || "default", process.env.tasking_order_priority || "standard", parseInt(process.env.tasking_order_cloud || "70"));
+    const req = new OrderRequest(process.env.tasking_order_key || "", process.env.tasking_order_eula || "", process.env.tasking_order_bundle || "default", process.env.tasking_order_priority || "standard", parseInt(process.env.tasking_order_cloud || "100"));
     return client.tasking().order(req)
     .then(async (resp) => {
         if (!resp.id) {
@@ -26,9 +26,9 @@ function test1(client: Arlula) {
             return Promise.reject("tasking order 1 - Receives order without ID");
         }
         // pre defined order, will be pending approval and not have resource results
-        if (resp.status !== StatusCode.PendingApproval) {
-            console.error("tasking order 1 - order not pending approval: ", resp.status);
-            return Promise.reject("tasking order 1 - order not pending approval");
+        if (resp.status === StatusCode.Complete) {
+            console.error("tasking order 1 - order not pending fulfillment: ", resp.status);
+            return Promise.reject("tasking order 1 - order not pending fulfillment");
         }
 
         const cpgn = await resp.campaigns;

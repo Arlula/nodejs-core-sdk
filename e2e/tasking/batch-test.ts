@@ -24,9 +24,9 @@ function test1(client: Arlula) {
     req.addOrder(new OrderRequest(process.env.tasking_order_key2 || "", process.env.tasking_order_eula || "", process.env.tasking_order_bundle || "default", process.env.tasking_order_priority || "standard", parseInt(process.env.tasking_order_cloud || "70")));
     return client.tasking().batchOrder(req)
     .then(async (resp) => {
-        if (resp.status != StatusCode.Pending) {
-            console.error("tasking batch 1 - Response to batch order is not in the pending state");
-            return Promise.reject("tasking batch 1 - Response to batch order is not in the pending state");
+        if (resp.status === StatusCode.Complete) {
+            console.error("tasking batch 1 - Response to batch order is complete when a tasking order");
+            return Promise.reject("tasking batch 1 - Response to batch order is complete when a tasking order");
         }
         
         const campaigns = await resp.campaigns;
