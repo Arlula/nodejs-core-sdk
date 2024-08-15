@@ -15,6 +15,8 @@ jobs:
       test_order_bundle: ${{ secrets.test_order_bundle }}
       test_order_eula: ${{ secrets.test_order_eula }}
       test_order_id: ${{ secrets.test_order_id }}
+      test_campaign_id: ${{ secrets.test_campaign_id }}
+      test_dataset_id: ${{ secrets.test_dataset_id }}
       test_resource_id: ${{ secrets.test_resource_id }}
       test_resource_file1: ${{ secrets.test_resource_file1 }}
       test_resource_file2: ${{ secrets.test_resource_file2 }}
@@ -25,6 +27,8 @@ jobs:
       test_tasking_order_key2: ${{ secrets.test_tasking_order_key2 }}
       test_tasking_order_eula: ${{ secrets.test_tasking_order_eula }}
       test_tasking_order_bundle: ${{ secrets.test_tasking_order_bundle }}
+      test_tasking_order_priority: ${{ secrets.test_tasking_order_priority }}
+      test_tasking_order_cloud: ${{ secrets.test_tasking_order_cloud }}
   build:
     needs: test
     runs-on: ubuntu-latest

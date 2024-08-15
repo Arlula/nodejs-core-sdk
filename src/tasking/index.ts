@@ -1,11 +1,11 @@
-import Order, { fromJSON as OrderFromJSON } from "../orders/order";
+import Order, { fromJSON as orderFromJSON } from "../orders/order";
 import paths from "../util/paths";
 import { jsonOrError, requestBuilder } from "../util/request";
 import TaskingSearchRequest from "./search-request";
 import { TaskingSearchResponse } from "./search-response";
 import { decodeResponse } from "./search-response";
-import OrderRequest from "../orders/order-request";
-import BatchOrderRequest from "../orders/batch-order";
+import OrderRequest from "./order-request";
+import BatchOrderRequest from "./batch-order";
 
 /**
  * @class Tasking wraps the API requests to the imagery tasking API
@@ -77,7 +77,7 @@ export default class Tasking {
         .then(jsonOrError)
         .then((resp) => {
 
-            const ord = OrderFromJSON(this._client, resp as {[key: string]: unknown});
+            const ord = orderFromJSON(this._client, resp as {[key: string]: unknown});
             if (!(ord instanceof Order)) {
                 return Promise.reject(ord);
             }
@@ -86,7 +86,7 @@ export default class Tasking {
         });
     }
 
-    batchOrder(req: BatchOrderRequest): Promise<Order[]> {
+    batchOrder(req: BatchOrderRequest): Promise<Order> {
         if (!req.valid()) {
             return Promise.reject("invalid order request");
         }
@@ -94,21 +94,12 @@ export default class Tasking {
         .then(jsonOrError)
         .then((resp) => {
 
-            if (!Array.isArray(resp)) {
-                return Promise.reject("error placing batch order, response is not array or orders")
+            const ord = orderFromJSON(this._client, resp as {[key: string]: unknown});
+            if (!(ord instanceof Order)) {
+                return Promise.reject(ord);
             }
 
-            const ords: Order[] = [];
-
-            for (let i=0; i<resp.length; i++) {
-                const ord = OrderFromJSON(this._client, resp[i] as {[key: string]: unknown});
-                if (!(ord instanceof Order)) {
-                    return Promise.reject(ord);
-                }
-                ords.push(ord)
-            }
-
-            return ords;
+            return ord;
         });
     }
 }

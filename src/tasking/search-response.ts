@@ -2,9 +2,11 @@ import Band from "../archive/search/band";
 import BundleOption from "../archive/search/bundle";
 import License from "../archive/search/license";
 import { decodeBand } from "../archive/search/band";
-import { decodeMultiPolygon } from "../archive/search/polygon";
+import decodePolygon from "../archive/search/polygon";
 import { decodeBundle } from "../archive/search/bundle";
 import { decodeLicense } from "../archive/search/license";
+import { Priority, decodePriority } from "./priority";
+import { CloudLevel, decodeCloudLevel } from "./cloud";
 
 /**
  * TaskingSearchResponse is a response envelope that includes the search result set
@@ -18,7 +20,8 @@ export interface TaskingSearchResponse {
     // status: string;
     errors?: annotation[];
     // warnings: string[];
-    results?: TaskingSearchResult[];
+    results?:  TaskingSearchResult[];
+    failures?: taskingFailure[];
 }
 
 
@@ -28,8 +31,16 @@ export interface annotation {
     platforms?: string[];
 }
 
+export interface taskingFailure {
+    type:      string;
+    message:   string;
+    supplier:  string;
+    platforms: string[];
+    detail:    any;
+}
+
 export function isResponse(object: unknown): object is TaskingSearchResponse {
-    return !!object && (typeof object === "object") && ('errors' in object || 'results' in object);
+    return !!object && (typeof object === "object") && ('errors' in object || 'results' in object || 'failures' in object);
 }
 
 // decodeResponse is a helper for reading results from JSON, it is not intended for public use.
@@ -84,10 +95,10 @@ export function decodeResultSet(json: unknown[]): TaskingSearchResult[]|null {
  * @see {https://arlula.com/documentation/#ref-search-result|Tasking Search result structure reference}
  */
 export class TaskingSearchResult {
-    polygons: number[][][][];
-    areas: taskingArea;
+    polygon: number[][][];
     startDate: Date;
     endDate: Date;
+    metrics: taskingMetrics;
     gsd: number;
     supplier: string;
     orderingID: string;
@@ -95,13 +106,15 @@ export class TaskingSearchResult {
     bands: Band[];
     bundles: BundleOption[];
     licenses: License[];
+    priorities: Priority[];
+    cloud: CloudLevel[];
     platforms: string[];
     annotations?: annotation[];
     constructor(
-        polygons: number[][][][],
-        areas: taskingArea,
+        polygon: number[][][],
         startDate: Date,
         endDate: Date,
+        metrics: taskingMetrics,
         gsd: number,
         supplier: string,
         orderingID: string,
@@ -109,11 +122,13 @@ export class TaskingSearchResult {
         bands: Band[],
         bundles: BundleOption[],
         licenses: License[],
+        priorities: Priority[],
+        cloud: CloudLevel[],
         platforms: string[],
         annotations?: annotation[],
     ) {
-        this.polygons = polygons;
-        this.areas = areas;
+        this.polygon = polygon;
+        this.metrics = metrics;
         this.startDate = startDate;
         this.endDate = endDate;
         this.gsd = gsd;
@@ -123,27 +138,33 @@ export class TaskingSearchResult {
         this.bands = bands;
         this.bundles = bundles;
         this.licenses = licenses;
+        this.priorities = priorities;
+        this.cloud = cloud;
         this.platforms = platforms;
         this.annotations = annotations;
     }
 }
 
-export interface taskingArea {
-    target: number;
-    scene: number;
+export interface taskingMetrics {
+    windowsAvailable: number;
+    windowsRequired:  number;
+    orderArea:        number;
+    moq:              number;
 }
 
 
 // decodeResult is a helper for reading results from JSON, it is not intended for public use.
 export function decodeResult(json: unknown): TaskingSearchResult|null {
-    let polygons: number[][][][] = [];
-    const areas: taskingArea = {target: 0, scene: 0};
+    let polygon: number[][][] = [];
+    const metrics: taskingMetrics = {windowsAvailable: 0, windowsRequired: 0, orderArea: 0, moq: 0,};
     let startDate = new Date(), endDate = new Date();
     let supplier = "", orderingID = "";
     let offNadir = 0, gsd = 0;
     const bands: Band[] = [];
     const bundles: BundleOption[] = [];
     const licenses: License[] = [];
+    const priorities: Priority[] = [];
+    const clouds: CloudLevel[] = [];
     const platforms: string[] = [];
     const annotations: annotation[] = [];
 
@@ -206,25 +227,31 @@ export function decodeResult(json: unknown): TaskingSearchResult|null {
             }
         });
     }
-    // areas
-    if (argMap?.areas && typeof argMap.areas == "object") {
-        const innerMap = argMap.areas as {[key: string]: unknown}
-        if (innerMap?.target && typeof innerMap.target == "number") {
-            areas.target = innerMap.target;
+    // metrics
+    if (argMap?.metrics && typeof argMap.metrics == "object") {
+        const innerMap = argMap.metrics as {[key: string]: unknown};
+        if (innerMap?.windowsAvailable && typeof innerMap.windowsAvailable == "number") {
+            metrics.windowsAvailable = innerMap.windowsAvailable;
         }
-        if (innerMap?.scene && typeof innerMap.scene == "number") {
-            areas.scene = innerMap.scene;
+        if (innerMap?.windowsRequired && typeof innerMap.windowsRequired == "number") {
+            metrics.windowsRequired = innerMap.windowsRequired;
+        }
+        if (innerMap?.orderArea && typeof innerMap.orderArea == "number") {
+            metrics.orderArea = innerMap.orderArea;
+        }
+        if (innerMap?.moq && typeof innerMap.moq == "number") {
+            metrics.moq = innerMap.moq;
         }
     } else {
         return null;
     }
-    // polygons
-    if (argMap?.polygons && Array.isArray(argMap.polygons)) {
-        const p = decodeMultiPolygon(argMap.polygons);
+    // polygon
+    if (argMap?.polygon && Array.isArray(argMap.polygon)) {
+        const p = decodePolygon(argMap.polygon);
         if (!p) {
             return null;
         }
-        polygons = p;
+        polygon = p;
     } else {
         return null;
     }
@@ -256,6 +283,28 @@ export function decodeResult(json: unknown): TaskingSearchResult|null {
             }
         });
     }
+    // priorities
+    if (argMap?.priorities && Array.isArray(argMap.priorities)) {
+        argMap.priorities.forEach((b) => {
+            const li = decodePriority(b);
+            if (li) {
+                priorities.push(li);
+            } else {
+                return null;
+            }
+        });
+    }
+    // cloud levels
+    if (argMap?.cloud && Array.isArray(argMap.cloud)) {
+        argMap.cloud.forEach((b) => {
+            const li = decodeCloudLevel(b);
+            if (li) {
+                clouds.push(li);
+            } else {
+                return null;
+            }
+        });
+    }
     // annotations
     if (argMap?.annotations && Array.isArray(argMap.annotations)) {
         argMap.annotations.forEach((a) => {
@@ -281,10 +330,10 @@ export function decodeResult(json: unknown): TaskingSearchResult|null {
 
 
     return new TaskingSearchResult(
-        polygons,
-        areas,
+        polygon,
         startDate,
         endDate,
+        metrics,
         gsd,
         supplier,
         orderingID,
@@ -292,6 +341,8 @@ export function decodeResult(json: unknown): TaskingSearchResult|null {
         bands,
         bundles,
         licenses,
+        priorities,
+        clouds,
         platforms,
         annotations,
     );

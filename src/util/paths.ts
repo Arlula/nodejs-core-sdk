@@ -19,14 +19,38 @@ export default class paths {
         return host + "/api/archive/order/batch";
     }
 
-    static get OrderList(): string {
-        return host + "/api/order/list";
+    static OrderList(): string {
+        return host + "/api/orders";
     }
-    static get OrderGet(): string {
-        return host + "/api/order/get";
+    static CampaignList(): string {
+        return host + "/api/campaigns";
     }
-    static get ResourceDownload(): string {
-        return host + "/api/order/resource/get";
+    static DatasetList(): string {
+        return host + "/api/datasets";
+    }
+    static OrderGet(id: string): string {
+        return host + `/api/order/${id}`;
+    }
+    static CampaignGet(id: string): string {
+        return host + `/api/campaign/${id}`;
+    }
+    static DatasetGet(id: string): string {
+        return host + `/api/dataset/${id}`;
+    }
+    static ResourceGet(id: string): string {
+        return host + `/api/resource/${id}`;
+    }
+    static ResourceDownload(id: string): string {
+        return host + `/api/resource/${id}/data`;
+    }
+    static OrderCampaigns(id: string): string {
+        return `${host}/api/order/${id}/campaigns`
+    }
+    static OrderDatasets(id: string): string {
+        return `${host}/api/order/${id}/datasets`
+    }
+    static CampaignDatasets(id: string): string {
+        return `${host}/api/campaign/${id}/datasets`
     }
 
     static get CollectionConformance(): string {
