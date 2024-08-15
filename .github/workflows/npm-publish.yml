@@ -25,6 +25,8 @@ jobs:
       test_tasking_order_key2: ${{ secrets.test_tasking_order_key2 }}
       test_tasking_order_eula: ${{ secrets.test_tasking_order_eula }}
       test_tasking_order_bundle: ${{ secrets.test_tasking_order_bundle }}
+      tasking_order_priority: ${{ secrets.test_tasking_order_priority }}
+      tasking_order_cloud: ${{ secrets.test_tasking_order_cloud }}
   build:
     needs: test
     runs-on: ubuntu-latest
